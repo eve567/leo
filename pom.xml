@@ -37,11 +37,6 @@
     
     <modules>
         <module>leo-model</module>
-        <module>leo-repository</module>
-        <module>leo-service</module>
-        <module>leo-console</module>
-        <module>leo-server</module>
-        <module>leo-static</module>
     </modules>
     
     <properties>
