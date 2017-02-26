@@ -36,7 +36,12 @@
     </distributionManagement>
     
     <modules>
-        <module>leo-model</module>
+        <module>leo-domain</module>
+        <module>leo-service</module>
+        <module>leo-console</module>
+        <module>leo-server</module>
+        <module>leo-client</module>
+        <module>leo-static</module>
     </modules>
     
     <properties>
