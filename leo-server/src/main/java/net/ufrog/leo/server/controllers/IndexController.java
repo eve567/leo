@@ -22,4 +22,16 @@ public class IndexController {
     public String index() {
         return "index";
     }
+
+    /**
+     * 登录表单
+     *
+     * @return view for sign_in
+     */
+    @GetMapping("/sign_in")
+    public String signIn() {
+        return "sign_in";
+    }
+
+
 }
