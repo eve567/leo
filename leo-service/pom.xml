@@ -17,6 +17,11 @@
             <artifactId>leo-domain</artifactId>
             <version>${version.this}</version>
         </dependency>
+        <dependency>
+            <groupId>net.ufrog</groupId>
+            <artifactId>leo-client</artifactId>
+            <version>${version.this}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat</groupId>
