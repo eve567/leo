@@ -4,10 +4,9 @@ import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
-import net.ufrog.common.utils.Passwords;
-import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.domain.mappers.UserMapper;
 import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.server.beans.AccessToken;
+import net.ufrog.leo.server.beans.access.token.AccessToken;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,16 +24,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IndexController {
 
+    /**  */
+    private UserMapper userMapper;
+
     /** 用户业务接口 */
     private UserService userService;
 
     /**
      * 构造函数
      *
+     * @param userMapper user mapper
      * @param userService 用户业务接口
      */
     @Autowired
-    public IndexController(UserService userService) {
+    public IndexController(UserMapper userMapper, UserService userService) {
+        this.userMapper = userMapper;
         this.userService = userService;
     }
 
@@ -45,6 +49,13 @@ public class IndexController {
      */
     @GetMapping({"", "/", "/index"})
     public String index() {
+        User user = userMapper.findOne("id");
+        if (user != null) {
+            System.out.println(">>>>>>>>>>>>>>>>>>>>");
+            System.out.println(">>>>>>>>>>" + user.getId());
+            System.out.println(">>>>>>>>>>" + user.getName());
+            System.out.println(">>>>>>>>>>>>>>>>>>>>");
+        }
         return "index";
     }
 
