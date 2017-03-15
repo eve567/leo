@@ -8,4 +8,31 @@ import net.ufrog.common.app.AppUser;
  * @since 0.1
  */
 public class LeoAppUser extends AppUser {
+
+    private static final long serialVersionUID = -8577812680514415491L;
+
+    /** 令牌 */
+    private String token;
+
+    /**
+     * 构造函数
+     *
+     * @param id 编号
+     * @param account 账号
+     * @param name 名称
+     * @param token 令牌
+     */
+    public LeoAppUser(String id, String account, String name, String token) {
+        super(id, account, name);
+        this.token = token;
+    }
+
+    /**
+     * 读取令牌
+     *
+     * @return 令牌
+     */
+    public String getToken() {
+        return token;
+    }
 }

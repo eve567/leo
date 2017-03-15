@@ -4,6 +4,7 @@ import net.ufrog.common.Logger;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.utils.Calendars;
 import net.ufrog.common.utils.Codecs;
+import net.ufrog.leo.client.LeoAppUser;
 import net.ufrog.leo.service.beans.Props;
 
 import java.io.Serializable;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 访问令牌
+ * 访问令牌抽象
  *
  * @author ultrafrog, ufrog.net@gmail.com
  * @version 0.1, 2017-02-26
@@ -28,7 +29,7 @@ public class AccessToken implements Serializable {
     private Long timestamp;
 
     /** 应用用户 */
-    private AppUser appUser;
+    private LeoAppUser leoAppUser;
 
     /** 应用映射 */
     private Map<String, Long> mApp;
@@ -43,12 +44,13 @@ public class AccessToken implements Serializable {
     /**
      * 构造函数
      *
-     * @param appUser 应用用户
+     * @param id 编号
+     * @param account 账号
+     * @param name 名称
      */
-    private AccessToken(AppUser appUser) {
+    public AccessToken(String id, String account, String name) {
         this();
-        this.appUser = appUser;
-        this.appUser.setData(token);
+        this.leoAppUser = new LeoAppUser(id, account, name, token);
     }
 
     /**
@@ -97,33 +99,15 @@ public class AccessToken implements Serializable {
      * @return 应用用户
      */
     public AppUser getAppUser() {
-        return appUser;
+        return leoAppUser;
     }
-
-    /** 缓存令牌 */
-    public void cache() {}
-
-    /** 移除令牌 */
-    public void remove() {}
 
     /**
      * 获取超时时间
      *
      * @return 超时时间
      */
-    private Integer getTimeout() {
-        return Calendars.parseDuration(Props.getSysSignTimeout());
-    }
-
-    /**
-     * 创建访问令牌实例
-     *
-     * @param appUser 应用用户
-     * @return 访问令牌
-     */
-    public static AccessToken newAccessToken(AppUser appUser) {
-        AccessToken accessToken = new AccessToken(appUser);
-
-        return null;
+    protected static Integer getTimeout() {
+        return Calendars.parseDuration(Props.getLeoSignTimeout());
     }
 }

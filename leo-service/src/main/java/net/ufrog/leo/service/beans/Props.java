@@ -8,9 +8,16 @@ package net.ufrog.leo.service.beans;
 public class Props {
 
     /**
-     * @return
+     * @return string
      */
-    public static String getSysSignTimeout() {
+    public static String getLeoSignTimeout() {
         return "30min";
+    }
+
+    /**
+     * @return boolean
+     */
+    public static Boolean getLeoSignKickout() {
+        return Boolean.FALSE;
     }
 }

@@ -4,9 +4,9 @@ import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
-import net.ufrog.leo.domain.mappers.UserMapper;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.server.beans.access.token.AccessToken;
+import net.ufrog.leo.server.beans.access.token.AccessTokenManager;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,21 +24,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IndexController {
 
-    /**  */
-    private UserMapper userMapper;
-
     /** 用户业务接口 */
     private UserService userService;
+
+    /** 访问令牌处理 */
+    private AccessTokenManager accessTokenProcessor;
 
     /**
      * 构造函数
      *
-     * @param userMapper user mapper
      * @param userService 用户业务接口
      */
     @Autowired
-    public IndexController(UserMapper userMapper, UserService userService) {
-        this.userMapper = userMapper;
+    public IndexController(UserService userService) {
         this.userService = userService;
     }
 
@@ -49,13 +47,6 @@ public class IndexController {
      */
     @GetMapping({"", "/", "/index"})
     public String index() {
-        User user = userMapper.findOne("id");
-        if (user != null) {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>");
-            System.out.println(">>>>>>>>>>" + user.getId());
-            System.out.println(">>>>>>>>>>" + user.getName());
-            System.out.println(">>>>>>>>>>>>>>>>>>>>");
-        }
         return "index";
     }
 
@@ -96,9 +87,9 @@ public class IndexController {
     public Result<AppUser> authenticate(String account, String password) {
         try {
             User user = userService.authenticate(account, password, UserService.UserType.STAFF, UserService.UserType.ROOT);
-            AppUser appUser = new AppUser(user.getId(), user.getAccount(), user.getName());
+            AccessToken accessToken = accessTokenProcessor.online(user.getId(), user.getAccount(), user.getName());
+            AppUser appUser = accessToken.getAppUser();
 
-            AccessToken.newAccessToken(appUser);
             App.current().setUser(appUser);
             return Result.success(appUser, App.message(""));
         } catch (ServiceException e) {
