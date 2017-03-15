@@ -1,6 +1,7 @@
 package net.ufrog.leo.server.beans.access.token;
 
 import net.ufrog.common.Logger;
+import net.ufrog.common.ThreadPools;
 import net.ufrog.common.utils.Calendars;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.service.beans.Props;
@@ -20,8 +21,6 @@ import java.util.concurrent.*;
  */
 public class DevAccessTokenManager implements AccessTokenManager {
 
-    private static ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
-
     private static Map<String, AccessToken> mAccessToken = new ConcurrentHashMap<>();
     private static Map<String, List<String>> mUserToken = new ConcurrentHashMap<>();
 
@@ -38,10 +37,10 @@ public class DevAccessTokenManager implements AccessTokenManager {
 
         mUserToken.get(id).add(token);
         mAccessToken.put(token, accessToken);
-        scheduledExecutorService.schedule(() -> {
+        ThreadPools.schedule(() -> {
             offline(id, token);
             Logger.info("offline user: %s by token: %s, %s", id, token, Calendars.datetime());
-        }, AccessToken.getTimeout(), TimeUnit.SECONDS);
+        }, "scheduled", Long.valueOf(AccessToken.getTimeout()), TimeUnit.SECONDS);
     }
 
     @Override
