@@ -1,18 +1,29 @@
 package net.ufrog.leo.server.controllers;
 
+import net.ufrog.common.Logger;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
+import net.ufrog.common.spring.app.SpringWebApp;
+import net.ufrog.common.utils.Strings;
+import net.ufrog.common.web.app.WebApp;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.server.beans.access.token.AccessToken;
 import net.ufrog.leo.server.beans.access.token.AccessTokenManager;
+import net.ufrog.leo.service.AppService;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 索引控制器
@@ -24,20 +35,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class IndexController {
 
+    private static final String SESSION_ACCESS_TOKENS   = "session_access_tokens";
+
+    /** 应用业务接口 */
+    private AppService appService;
+
     /** 用户业务接口 */
     private UserService userService;
 
-    /** 访问令牌处理 */
-    private AccessTokenManager accessTokenProcessor;
+    /** 访问令牌管理接口 */
+    private AccessTokenManager accessTokenManager;
 
     /**
      * 构造函数
      *
+     * @param appService 应用业务接口
      * @param userService 用户业务接口
      */
     @Autowired
-    public IndexController(UserService userService) {
+    public IndexController(AppService appService, UserService userService) {
+        this.appService = appService;
         this.userService = userService;
+        this.accessTokenManager = SpringWebApp.getBean(AccessTokenManager.class);
     }
 
     /**
@@ -65,11 +84,13 @@ public class IndexController {
      *
      * @return view for sign_in
      */
+    @SuppressWarnings("unchecked")
     @GetMapping("/sign_out")
     public String signOut() {
         AppUser appUser = App.current().getUser();
         if (appUser != null) {
-            //TODO 插入移除令牌
+            List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
+            lAccessToken.forEach(accessToken -> accessTokenManager.offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
             App.current().setUser(null);
         }
         return signIn();
@@ -87,13 +108,36 @@ public class IndexController {
     public Result<AppUser> authenticate(String account, String password) {
         try {
             User user = userService.authenticate(account, password, UserService.UserType.STAFF, UserService.UserType.ROOT);
-            AccessToken accessToken = accessTokenProcessor.online(user.getId(), user.getAccount(), user.getName());
-            AppUser appUser = accessToken.getAppUser();
-
+            AppUser appUser = new AppUser(user.getId(), user.getAccount(), user.getName());
             App.current().setUser(appUser);
             return Result.success(appUser, App.message(""));
         } catch (ServiceException e) {
             return Result.failure(App.message(e.getKey()));
         }
+    }
+
+    /**
+     * 跳转应用
+     *
+     * @param appId 应用编号
+     */
+    @SuppressWarnings("unchecked")
+    @GetMapping("/redirect/{appId}")
+    public String redirect(@PathVariable("appId") String appId, HttpServletRequest request) {
+        net.ufrog.leo.domain.models.App app = appService.getById(appId);
+        List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
+        if (lAccessToken == null) lAccessToken = new ArrayList<>();
+
+        AccessToken accessToken;
+        Optional<AccessToken> oAccessToken = lAccessToken.stream().filter(at -> Strings.equals(appId, at.getAppId())).findFirst();
+        if (!oAccessToken.isPresent()) {
+            accessToken = accessTokenManager.online(App.user(), app, request.getRemoteAddr());
+            lAccessToken.add(accessToken);
+            App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, lAccessToken);
+            Logger.debug("create access token '%s' for app '%s'", accessToken.getToken(), accessToken.getAppId());
+        } else {
+            accessToken = oAccessToken.get();
+        }
+        return "redirect:" + app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + "_leo_access_token=" + accessToken.getToken();
     }
 }

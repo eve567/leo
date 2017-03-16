@@ -20,11 +20,9 @@ public class LeoAppUser extends AppUser {
      * @param id 编号
      * @param account 账号
      * @param name 名称
-     * @param token 令牌
      */
-    public LeoAppUser(String id, String account, String name, String token) {
+    public LeoAppUser(String id, String account, String name) {
         super(id, account, name);
-        this.token = token;
     }
 
     /**
@@ -34,5 +32,14 @@ public class LeoAppUser extends AppUser {
      */
     public String getToken() {
         return token;
+    }
+
+    /**
+     * 设置令牌
+     *
+     * @param token 令牌
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 }

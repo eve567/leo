@@ -1,15 +1,13 @@
 package net.ufrog.leo.server.beans.access.token;
 
-import net.ufrog.common.Logger;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.utils.Calendars;
 import net.ufrog.common.utils.Codecs;
+import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.client.LeoAppUser;
-import net.ufrog.leo.service.beans.Props;
+import net.ufrog.leo.domain.models.App;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 访问令牌抽象
@@ -28,51 +26,33 @@ public class AccessToken implements Serializable {
     /** 时间戳 */
     private Long timestamp;
 
+    /** 地址 */
+    private String ip;
+
     /** 应用用户 */
     private LeoAppUser leoAppUser;
 
-    /** 应用映射 */
-    private Map<String, Long> mApp;
+    /** 应用 */
+    private App app;
 
     /** 构造函数 */
     private AccessToken() {
         token = Codecs.uuid();
         timestamp = System.currentTimeMillis();
-        mApp = new HashMap<>();
     }
 
     /**
      * 构造函数
      *
-     * @param id 编号
-     * @param account 账号
-     * @param name 名称
+     * @param appUser 应用用户
+     * @param app 应用
+     * @param ip 访问地址
      */
-    public AccessToken(String id, String account, String name) {
+    public AccessToken(AppUser appUser, App app, String ip) {
         this();
-        this.leoAppUser = new LeoAppUser(id, account, name, token);
-    }
-
-    /**
-     * 验证令牌是否有效
-     *
-     * @param appId 应用编号
-     * @return 判断结果
-     */
-    public Boolean validate(String appId) {
-        Long current = System.currentTimeMillis();
-        Long timeout = getTimeout() * 1000L;
-        Long interval = current - timestamp;
-
-        if (interval > timeout) {
-            Logger.warn("token '" + token + "' expired.");
-            return Boolean.FALSE;
-        } else if (!mApp.containsKey(appId)) {
-            Logger.warn("token '" + token + "' has no app info by id: " + appId + ".");
-            return Boolean.FALSE;
-        } else {
-            return Boolean.TRUE;
-        }
+        this.app = app;
+        this.leoAppUser = (appUser instanceof LeoAppUser) ? (LeoAppUser) appUser : new LeoAppUser(appUser.getId(), appUser.getAccount(), appUser.getName());
+        this.leoAppUser.setToken(token);
     }
 
     /**
@@ -94,20 +74,56 @@ public class AccessToken implements Serializable {
     }
 
     /**
+     * 读取地址
+     *
+     * @return 地址
+     */
+    public String getIp() {
+        return ip;
+    }
+
+    /**
      * 读取应用用户
      *
      * @return 应用用户
      */
-    public AppUser getAppUser() {
+    public LeoAppUser getAppUser() {
         return leoAppUser;
     }
 
     /**
-     * 获取超时时间
+     * 读取应用
+     *
+     * @return 应用
+     */
+    public App getApp() {
+        return app;
+    }
+
+    /**
+     * 读取用户编号
+     *
+     * @return 用户编号
+     */
+    public String getUserId() {
+        return leoAppUser.getId();
+    }
+
+    /**
+     * 读取应用编号
+     *
+     * @return 应用编号
+     */
+    public String getAppId() {
+        return app.getId();
+    }
+
+    /**
+     * 读取超时时间
      *
      * @return 超时时间
      */
-    protected static Integer getTimeout() {
-        return Calendars.parseDuration(Props.getLeoSignTimeout());
+    public Long getTimeout() {
+        return Strings.empty(app.getTimeout()) ? -1L : Calendars.parseDuration(app.getTimeout()) * 1000L;
     }
 }

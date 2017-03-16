@@ -11,10 +11,12 @@
         http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <aop:aspectj-autoproxy />
+    <context:property-placeholder location="classpath:application.conf" ignore-unresolvable="true" />
     <context:component-scan base-package="net.ufrog.leo">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     </context:component-scan>
 
+    <bean class="${leo.access.token.manager}" />
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basenames">
             <list>
