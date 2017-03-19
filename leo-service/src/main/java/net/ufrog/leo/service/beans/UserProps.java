@@ -25,6 +25,9 @@ public class UserProps implements Serializable {
     /** 用户属性映射 */
     private Map<String, UserProp> mUserProp;
 
+    /** 更新属性映射 */
+    private Map<String, Modified> mModified;
+
     /** 构造函数 */
     private UserProps() {
         this.mUserProp = new HashMap<>();
@@ -85,6 +88,33 @@ public class UserProps implements Serializable {
      */
     public String getEmail() {
         return (user == null) ? null : user.getEmail();
+    }
+
+    /**
+     * 读取用户姓名
+     *
+     * @return 用户姓名
+     */
+    public String getName() {
+        return (user == null) ? null : user.getName();
+    }
+
+    /**
+     * 读取用户状态
+     *
+     * @return 用户状态
+     */
+    public String getStatus() {
+        return (user == null) ? null : user.getStatus();
+    }
+
+    /**
+     * 读取用户类型
+     *
+     * @return 用户类型
+     */
+    public String getType() {
+        return (user == null) ? null : user.getType();
     }
 
     /**
