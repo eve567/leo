@@ -9,11 +9,12 @@ import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
 import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.server.beans.access.token.AccessToken;
-import net.ufrog.leo.server.beans.access.token.AccessTokenManager;
+import net.ufrog.leo.server.auth.AccessToken;
+import net.ufrog.leo.server.auth.AccessTokenManager;
 import net.ufrog.leo.service.AppService;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,8 +44,8 @@ public class IndexController {
     /** 用户业务接口 */
     private UserService userService;
 
-    /** 访问令牌管理接口 */
-    private AccessTokenManager accessTokenManager;
+    /**  */
+    private ApplicationContext applicationContext;
 
     /**
      * 构造函数
@@ -53,10 +54,10 @@ public class IndexController {
      * @param userService 用户业务接口
      */
     @Autowired
-    public IndexController(AppService appService, UserService userService) {
+    public IndexController(AppService appService, UserService userService, ApplicationContext applicationContext) {
         this.appService = appService;
         this.userService = userService;
-        this.accessTokenManager = SpringWebApp.getBean(AccessTokenManager.class);
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -90,7 +91,7 @@ public class IndexController {
         AppUser appUser = App.current().getUser();
         if (appUser != null) {
             List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
-            lAccessToken.forEach(accessToken -> accessTokenManager.offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
+            lAccessToken.forEach(accessToken -> applicationContext.getBean(AccessTokenManager.class).offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
             App.current().setUser(null);
         }
         return signIn();
@@ -131,7 +132,7 @@ public class IndexController {
         AccessToken accessToken;
         Optional<AccessToken> oAccessToken = lAccessToken.stream().filter(at -> Strings.equals(appId, at.getAppId())).findFirst();
         if (!oAccessToken.isPresent()) {
-            accessToken = accessTokenManager.online(App.user(), app, request.getRemoteAddr());
+            accessToken = applicationContext.getBean(AccessTokenManager.class).online(App.user(), app, request.getRemoteAddr());
             lAccessToken.add(accessToken);
             App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, lAccessToken);
             Logger.debug("create access token '%s' for app '%s'", accessToken.getToken(), accessToken.getAppId());

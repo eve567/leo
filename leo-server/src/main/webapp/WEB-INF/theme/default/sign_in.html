@@ -1,0 +1,64 @@
+<!-- #tag layout_block('bodyContent') -->
+<div class="container" ng-controller="signCtrl">
+    <h1>${App::config('leo_name')}</h1>
+    <div class="panel panel-default">
+        <!-- #form -->
+        <form name="signForm" action="#" method="post" ng-submit="authenticate($event)">
+            <div class="panel-body">
+                <h3>管理员登录</h3>
+                <div class="alert alert-warning" ng-bind="result.firstMessage" ng-hide="valid.empty(result)" ng-cloak></div>
+                <div class="form-group">
+                    <input type="text" name="account" placeholder="输入管理员帐号" class="form-control input-lg" ng-model="data.sign.account" required autofocus>
+                    <input type="password" name="password" placeholder="登录密码" class="form-control input-lg" ng-model="data.sign.password" required>
+                </div>
+                <button class="btn btn-primary btn-block btn-lg" ng-disabled="disabledSignBtn()">
+                    <span ng-show="ctrl.status('signBtn', ['standby'])" ng-cloak>登录</span>
+                    <span ng-show="ctrl.status('signBtn', ['processing'])" ng-cloak><fa i="spinner spin">&nbsp;正在努力验证中...</fa></span>
+                </button>
+            </div>
+        </form>
+        <!-- #form -->
+    </div>
+    <p>${App::config('console_copyright')}</p>
+</div>
+<!-- #end -->
+
+<!-- #tag layout_block('moreJs') -->
+<script type="text/javascript">
+    'use strict';
+    function signCtrl($scope) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.ctrl.status('signBtn', 'standby');
+            },
+
+            // 提交登录
+            authenticate: function($event) {
+                $scope.ctrl.stop($event);
+                $scope.ctrl.status('signBtn', 'processing');
+                $scope.post('${app}/authenticate', $scope.data.sign, function() {
+                    $scope.ctrl.redirect('${app}/index');
+                }, function() {
+                    $scope.ctrl.status('signBtn', 'standby');
+                }, null, function(data) {
+                    $scope.result = data;
+                    $scope.data.sign.password = '';
+                });
+            },
+
+            // 判断登录按钮是否有效
+            disabledSignBtn: function() {
+                if ($scope.signForm.$invalid) return true;
+                else if ($scope.ctrl.status('signBtn', ['processing'])) return true;
+                return false;
+            },
+
+            data: {
+                sign: {}
+            }
+        }).init();
+    }
+</script>
+<!-- #end -->
+<!-- #include('layout.html') -->

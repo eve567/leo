@@ -10,8 +10,24 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <bean id="configReader" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:application.conf</value>
+            </list>
+        </property>
+        <property name="propertiesPersister">
+            <bean class="net.ufrog.common.spring.DecryptPropertiesPersister">
+                <property name="keys">
+                    <list>
+                        <value>db.password</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="ignoreResourceNotFound" value="true" />
+    </bean>
     <aop:aspectj-autoproxy />
-    <context:property-placeholder location="classpath:application.conf" ignore-unresolvable="true" />
     <context:component-scan base-package="net.ufrog.leo">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     </context:component-scan>

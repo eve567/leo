@@ -9,6 +9,7 @@
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
     <context:property-placeholder location="classpath:application.conf" ignore-unresolvable="true" />
     <context:component-scan base-package="net.ufrog.leo" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
@@ -20,10 +21,22 @@
     </mvc:annotation-driven>
     <mvc:default-servlet-handler />
     <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/*" />
+            <mvc:exclude-mapping path="/sign" />
+            <mvc:exclude-mapping path="/sign_in" />
+            <mvc:exclude-mapping path="/sign_out" />
+            <mvc:exclude-mapping path="/authenticate" />
+            <mvc:exclude-mapping path="/reset_password" />
+            <mvc:exclude-mapping path="/reset_password_forced" />
+            <bean class="net.ufrog.leo.server.SecurityInterception">
+                <property name="forcedResetPasswordUri" value="/reset_password_forced" />
+            </bean>
+        </mvc:interceptor>
         <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
         <bean class="net.ufrog.common.spring.interceptor.TokenInterceptor" />
-        <bean class="net.ufrog.leo.client.LeoInterception" />
     </mvc:interceptors>
+
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
     <bean class="jetbrick.template.web.springmvc.JetTemplateViewResolver">
         <property name="prefix" value="/WEB-INF/theme/${path.theme}/" />
@@ -40,7 +53,7 @@
                 <bean class="net.ufrog.common.spring.exception.ServiceExceptionHandler" />
                 <bean class="net.ufrog.common.spring.exception.NotSignExceptionHandler">
                     <property name="view" value="sign" />
-                    <property name="uri" value="" />
+                    <property name="uri" value="/sign_out" />
                     <property name="prefix" value="not_sign::" />
                 </bean>
             </list>

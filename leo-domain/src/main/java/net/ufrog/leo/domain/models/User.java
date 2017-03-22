@@ -1,68 +1,65 @@
 package net.ufrog.leo.domain.models;
 
-import net.ufrog.common.dict.Dicts;
-import net.ufrog.common.dict.Element;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
  * 用户模型
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-02-18
+ * @version 0.1, 2017-03-22
  * @since 0.1
  */
-@Entity
-@Table(name = "leo_user")
+@javax.persistence.Entity
+@javax.persistence.Table(name = "leo_user")
 public class User extends Model {
 
-    private static final long serialVersionUID = -2264989599259175132L;
+    private static final long serialVersionUID = -4022179879403274597L;
 
-    /** 帐号 */
-    @Column(name = "vc_account")
-    private String account;
+    /** 账号 */
+    @javax.persistence.Column(name = "vc_account")
+    private java.lang.String account;
 
     /** 电子邮件 */
-    @Column(name = "vc_email")
-    private String email;
+    @javax.persistence.Column(name = "vc_email")
+    private java.lang.String email;
 
     /** 手机号码 */
-    @Column(name = "vc_cellphone")
-    private String cellphone;
+    @javax.persistence.Column(name = "vc_cellphone")
+    private java.lang.String cellphone;
 
-    /** 姓名 */
-    @Column(name = "vc_name")
-    private String name;
+    /** 称呼 */
+    @javax.persistence.Column(name = "vc_name")
+    private java.lang.String name;
 
     /** 密码 */
-    @Column(name = "vc_password")
-    private String password;
+    @javax.persistence.Column(name = "vc_password")
+    private java.lang.String password;
 
     /** 状态 */
-    @Column(name = "dc_status")
-    private String status;
+    @javax.persistence.Column(name = "dc_status")
+    private java.lang.String status;
 
     /** 类型 */
-    @Column(name = "dc_type")
-    private String type;
+    @javax.persistence.Column(name = "dc_type")
+    private java.lang.String type;
+
+    /** 强制修改密码 */
+    @javax.persistence.Column(name = "dc_forced")
+    private java.lang.String forced;
 
     /**
-     * 读取帐号
+     * 读取账号
      *
-     * @return 帐号
+     * @return 账号
      */
-    public String getAccount() {
+    public java.lang.String getAccount() {
         return account;
     }
 
     /**
-     * 设置帐号
+     * 设置账号
      *
-     * @param account 帐号
+     * @param account 账号
      */
-    public void setAccount(String account) {
+    public void setAccount(java.lang.String account) {
         this.account = account;
     }
 
@@ -71,7 +68,7 @@ public class User extends Model {
      *
      * @return 电子邮件
      */
-    public String getEmail() {
+    public java.lang.String getEmail() {
         return email;
     }
 
@@ -80,7 +77,7 @@ public class User extends Model {
      *
      * @param email 电子邮件
      */
-    public void setEmail(String email) {
+    public void setEmail(java.lang.String email) {
         this.email = email;
     }
 
@@ -89,7 +86,7 @@ public class User extends Model {
      *
      * @return 手机号码
      */
-    public String getCellphone() {
+    public java.lang.String getCellphone() {
         return cellphone;
     }
 
@@ -98,25 +95,25 @@ public class User extends Model {
      *
      * @param cellphone 手机号码
      */
-    public void setCellphone(String cellphone) {
+    public void setCellphone(java.lang.String cellphone) {
         this.cellphone = cellphone;
     }
 
     /**
-     * 读取姓名
+     * 读取称呼
      *
-     * @return 姓名
+     * @return 称呼
      */
-    public String getName() {
+    public java.lang.String getName() {
         return name;
     }
 
     /**
-     * 设置姓名
+     * 设置称呼
      *
-     * @param name 姓名
+     * @param name 称呼
      */
-    public void setName(String name) {
+    public void setName(java.lang.String name) {
         this.name = name;
     }
 
@@ -125,7 +122,7 @@ public class User extends Model {
      *
      * @return 密码
      */
-    public String getPassword() {
+    public java.lang.String getPassword() {
         return password;
     }
 
@@ -134,7 +131,7 @@ public class User extends Model {
      *
      * @param password 密码
      */
-    public void setPassword(String password) {
+    public void setPassword(java.lang.String password) {
         this.password = password;
     }
 
@@ -143,7 +140,7 @@ public class User extends Model {
      *
      * @return 状态
      */
-    public String getStatus() {
+    public java.lang.String getStatus() {
         return status;
     }
 
@@ -152,7 +149,7 @@ public class User extends Model {
      *
      * @param status 状态
      */
-    public void setStatus(String status) {
+    public void setStatus(java.lang.String status) {
         this.status = status;
     }
 
@@ -161,7 +158,7 @@ public class User extends Model {
      *
      * @return 类型
      */
-    public String getType() {
+    public java.lang.String getType() {
         return type;
     }
 
@@ -170,47 +167,47 @@ public class User extends Model {
      *
      * @param type 类型
      */
-    public void setType(String type) {
+    public void setType(java.lang.String type) {
         this.type = type;
     }
 
     /**
-     * 读取状态名称
+     * 读取强制修改密码
      *
-     * @return 状态名称
+     * @return 强制修改密码
      */
-    public String getStatusName() {
-        return Dicts.name(status, Status.class);
+    public java.lang.String getForced() {
+        return forced;
     }
 
     /**
-     * 读取类型名称
+     * 设置强制修改密码
      *
-     * @return 类型名称
+     * @param forced 强制修改密码
      */
-    public String getTypeName() {
-        return Dicts.name(type, Type.class);
+    public void setForced(java.lang.String forced) {
+        this.forced = forced;
     }
 
     /**
      * 状态
      *
      * @author ultrafrog
-     * @version 0.1, 2016-08-16
+     * @version 0.1, 2017-03-22
      * @since 0.1
      */
     public static final class Status {
 
-        @Element("待确认")
+        @net.ufrog.common.dict.Element("待确认")
         public static final String PENDING = "00";
 
-        @Element("正常")
+        @net.ufrog.common.dict.Element("正常")
         public static final String ENABLED = "10";
 
-        @Element("冻结")
+        @net.ufrog.common.dict.Element("冻结")
         public static final String FROZEN = "90";
 
-        @Element("注销")
+        @net.ufrog.common.dict.Element("注销")
         public static final String DISABLED = "99";
     }
 
@@ -218,18 +215,34 @@ public class User extends Model {
      * 类型
      *
      * @author ultrafrog
-     * @version 0.1, 2016-08-16
+     * @version 0.1, 2017-03-22
      * @since 0.1
      */
     public static final class Type {
 
-        @Element("客户")
+        @net.ufrog.common.dict.Element("客户")
         public static final String CLIENT = "00";
 
-        @Element("员工")
+        @net.ufrog.common.dict.Element("员工")
         public static final String STAFF = "90";
 
-        @Element("根")
+        @net.ufrog.common.dict.Element("上帝")
         public static final String ROOT = "99";
+    }
+
+    /**
+     * 强制修改密码
+     *
+     * @author ultrafrog
+     * @version 0.1, 2017-03-22
+     * @since 0.1
+     */
+    public static final class Forced {
+
+        @net.ufrog.common.dict.Element("否")
+        public static final String FALSE = "00";
+
+        @net.ufrog.common.dict.Element("是")
+        public static final String TRUE = "01";
     }
 }

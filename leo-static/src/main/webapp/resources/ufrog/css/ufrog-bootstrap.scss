@@ -1,0 +1,310 @@
+/* define */
+$spacing: 20px;
+$font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-size: 14px;
+$font-size-sm: 12px;
+$color-white: #ffffff;
+$color-gray-darker: #222222;
+$color-gray-dark: #333333;
+$color-gray: #555555;
+$color-gray-light: #777777;
+$color-gray-lighter: #eeeeee;
+$color-primary: #337ab7;
+$color-success: #5cb85c;
+$color-info: #5bc0de;
+$color-warning: #f0ad4e;
+$color-danger: #d9534f;
+
+@mixin transition($prop: all, $duration: 400ms, $timing: linear) {
+  transition: $prop $duration $timing;
+  -webkit-transition: $prop $duration $timing;
+  -moz-transition: $prop $duration $timing;
+  -ms-transition: $prop $duration $timing;
+  -o-transition: $prop $duration $timing;
+}
+
+/* element style */
+body {
+  padding-top: 50 + $spacing;
+  background-color: $color-white;
+  font-family: $font-family;
+  &.fullscreen {
+    padding: 0;
+  }
+}
+
+/* common style */
+.margin-top-zero {
+  margin-top: 0;
+}
+.margin-top-half {
+  margin-top: $spacing/2;
+}
+.margin-top {
+  margin-top: $spacing;
+}
+.margin-bottom-zero {
+  margin-bottom: 0;
+}
+.margin-bottom-half {
+  margin-bottom: $spacing/2;
+}
+.margin-bottom {
+  margin-bottom: $spacing;
+}
+.table-footer {
+  margin-top: -$spacing/2;
+  margin-bottom: $spacing;
+}
+.link-group {
+  .link-group-item + .link-group-item:before {
+    content: "|";
+    padding-right: $spacing/5;
+    padding-left: $spacing/10;
+  }
+}
+
+/* angular styles */
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak,
+[leo-view-item] {
+  display: none !important;
+}
+
+.ng-fade.ng-enter,
+.ng-fade.ng-leave,
+.ng-fade.ng-hide,
+.ng-fade.ng-hide-add,
+.ng-fade.ng-hide-remove {
+  @include transition();
+  position: relative;
+  display: block;
+}
+.ng-fade.ng-leave.ng-leave-active,
+.ng-fade.ng-enter,
+.ng-fade.ng-hide-add.ng-hide-add-active,
+.ng-fade.ng-hide-remove {
+  position: relative;
+  top: 10px;
+  left: 10px;
+  opacity: 0;
+}
+.ng-fade.ng-enter.ng-enter-active,
+.ng-fade.ng-leave,
+.ng-fade.ng-hide-remove.ng-hide-remove-active,
+.ng-fade.ng-hide-add {
+  position: relative;
+  top: 0;
+  left: 0;
+  opacity: 1;
+}
+
+/* override style */
+.container-fluid {
+  padding-right: $spacing;
+  padding-left: $spacing;
+}
+.row {
+  margin-right: -$spacing/2;
+  margin-left: -$spacing/2;
+  @for $i from 1 through 12 {
+    .col-xs-#{$i},
+    .col-sm-#{$i},
+    .col-md-#{$i},
+    .col-lg-#{$i} {
+      padding-right: $spacing/2;
+      padding-left: $spacing/2;
+    }
+  }
+  &.fullscreen {
+    margin-right: -$spacing;
+    margin-left: -$spacing;
+    @for $i from 1 through 12 {
+      .col-xs-#{$i},
+      .col-sm-#{$i},
+      .col-md-#{$i},
+      .col-lg-#{$i} {
+        padding: 0;
+      }
+    }
+  }
+}
+.form-horizontal {
+  .form-group {
+    margin-right: -$spacing/4;
+    margin-left: -$spacing/4;
+    @for $i from 1 through 12 {
+      .col-xs-#{$i},
+      .col-sm-#{$i},
+      .col-md-#{$i},
+      .col-lg-#{$i} {
+        padding-right: $spacing/4;
+        padding-left: $spacing/4;
+      }
+    }
+    .toggle-switch {
+      min-height: 34px;
+      padding-top: 4px;
+    }
+  }
+}
+.pagination {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.panel-tab {
+  .panel {
+    border-top-width: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+  }
+}
+
+/* alert style for angular bootstrap */
+.alert-fixed {
+  @include transition();
+  position: fixed;
+  left: 25%;
+  width: 50%;
+  opacity: 0;
+  padding-top: $spacing/2;
+  padding-bottom: $spacing/2;
+  border-top: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  text-align: center;
+  z-index: 999;
+  &.alert-show {
+    top: 51px !important;
+    opacity: .8;
+  }
+}
+
+/* tree style */
+.tree {
+  min-height: 340px;
+  max-height: 600px;
+  margin-bottom: 0;
+  padding: $spacing/2;
+  padding-left: 0;
+  padding-right: $font-size - $spacing/4;
+  background-color: lighten($color-gray-lighter,5%);
+  border: 1px lighten($color-gray-light,40%) solid;
+  border-radius: 4px;
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    li {
+      line-height: 25px;
+      padding-left: $font-size;
+      p {
+        display: block;
+        margin-bottom: 0;
+        margin-left: -$spacing/4;
+        padding: 0 $spacing/4;
+        border-radius: 4px;
+        cursor: pointer;
+        > .pull-right {
+          display: none;
+        }
+        &:hover {
+          background-color: $color-gray-lighter;
+          > .pull-right {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
+
+.alert-pop {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 100px;
+  min-height: 32px;
+  list-style: none;
+  z-index: 999;
+  li {
+    line-height: 32px;
+    padding-right: 10px;
+    padding-left: 10px;
+    white-space: nowrap;
+  }
+  .alert-pop-triangle {
+    position: absolute;
+    top: 13px;
+    left: -10px;
+    width: 0;
+    height: 0;
+    border: 5px transparent solid;
+    border-right-color: #dca7a7;
+  }
+}
+
+/* sign form */
+.sign {
+  padding-top: 80px;
+  background-color: $color-gray-lighter;
+  .container {
+    width: 300px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 0;
+    padding-left: 0;
+    .panel {
+      padding-bottom: $spacing;
+      margin-bottom: $spacing/2;
+      box-shadow: 1px 1px 1px rgba($color-white,.75);
+      .alert {
+        margin-bottom: $spacing/2;
+        padding-top: $spacing/2;
+        padding-bottom: $spacing/2;
+      }
+      .form-group {
+        .form-control {
+          position: relative;
+          &:focus {
+            z-index: 2;
+          }
+        }
+        input {
+          margin-bottom: -1px;
+          border-radius:0;
+          &:first-child {
+            border-top-right-radius: 6px;
+            border-top-left-radius: 6px;
+          }
+          &:last-child {
+            border-bottom-right-radius: 6px;
+            border-bottom-left-radius: 6px;
+          }
+        }
+      }
+    }
+    p {
+      color: $color-gray-dark;
+    }
+  }
+}
+
+/* ueditor style override */
+.edui-default {
+  .edui-colorpicker-preview {
+    width: 110px !important;
+    height: 22px !important;
+  }
+  .edui-colorpicker-nocolor {
+    height: auto !important;;
+  }
+  .edui-colorpicker-topbar {
+    width: 180px !important;
+  }
+}

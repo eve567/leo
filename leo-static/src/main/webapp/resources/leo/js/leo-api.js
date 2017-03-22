@@ -11,11 +11,7 @@
                 $config: {},
                 $constant: {
                     jsonp: 'jsonp=JSON_CALLBACK',
-                    uri: {
-                        nav: '/navs',
-                        app: '/apps',
-                        viewItems: '/view_items'
-                    }
+                    uri: {}
                 },
 
                 /** 配置 */

@@ -87,8 +87,8 @@ public class UserServiceImpl implements UserService {
     public User reset(String id, String prev, String next) {
         User user = userRepository.findOne(id);
         if (user != null && Passwords.match(prev, user.getPassword())) {
-            //TODO 设置强制修改密码为否
             user.setPassword(Passwords.encode(next));
+            user.setForced(User.Forced.TRUE);
             return userRepository.save(user);
         }
         throw new ServiceException("cannot find user or password is not match.", "service.user.reset.failure.match");
@@ -99,8 +99,8 @@ public class UserServiceImpl implements UserService {
     public User reset(String id, String next) {
         User user = userRepository.findOne(id);
         if (user != null) {
-            //TODO 设置强制修改密码为是
             user.setPassword(Passwords.encode(next));
+            user.setForced(User.Forced.TRUE);
             return userRepository.save(user);
         }
         throw new ServiceException("cannot find user or password is not match.", "service.user.reset.failure.match");

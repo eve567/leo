@@ -1,4 +1,4 @@
-package net.ufrog.leo.server.beans.access.token;
+package net.ufrog.leo.server.auth;
 
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.utils.Strings;
