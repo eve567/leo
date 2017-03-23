@@ -59,11 +59,11 @@ public class UserServiceImpl implements UserService {
     public User authenticate(String account, String password, UserType... userTypes) throws ServiceException {
         User user = findByAccount(account);
         if (user == null || !Passwords.match(password, user.getPassword())) {
-            throw new ServiceException("cannot authenticate user.", ""); //TODO
+            throw new ServiceException("cannot authenticate user.", "service.authenticate.failure.account");
         } else if (Strings.in(user.getStatus(), User.Status.PENDING, User.Status.FROZEN, User.Status.DISABLED)) {
-            throw new ServiceException("cannot authenticate user.", ""); //TODO
+            throw new ServiceException("cannot authenticate user.", "service.authenticate.failure.status");
         } if (Stream.of(userTypes).filter(userType -> Strings.in(user.getType(), userType.getTypes())).count() <= 0) {
-            throw new ServiceException("cannot authenticate user.", ""); //TODO
+            throw new ServiceException("cannot authenticate user.", "service.authenticate.failure.type");
         }
         return user;
     }
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findOne(id);
         if (user != null && Passwords.match(prev, user.getPassword())) {
             user.setPassword(Passwords.encode(next));
-            user.setForced(User.Forced.TRUE);
+            user.setForced(User.Forced.FALSE);
             return userRepository.save(user);
         }
         throw new ServiceException("cannot find user or password is not match.", "service.user.reset.failure.match");

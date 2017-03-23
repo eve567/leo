@@ -1,6 +1,19 @@
-<!-- #tag layout_block('bodyContent') -->
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" ng-app="leoApp" ng-controller="leoCtrl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${App::config('console_title')}</title>
+    <link rel="shortcut icon" href="${app.common}/ufrog/img/favicon.png" type="image/png" />
+    <link rel="stylesheet" type="text/css" href="${app.common}/bootstrap/3_3_7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="${app.common}/bootstrap/3_3_7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="${app.common}/font_awesome/4_7_0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="${app.common}/ufrog/css/ufrog-bootstrap.min.css?ver=${app.version}">
+</head>
+<body class="sign">
+
 <div class="container" ng-controller="signCtrl">
-    <h1>${App::config('leo_name')}</h1>
+    <h1>${App::config('console_name')}</h1>
     <div class="panel panel-default">
         <!-- #form -->
         <form name="signForm" action="#" method="post" ng-submit="authenticate($event)">
@@ -21,23 +34,30 @@
     </div>
     <p>${App::config('console_copyright')}</p>
 </div>
-<!-- #end -->
 
-<!-- #tag layout_block('moreJs') -->
+<script type="text/javascript" src="${app.common}/jquery/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="${app.common}/bootstrap/3_3_7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${app.common}/angular/1_6_2/angular.min.js"></script>
+<script type="text/javascript" src="${app.common}/angular/1_6_2/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="${app.common}/ufrog/js/ufrog-angular-common.min.js?ver=${app.version}"></script>
+<script type="text/javascript" src="${app.common}/ufrog/js/ufrog-angular-bootstrap.min.js?ver=${app.version}"></script>
+<script type="text/javascript" src="${app.common}/ufrog/js/ufrog-angular-request.min.js?ver=${app.version}"></script>
+<script type="text/javascript" src="${app.common}/leo/js/leo-server.min.js?ver=${app.version}"></script>
 <script type="text/javascript">
     'use strict';
-    function signCtrl($scope) {
+    function signCtrl($scope, $bootstrap) {
         angular.extend($scope, {
             // 初始化
             init: function() {
                 $scope.ctrl.status('signBtn', 'standby');
+                $bootstrap.alert.config();
             },
 
             // 提交登录
             authenticate: function($event) {
                 $scope.ctrl.stop($event);
                 $scope.ctrl.status('signBtn', 'processing');
-                $scope.post('${app}/authenticate', $scope.data.sign, function() {
+                $scope.postUrlencoded('${app}/authenticate', $scope.data.sign, function() {
                     $scope.ctrl.redirect('${app}/index');
                 }, function() {
                     $scope.ctrl.status('signBtn', 'standby');
@@ -60,5 +80,6 @@
         }).init();
     }
 </script>
-<!-- #end -->
-<!-- #include('layout.html') -->
+
+</body>
+</html>

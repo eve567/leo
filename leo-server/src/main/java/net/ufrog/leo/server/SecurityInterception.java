@@ -20,29 +20,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SecurityInterception implements HandlerInterceptor {
 
-    /** 用户业务接口 */
-    private UserService userService;
-
-    /** 强制修改密码地址 */
-    private String forcedResetPasswordUri;
-
-    /**
-     * 构造函数
-     *
-     * @param userService 用户业务接口
-     */
-    @Autowired
-    public SecurityInterception(UserService userService) {
-        this.userService = userService;
-    }
-
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        User  user = userService.findById(App.user().getId());
-        if (Strings.equals(User.Forced.TRUE, user.getForced())) {
-            httpServletRequest.getRequestDispatcher(getForcedResetPasswordUri()).forward(httpServletRequest, httpServletResponse);
-            return false;
-        }
+        App.user();
         return true;
     }
 
@@ -51,22 +31,4 @@ public class SecurityInterception implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {}
-
-    /**
-     * 读取强制修改密码地址
-     *
-     * @return 强制修改密码地址
-     */
-    public String getForcedResetPasswordUri() {
-        return forcedResetPasswordUri;
-    }
-
-    /**
-     * 设置强制修改密码地址
-     *
-     * @param forcedResetPasswordUri 强制修改密码地址
-     */
-    public void setForcedResetPasswordUri(String forcedResetPasswordUri) {
-        this.forcedResetPasswordUri = forcedResetPasswordUri;
-    }
 }

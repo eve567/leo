@@ -5,12 +5,11 @@ import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
-import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
 import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.server.auth.AccessToken;
-import net.ufrog.leo.server.auth.AccessTokenManager;
+import net.ufrog.leo.server.AccessToken;
+import net.ufrog.leo.server.AccessTokenManager;
 import net.ufrog.leo.service.AppService;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +70,16 @@ public class IndexController {
     }
 
     /**
+     * 视图
+     *
+     * @return
+     */
+    @GetMapping("/view/{view}")
+    public String view(@PathVariable("view") String view) {
+        return view.replaceAll("@", "/");
+    }
+
+    /**
      * 登录表单
      *
      * @return view for sign_in
@@ -91,7 +100,10 @@ public class IndexController {
         AppUser appUser = App.current().getUser();
         if (appUser != null) {
             List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
-            lAccessToken.forEach(accessToken -> applicationContext.getBean(AccessTokenManager.class).offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
+            if (lAccessToken != null) {
+                AccessTokenManager accessTokenManager = applicationContext.getBean(AccessTokenManager.class);
+                lAccessToken.forEach(accessToken -> accessTokenManager.offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
+            }
             App.current().setUser(null);
         }
         return signIn();
@@ -140,5 +152,32 @@ public class IndexController {
             accessToken = oAccessToken.get();
         }
         return "redirect:" + app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + "_leo_access_token=" + accessToken.getToken();
+    }
+
+    /**
+     * 查询应用
+     *
+     * @return 应用列表
+     */
+    @GetMapping("/apps")
+    @ResponseBody
+    public List<net.ufrog.leo.domain.models.App> findApps() {
+        return appService.findAll();
+    }
+
+    /**
+     * 检查是否需要强制修改密码
+     *
+     * @param id 用户编号
+     * @return 检查结果
+     */
+    @GetMapping("/check_forced/{id}")
+    @ResponseBody
+    public Result<User> checkForced(@PathVariable("id") String id) {
+        User user = userService.findById(id);
+        if (Strings.equals(User.Forced.TRUE, user.getForced())) {
+            return Result.failure(user, App.message("reset.password.forced"));
+        }
+        return Result.success(user);
     }
 }

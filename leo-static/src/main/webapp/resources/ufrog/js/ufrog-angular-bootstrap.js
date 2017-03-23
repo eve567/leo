@@ -114,7 +114,7 @@
                         // 样式
                         $class: function() {
                             $element.css({top: 51 - $element.outerHeight()});
-                            return (($bootstrap.alert.$object.show === true) ? 'alert-show' : '') + 'alert-' + $scope.$mType[$bootstrap.alert.$object.type];
+                            return (($bootstrap.alert.$object.show === true) ? 'alert-show ' : '') + 'alert-' + $scope.$mType[$bootstrap.alert.$object.type];
                         },
 
                         // 类型映射

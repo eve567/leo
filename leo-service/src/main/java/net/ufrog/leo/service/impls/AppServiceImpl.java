@@ -1,12 +1,16 @@
 package net.ufrog.leo.service.impls;
 
 import net.ufrog.common.cache.Caches;
+import net.ufrog.common.data.spring.Domains;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.repositories.AppRepository;
 import net.ufrog.leo.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 应用业务实现
@@ -47,5 +51,10 @@ public class AppServiceImpl implements AppService {
             if (app != null) Caches.set(CACHE_APP, id, app);
         }
         return app;
+    }
+
+    @Override
+    public List<App> findAll() {
+        return appRepository.findAll(Domains.sort(Sort.Direction.ASC, "code"));
     }
 }

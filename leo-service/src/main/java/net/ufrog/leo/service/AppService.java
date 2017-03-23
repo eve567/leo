@@ -2,6 +2,8 @@ package net.ufrog.leo.service;
 
 import net.ufrog.leo.domain.models.App;
 
+import java.util.List;
+
 /**
  * 应用业务接口
  *
@@ -26,4 +28,11 @@ public interface AppService {
      * @return 应用对象
      */
     App getById(String id);
+
+    /**
+     * 查询所有应用
+     *
+     * @return 应用列表
+     */
+    List<App> findAll();
 }

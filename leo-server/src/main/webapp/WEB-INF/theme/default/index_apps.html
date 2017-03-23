@@ -1,0 +1,44 @@
+<div class="row" ng-controller="appCtrl">
+    <div class="col-sm-4 app" ng-repeat="app in apps" ng-mouseover="appFn.mouse(app, 'over')" ng-mouseleave="appFn.mouse(app, 'leave')">
+        <h3 ng-style="appFn.style(app, 'code')"><i class="fa" ng-class="{'fa-circle': app.over, 'fa-circle-o': !app.over}"></i>&nbsp;<span ng-bind="app.code|uppercase"></span></h3>
+        <div class="app-name" ng-bind="app.name" ng-style="appFn.style(app, 'name')"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    'use strict';
+    function appCtrl($scope) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.appFn.find();
+            },
+
+            // 应用功能集合
+            appFn: {
+                // 查询
+                find: function() {
+                    $scope.get('${app}/apps', function(data) {
+                        $scope.apps = data;
+                    });
+                },
+
+                // 样式
+                style: function(app, type) {
+                    if (type === 'code') {
+                        return {'color': app.color};
+                    } else if (type === 'name' && app.over) {
+                        return {'background-color': app.color, 'border-color': app.color, 'color': '#ffffff'};
+                    } else if (type === 'name' && !app.over) {
+                        return {'border-color': app.color, 'color': app.color};
+                    }
+                },
+
+                // 鼠标事件
+                mouse: function (app, type){
+                    app.over = (type === 'over');
+                }
+            }
+        }).init();
+    }
+</script>

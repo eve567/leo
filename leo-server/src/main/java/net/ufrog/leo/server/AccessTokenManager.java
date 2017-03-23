@@ -1,4 +1,4 @@
-package net.ufrog.leo.server.auth;
+package net.ufrog.leo.server;
 
 import net.ufrog.common.app.AppUser;
 import net.ufrog.leo.domain.models.App;
