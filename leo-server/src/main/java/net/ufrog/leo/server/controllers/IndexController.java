@@ -4,6 +4,7 @@ import net.ufrog.common.Logger;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
+import net.ufrog.common.app.Validation;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
@@ -43,14 +44,18 @@ public class IndexController {
     /** 用户业务接口 */
     private UserService userService;
 
-    /**  */
+    /** 应用容器 */
     private ApplicationContext applicationContext;
+
+    /** 访问令牌管理接口 */
+    private AccessTokenManager accessTokenManager;
 
     /**
      * 构造函数
      *
      * @param appService 应用业务接口
      * @param userService 用户业务接口
+     * @param applicationContext 应用容器
      */
     @Autowired
     public IndexController(AppService appService, UserService userService, ApplicationContext applicationContext) {
@@ -101,8 +106,7 @@ public class IndexController {
         if (appUser != null) {
             List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
             if (lAccessToken != null) {
-                AccessTokenManager accessTokenManager = applicationContext.getBean(AccessTokenManager.class);
-                lAccessToken.forEach(accessToken -> accessTokenManager.offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
+                lAccessToken.forEach(accessToken -> getAccessTokenManager().offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
             }
             App.current().setUser(null);
         }
@@ -144,7 +148,7 @@ public class IndexController {
         AccessToken accessToken;
         Optional<AccessToken> oAccessToken = lAccessToken.stream().filter(at -> Strings.equals(appId, at.getAppId())).findFirst();
         if (!oAccessToken.isPresent()) {
-            accessToken = applicationContext.getBean(AccessTokenManager.class).online(App.user(), app, request.getRemoteAddr());
+            accessToken = getAccessTokenManager().online(App.user(), app, request.getRemoteAddr());
             lAccessToken.add(accessToken);
             App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, lAccessToken);
             Logger.debug("create access token '%s' for app '%s'", accessToken.getToken(), accessToken.getAppId());
@@ -162,7 +166,7 @@ public class IndexController {
     @GetMapping("/apps")
     @ResponseBody
     public List<net.ufrog.leo.domain.models.App> findApps() {
-        return appService.findAll();
+        return appService.findAll();    //TODO 过滤权限
     }
 
     /**
@@ -176,8 +180,20 @@ public class IndexController {
     public Result<User> checkForced(@PathVariable("id") String id) {
         User user = userService.findById(id);
         if (Strings.equals(User.Forced.TRUE, user.getForced())) {
-            return Result.failure(user, App.message("reset.password.forced"));
+            return Result.warning(user, App.message("reset.password.forced"));
         }
         return Result.success(user);
+    }
+
+    /**
+     * 读取访问令牌管理接口
+     *
+     * @return 访问令牌管理接口
+     */
+    private AccessTokenManager getAccessTokenManager() {
+        if (accessTokenManager == null) {
+            accessTokenManager = applicationContext.getBean(AccessTokenManager.class);
+        }
+        return accessTokenManager;
     }
 }

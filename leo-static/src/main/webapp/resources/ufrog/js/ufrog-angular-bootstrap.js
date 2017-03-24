@@ -37,7 +37,7 @@
                             $this.alert.$object = $this.alert.$object || {};
                             $this.alert.$object.type = ng.lowercase(data.type);
                             $this.alert.$object.message = data.message || data.messages.join('<br>');
-                            $this.alert.$object.show = true;
+                            $this.alert.$object.show = !$common.valid.empty($this.alert.$object.message);
 
                             if (data.delay !== -1) {
                                 $timeout(function() {

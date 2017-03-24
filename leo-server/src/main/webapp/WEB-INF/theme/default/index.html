@@ -14,6 +14,7 @@
 <body ng-controller="indexCtrl">
 
 <!-- header -->
+<alert ng-model="alert" sign-out-flag="not_sign::" sign-view="${app}/sign_out"></alert>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -23,12 +24,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="#" class="navbar-brand">${App::config('console_name')}</a>
+            <a href="${app}/" class="navbar-brand">${App::config('console_name')}</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#"><fa i="user">&nbsp;${app.user.name}，您好</fa></a></li>
-                <li><a href="#"><fa i="key">&nbsp;修改密码</fa></a></li>
+                <li><a href="#" ng-click="resetPassword()"><fa i="key">&nbsp;修改密码</fa></a></li>
                 <li><a href="${app}/sign_out"><fa i="sign-out">&nbsp;安全注销</fa></a></li>
             </ul>
         </div>
@@ -37,8 +38,7 @@
 <!-- header -->
 
 <!-- body -->
-<alert ng-model="alert" sign-out-flag="not_sign::" sign-view="${app}/sign_out"></alert>
-<div class="container container-server" ng-include="bodyUrl"></div>
+<div class="container container-server ng-fade" ng-include="bodyUrl"></div>
 <!-- body -->
 
 <script type="text/javascript" src="${app.common}/jquery/jquery-3.1.1.min.js"></script>
@@ -58,8 +58,13 @@
                 $scope.get('${app}/check_forced/${app.user.id}', function() {
                     $scope.bodyUrl = '${app}/view/index_apps';
                 }, null, null, function() {
-                    $scope.bodyUrl = '${app}/view/index_reset_password';
+                    $scope.resetPassword();
                 });
+            },
+
+            // 修改密码视图
+            resetPassword: function() {
+                $scope.bodyUrl = '${app}/view/index_reset_password';
             },
 
             alert: {}
