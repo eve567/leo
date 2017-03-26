@@ -57,4 +57,9 @@ public class DevAccessTokenManager implements AccessTokenManager {
             }
         }
     }
+
+    @Override
+    public AccessToken get(String token) {
+        return mAccessToken.get(token);
+    }
 }

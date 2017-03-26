@@ -1,6 +1,7 @@
 package net.ufrog.leo.server;
 
 import net.ufrog.common.app.AppUser;
+import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.leo.domain.models.App;
 
 /**
@@ -37,4 +38,21 @@ public interface AccessTokenManager {
      * @param token 令牌
      */
     void offline(String userId, String appId, String token);
+
+    /**
+     * 读取访问令牌
+     *
+     * @param token 令牌
+     * @return 访问令牌
+     */
+    AccessToken get(String token);
+
+    /**
+     * 读取令牌管理器
+     *
+     * @return 令牌管理器
+     */
+    static AccessTokenManager get() {
+        return SpringWebApp.getBean(AccessTokenManager.class);
+    }
 }

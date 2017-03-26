@@ -1,5 +1,7 @@
 package net.ufrog.leo.domain.models;
 
+import net.ufrog.common.Link;
+
 /**
  * 导航模型
  *
@@ -9,7 +11,7 @@ package net.ufrog.leo.domain.models;
  */
 @javax.persistence.Entity
 @javax.persistence.Table(name = "leo_nav")
-public class Nav extends Model {
+public class Nav extends Model implements Link<String> {
 
     private static final long serialVersionUID = -5945791295949876544L;
 
