@@ -151,6 +151,17 @@ public class IndexController {
     }
 
     /**
+     * 查询应用
+     *
+     * @return 应用列表
+     */
+    @GetMapping("/apps")
+    @ResponseBody
+    public List<net.ufrog.leo.domain.models.App> findApps() {
+        return appService.findAll();
+    }
+
+    /**
      * 检查是否需要强制修改密码
      *
      * @param id 用户编号
