@@ -1,7 +1,6 @@
 package net.ufrog.leo.server.controllers;
 
 import net.ufrog.common.Link;
-import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.Nav;
@@ -12,6 +11,7 @@ import net.ufrog.leo.service.NavService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.List;
  * @since 0.1
  */
 @RestController
+@RequestMapping("/api")
 public class ApiController {
 
     /** 应用业务接口 */

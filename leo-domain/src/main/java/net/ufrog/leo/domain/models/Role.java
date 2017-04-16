@@ -1,12 +1,9 @@
 package net.ufrog.leo.domain.models;
 
 /**
- * 资源标记
- *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-03-26
+ * @version 0.1, 2017-04-04
  * @since 0.1
  */
-public interface ResourceMarker {
-
+public class Role {
 }

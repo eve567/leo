@@ -1,6 +1,6 @@
 package net.ufrog.leo.service;
 
-import net.ufrog.leo.domain.models.ResourceMarker;
+import net.ufrog.leo.domain.models.ID;
 
 import java.util.List;
 
@@ -14,12 +14,19 @@ import java.util.List;
 public interface SecurityService {
 
     /**
-     * 权限过滤
+     * 资源过滤
      *
-     * @param lResourceMarker 资源列表
-     * @param userId
-     * @param type
-     * @return
+     * @param lResource 元素列表
+     * @param userId 用户编号
+     * @param <T> 类型泛型
+     * @return 过滤后的资源列表
      */
-    List<ResourceMarker> filter(List<ResourceMarker> lResourceMarker, String userId, String type);
+    <T extends ID> List<T> filter(List<T> lResource, String userId);
+
+    /**
+     * 清空用户资源映射缓存
+     *
+     * @param userId 用户编号
+     */
+    void clearResourceMapping(String userId);
 }

@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
 /**
+ * 测试用暂时无用
+ *
  * @author ultrafrog, ufrog.net@gmail.com
  * @version 0.1, 2017-03-11
  * @since 0.1

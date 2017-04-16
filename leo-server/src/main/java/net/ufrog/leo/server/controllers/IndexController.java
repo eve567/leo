@@ -36,7 +36,7 @@ import java.util.Optional;
 @Controller
 public class IndexController {
 
-    private static final String SESSION_ACCESS_TOKENS   = "session_access_tokens";
+    private static final String SESSION_ACCESS_TOKENS   = "access_tokens";
 
     /** 应用业务接口 */
     private AppService appService;
@@ -158,6 +158,7 @@ public class IndexController {
     @GetMapping("/apps")
     @ResponseBody
     public List<net.ufrog.leo.domain.models.App> findApps() {
+        List<net.ufrog.leo.domain.models.App> lApp = appService.findAll();
         return appService.findAll();
     }
 
