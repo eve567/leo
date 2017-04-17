@@ -7,6 +7,7 @@ import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.*;
 import net.ufrog.leo.domain.repositories.ResourceRepository;
+import net.ufrog.leo.domain.repositories.UserRepository;
 import net.ufrog.leo.service.SecurityService;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class SecurityServiceImpl implements SecurityService {
     /** 资源仓库 */
     private ResourceRepository resourceRepository;
 
+    /** 用户仓库 */
+    private UserRepository userRepository;
+
     /** 权限脚本 */
     private SecurityJpql securityJpql;
 
@@ -42,17 +46,20 @@ public class SecurityServiceImpl implements SecurityService {
      * 构造函数
      *
      * @param resourceRepository 资源仓库
+     * @param userRepository 用户仓库
      * @param securityJpql 权限脚本
      */
     @Autowired
-    public SecurityServiceImpl(ResourceRepository resourceRepository, SecurityJpql securityJpql) {
+    public SecurityServiceImpl(ResourceRepository resourceRepository, UserRepository userRepository, SecurityJpql securityJpql) {
         this.resourceRepository = resourceRepository;
+        this.userRepository = userRepository;
         this.securityJpql = securityJpql;
     }
 
     @Override
     public <T extends ID> List<T> filter(List<T> lResource, String userId) {
-        if (lResource != null && lResource.size() > 0) {
+        User user = userRepository.findOne(userId);
+        if (!Strings.equals(User.Type.ROOT, user.getType()) && lResource != null && lResource.size() > 0) {
             List<String> lAllowed = getAllowedResource(userId, getType(lResource.get(0).getClass()));
             return lResource.stream().filter(resource -> lAllowed.contains(resource.getId())).collect(Collectors.toList());
         }
@@ -102,7 +109,7 @@ public class SecurityServiceImpl implements SecurityService {
                 Resource resource = resourceRepository.findOne(roleResource.getResourceId());
                 if (!lAll.contains(resource.getReferenceId())) {
                     lAll.add(resource.getReferenceId());
-                } if (Strings.equals(roleResource.getStatus(), RoleResource.Status.BAN) && !lBan.contains(resource.getReferenceId())) {
+                } if (Strings.equals(roleResource.getType(), RoleResource.Type.BAN) && !lBan.contains(resource.getReferenceId())) {
                     lBan.add(resource.getReferenceId());
                 }
             });

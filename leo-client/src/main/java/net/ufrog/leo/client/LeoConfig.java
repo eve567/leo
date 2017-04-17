@@ -11,15 +11,15 @@ import net.ufrog.common.app.App;
  */
 public class LeoConfig {
 
-    private static final String KEY_LEO_URL          = "leo.url";
+    private static final String KEY_LEO_HOST         = "leo.host";
     private static final String KEY_LEO_APP_ID       = "leo.app.id";
     private static final String KEY_LEO_APP_SECURITY = "leo.app.security";
 
     /**
-     * @return application config for leo url
+     * @return application config for leo host
      */
-    public static String getLeoUrl() {
-        return App.config(KEY_LEO_URL);
+    public static String getLeoHost() {
+        return App.config(KEY_LEO_HOST);
     }
 
     /**

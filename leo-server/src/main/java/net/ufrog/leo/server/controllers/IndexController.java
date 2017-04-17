@@ -7,14 +7,13 @@ import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
-import net.ufrog.leo.domain.models.Nav;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.server.AccessToken;
 import net.ufrog.leo.server.AccessTokenManager;
 import net.ufrog.leo.service.AppService;
+import net.ufrog.leo.service.SecurityService;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +40,9 @@ public class IndexController {
     /** 应用业务接口 */
     private AppService appService;
 
+    /** 权限业务接口 */
+    private SecurityService securityService;
+
     /** 用户业务接口 */
     private UserService userService;
 
@@ -48,11 +50,13 @@ public class IndexController {
      * 构造函数
      *
      * @param appService 应用业务接口
+     * @param securityService 权限业务接口
      * @param userService 用户业务接口
      */
     @Autowired
-    public IndexController(AppService appService, UserService userService) {
+    public IndexController(AppService appService, SecurityService securityService, UserService userService) {
         this.appService = appService;
+        this.securityService = securityService;
         this.userService = userService;
     }
 
@@ -69,7 +73,7 @@ public class IndexController {
     /**
      * 视图
      *
-     * @return
+     * @return view for {view}
      */
     @GetMapping("/view/{view}")
     public String view(@PathVariable("view") String view) {
@@ -119,6 +123,7 @@ public class IndexController {
             User user = userService.authenticate(account, password, UserService.UserType.STAFF, UserService.UserType.ROOT);
             AppUser appUser = new AppUser(user.getId(), user.getAccount(), user.getName());
             App.current().setUser(appUser);
+            securityService.clearResourceMapping(appUser.getId());
             return Result.success(appUser, App.message(""));
         } catch (ServiceException e) {
             return Result.failure(App.message(e.getKey()));
@@ -158,8 +163,7 @@ public class IndexController {
     @GetMapping("/apps")
     @ResponseBody
     public List<net.ufrog.leo.domain.models.App> findApps() {
-        List<net.ufrog.leo.domain.models.App> lApp = appService.findAll();
-        return appService.findAll();
+        return securityService.filter(appService.findAll(), App.user().getId());
     }
 
     /**

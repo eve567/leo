@@ -1,32 +1,97 @@
 package net.ufrog.leo.domain.models;
 
-import net.ufrog.common.dict.Element;
-
-import java.io.Serializable;
-
 /**
+ * 角色资源模型
+ *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-04-04
+ * @version 0.1, 2017-04-17
  * @since 0.1
  */
-public class RoleResource implements Serializable {
+@javax.persistence.Entity
+@javax.persistence.Table(name = "leo_role_resource")
+public class RoleResource extends Model {
 
-    private static final long serialVersionUID = -6454843644437079602L;
+    private static final long serialVersionUID = 7605765346765092854L;
 
-    public String getResourceId() {
-        return null;
+    /** 类型 */
+    @javax.persistence.Column(name = "dc_type")
+    private java.lang.String type;
+
+    /** 角色编号 */
+    @javax.persistence.Column(name = "fk_role_id")
+    private java.lang.String roleId;
+
+    /** 资源编号 */
+    @javax.persistence.Column(name = "fk_resource_id")
+    private java.lang.String resourceId;
+
+    /**
+     * 读取类型
+     *
+     * @return 类型
+     */
+    public java.lang.String getType() {
+        return type;
     }
 
-    public String getStatus() {
-        return null;
+    /**
+     * 设置类型
+     *
+     * @param type 类型
+     */
+    public void setType(java.lang.String type) {
+        this.type = type;
     }
 
-    public static class Status {
+    /**
+     * 读取角色编号
+     *
+     * @return 角色编号
+     */
+    public java.lang.String getRoleId() {
+        return roleId;
+    }
 
-        @Element("禁止")
+    /**
+     * 设置角色编号
+     *
+     * @param roleId 角色编号
+     */
+    public void setRoleId(java.lang.String roleId) {
+        this.roleId = roleId;
+    }
+
+    /**
+     * 读取资源编号
+     *
+     * @return 资源编号
+     */
+    public java.lang.String getResourceId() {
+        return resourceId;
+    }
+
+    /**
+     * 设置资源编号
+     *
+     * @param resourceId 资源编号
+     */
+    public void setResourceId(java.lang.String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    /**
+     * 类型
+     *
+     * @author ultrafrog
+     * @version 0.1, 2017-04-17
+     * @since 0.1
+     */
+    public static final class Type {
+
+        @net.ufrog.common.dict.Element("禁止")
         public static final String BAN = "00";
 
-        @Element("允许")
+        @net.ufrog.common.dict.Element("允许")
         public static final String ALLOW = "01";
     }
 }

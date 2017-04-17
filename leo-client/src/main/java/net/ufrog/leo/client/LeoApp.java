@@ -46,7 +46,7 @@ public class LeoApp extends SpringWebApp {
      * @return leo url
      */
     public String getUrl() {
-        return LeoConfig.getLeoUrl();
+        return LeoConfig.getLeoHost();
     }
 
     /**

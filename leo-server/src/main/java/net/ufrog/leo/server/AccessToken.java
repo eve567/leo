@@ -26,8 +26,11 @@ public class AccessToken implements Serializable {
     /** 时间戳 */
     private Long timestamp;
 
-    /** 地址 */
-    private String ip;
+    /** 超时时间 */
+    private Long timeout;
+
+    /** 全程地址 */
+    private String remote;
 
     /** 应用用户 */
     private LeoAppUser leoAppUser;
@@ -46,11 +49,12 @@ public class AccessToken implements Serializable {
      *
      * @param appUser 应用用户
      * @param app 应用
-     * @param ip 访问地址
+     * @param remote 远程地址
      */
-    public AccessToken(AppUser appUser, App app, String ip) {
+    public AccessToken(AppUser appUser, App app, String remote) {
         this();
         this.app = app;
+        this.remote = remote;
         this.leoAppUser = (appUser instanceof LeoAppUser) ? (LeoAppUser) appUser : new LeoAppUser(appUser.getId(), appUser.getAccount(), appUser.getName());
         this.leoAppUser.setToken(token);
     }
@@ -78,8 +82,8 @@ public class AccessToken implements Serializable {
      *
      * @return 地址
      */
-    public String getIp() {
-        return ip;
+    public String getRemote() {
+        return remote;
     }
 
     /**
@@ -124,6 +128,19 @@ public class AccessToken implements Serializable {
      * @return 超时时间
      */
     public Long getTimeout() {
-        return Strings.empty(app.getTimeout()) ? -1L : Calendars.parseDuration(app.getTimeout()) * 1000L;
+        if (timeout == null) {
+            timeout = Strings.empty(app.getTimeout()) ? -1L : Calendars.parseDuration(app.getTimeout()) * 1000L;
+        }
+        return timeout;
+    }
+
+    /**
+     * 判断超时
+     *
+     * @return 判断结果
+     */
+    public Boolean isTimeout() {
+        if (getTimeout().compareTo(-1L) == 0) return Boolean.FALSE;
+        return (getTimestamp() + getTimeout()) < System.currentTimeMillis();
     }
 }
