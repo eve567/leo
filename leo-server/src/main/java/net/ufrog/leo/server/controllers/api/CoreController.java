@@ -1,4 +1,4 @@
-package net.ufrog.leo.server.controllers;
+package net.ufrog.leo.server.controllers.api;
 
 import net.ufrog.common.Link;
 import net.ufrog.common.utils.Strings;
@@ -8,6 +8,7 @@ import net.ufrog.leo.server.AccessToken;
 import net.ufrog.leo.server.AccessTokenManager;
 import net.ufrog.leo.service.AppService;
 import net.ufrog.leo.service.NavService;
+import net.ufrog.leo.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 接口控制器
+ * 核心控制器
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-03-26
+ * @version 0.1, 2017-04-22
  * @since 0.1
  */
 @RestController
 @RequestMapping("/api")
-public class ApiController {
+public class CoreController {
 
     /** 应用业务接口 */
     private AppService appService;
@@ -33,16 +34,21 @@ public class ApiController {
     /** 导航业务接口 */
     private NavService navService;
 
+    /** 权限业务接口 */
+    private SecurityService securityService;
+
     /**
      * 构造函数
      *
      * @param appService 应用业务接口
      * @param navService 导航业务接口
+     * @param securityService 权限业务接口
      */
     @Autowired
-    public ApiController(AppService appService, NavService navService) {
+    public CoreController(AppService appService, NavService navService, SecurityService securityService) {
         this.appService = appService;
         this.navService = navService;
+        this.securityService = securityService;
     }
 
     /**
@@ -54,7 +60,7 @@ public class ApiController {
     @GetMapping("/apps/{token}")
     public List<App> findApps(@PathVariable("token") String token) {
         AccessToken accessToken = AccessTokenManager.get().get(token);
-        return appService.findAll(); //TODO 过滤权限
+        return securityService.filter(appService.findAll(), accessToken.getUserId());
     }
 
     /**
@@ -71,6 +77,6 @@ public class ApiController {
         List<Nav> lNav = Strings.equals("root", parentId) ? navService.findRoot(type, accessToken.getAppId()) : navService.findByParentId(parentId);
 
         lNav.stream().filter(nav -> nav.getPath().startsWith("@")).forEach(nav -> nav.setPath(nav.getPath().replace("@", net.ufrog.common.app.App.current().toString())));
-        return Link.sort(lNav); //TODO 权限过滤
+        return securityService.filter(Link.sort(lNav), accessToken.getUserId());
     }
 }

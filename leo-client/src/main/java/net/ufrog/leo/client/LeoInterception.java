@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LeoInterception implements HandlerInterceptor {
 
-    private static final String DEFAULT_PARAM_KEY   = "_leo_access_token";
+    public static final String DEFAULT_PARAM_KEY   = "_leo_access_token";
 
     /** 参数名 */
     private String paramKey = DEFAULT_PARAM_KEY;

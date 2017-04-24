@@ -7,6 +7,7 @@ import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
+import net.ufrog.leo.client.LeoInterception;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.server.AccessToken;
 import net.ufrog.leo.server.AccessTokenManager;
@@ -152,7 +153,7 @@ public class IndexController {
         } else {
             accessToken = oAccessToken.get();
         }
-        return "redirect:" + app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + "_leo_access_token=" + accessToken.getToken();
+        return "redirect:" + app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + LeoInterception.DEFAULT_PARAM_KEY + "=" + accessToken.getToken();
     }
 
     /**
