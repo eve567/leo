@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.6
+-- version 4.7.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: 2017-03-24 09:48:42
--- 服务器版本： 5.7.17
--- PHP Version: 5.6.28
+-- Host: 103.20.249.125
+-- Generation Time: 2017-04-25 05:05:26
+-- 服务器版本： 10.1.20-MariaDB-1~jessie
+-- PHP Version: 5.6.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 --
@@ -34,7 +36,7 @@ CREATE TABLE `leo_app` (
   `dc_mulriple` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '多用户',
   `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
   `dt_create_time` datetime NOT NULL COMMENT '创建时间',
-  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
   `dt_update_time` datetime NOT NULL COMMENT '更新时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='应用';
 
@@ -57,7 +59,7 @@ CREATE TABLE `leo_nav` (
   `fk_app_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '应用编号',
   `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
   `dt_create_time` datetime NOT NULL COMMENT '创建时间',
-  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
   `dt_update_time` datetime NOT NULL COMMENT '更新时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='导航';
 
@@ -73,9 +75,61 @@ CREATE TABLE `leo_prop` (
   `vc_value` varchar(2048) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '内容',
   `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
   `dt_create_time` datetime NOT NULL COMMENT '创建时间',
-  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
   `dt_update_time` datetime NOT NULL COMMENT '更新时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='系统属性';
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `leo_resource`
+--
+
+CREATE TABLE `leo_resource` (
+  `pk_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '编号',
+  `dc_type` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '类型',
+  `fk_reference_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '相关编号',
+  `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
+  `dt_create_time` datetime NOT NULL COMMENT '创建时间',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `dt_update_time` datetime NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='资源';
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `leo_role`
+--
+
+CREATE TABLE `leo_role` (
+  `pk_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '编号',
+  `vc_name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '名称',
+  `vc_code` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '代码',
+  `dc_type` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '类型',
+  `dc_status` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '状态',
+  `fk_app_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '应用编号',
+  `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
+  `dt_create_time` datetime NOT NULL COMMENT '创建时间',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `dt_update_time` datetime NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色';
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `leo_role_resource`
+--
+
+CREATE TABLE `leo_role_resource` (
+  `pk_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '编号',
+  `dc_type` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '类型',
+  `fk_role_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色编号',
+  `fk_resource_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '资源编号',
+  `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
+  `dt_create_time` datetime NOT NULL COMMENT '创建时间',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `dt_update_time` datetime NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色资源';
 
 -- --------------------------------------------------------
 
@@ -95,9 +149,25 @@ CREATE TABLE `leo_user` (
   `dc_forced` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '强制修改密码',
   `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
   `dt_create_time` datetime NOT NULL COMMENT '创建时间',
-  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
   `dt_update_time` datetime NOT NULL COMMENT '更新时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户';
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `leo_user_role`
+--
+
+CREATE TABLE `leo_user_role` (
+  `pk_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '编号',
+  `fk_user_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户编号',
+  `fk_role_id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色编号',
+  `fk_creator` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '创建用户',
+  `dt_create_time` datetime NOT NULL COMMENT '创建时间',
+  `fk_updater` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '更新用户',
+  `dt_update_time` datetime NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户角色';
 
 --
 -- Indexes for dumped tables
@@ -125,7 +195,38 @@ ALTER TABLE `leo_prop`
   ADD PRIMARY KEY (`pk_id`);
 
 --
+-- Indexes for table `leo_resource`
+--
+ALTER TABLE `leo_resource`
+  ADD PRIMARY KEY (`pk_id`),
+  ADD KEY `fk_reference_id` (`fk_reference_id`);
+
+--
+-- Indexes for table `leo_role`
+--
+ALTER TABLE `leo_role`
+  ADD PRIMARY KEY (`pk_id`),
+  ADD KEY `fk_app_id` (`fk_app_id`);
+
+--
+-- Indexes for table `leo_role_resource`
+--
+ALTER TABLE `leo_role_resource`
+  ADD PRIMARY KEY (`pk_id`),
+  ADD KEY `fk_resource_id` (`fk_resource_id`),
+  ADD KEY `fk_role_id` (`fk_role_id`);
+
+--
 -- Indexes for table `leo_user`
 --
 ALTER TABLE `leo_user`
   ADD PRIMARY KEY (`pk_id`);
+
+--
+-- Indexes for table `leo_user_role`
+--
+ALTER TABLE `leo_user_role`
+  ADD PRIMARY KEY (`pk_id`),
+  ADD KEY `fk_role_id` (`fk_role_id`),
+  ADD KEY `fk_user_id` (`fk_user_id`);
+COMMIT;
