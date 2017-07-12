@@ -1,0 +1,29 @@
+app:
+  name: "leo-server"
+  secret: "zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T"
+  messages: "classpath:messages-domain, classpath:messages-service, classpath:messages"
+pattern:
+  uuid: "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
+  cellphone: "1[3578][0-9]{9}"
+  email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
+path:
+  resource:
+    common: "//localhost:7086/static/resources"
+    app: "//localhost:7086/static/resources/leo"
+    theme: "//localhost:7086/static/resources/leo/default"
+cache:
+  default:
+    duration: "4h"
+    prefix: "leo_"
+datasource:
+  primary:
+    url: "jdbc:mysql://103.20.249.125:3306/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC"
+    username: "root"
+    password: "mSTta2o8+i8emsDWOD+3wamEgCyCNBCKRZqPf4gNg3c="
+    jpa:
+      show-sql: "true"
+thread:
+  scheduled:
+    type: "scheduled"
+leo:
+  access-token-manager: "net.ufrog.leo.server.DevAccessTokenManager"

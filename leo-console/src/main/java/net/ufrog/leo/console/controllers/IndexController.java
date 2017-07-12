@@ -3,6 +3,8 @@ package net.ufrog.leo.console.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.stream.IntStream;
+
 /**
  * 索引控制器
  *
