@@ -1,10 +1,6 @@
 package net.ufrog.leo.server;
 
 import net.ufrog.common.app.App;
-import net.ufrog.common.utils.Strings;
-import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
