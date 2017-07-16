@@ -33,6 +33,6 @@ public class ContextConfiguration {
 
     @Bean
     public AccessTokenManager accessTokenManager() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        return AccessTokenManager.class.cast(Class.forName(App.config("leo.accessTokenManage")).newInstance());
+        return AccessTokenManager.class.cast(Class.forName(App.config("leo.accessTokenManager")).newInstance());
     }
 }

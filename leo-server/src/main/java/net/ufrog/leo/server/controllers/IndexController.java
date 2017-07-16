@@ -125,7 +125,7 @@ public class IndexController {
             AppUser appUser = new AppUser(user.getId(), user.getAccount(), user.getName());
             App.current().setUser(appUser);
             securityService.clearResourceMapping(appUser.getId());
-            return Result.success(appUser, App.message(""));
+            return Result.success(appUser, App.message("authenticate.success"));
         } catch (ServiceException e) {
             return Result.failure(App.message(e.getKey()));
         }

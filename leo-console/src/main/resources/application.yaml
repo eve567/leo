@@ -1,0 +1,49 @@
+app:
+  name: "leo-console"
+  secret: "zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T"
+  messages: "classpath:messages-domain, classpath:messages-service, classpath:messages"
+pattern:
+  uuid: "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
+  cellphone: "1[3578][0-9]{9}"
+  email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
+path:
+  resource:
+    common: "//localhost:7086/static/resources"
+    host: "//localhost:7086/static/resources/leo"
+    theme: "//localhost:7086/static/resources/leo/default"
+cache:
+  default:
+    duration: "4h"
+    prefix: "leo_"
+datasource:
+  primary:
+    url: "jdbc:mysql://103.20.249.125:13306/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC"
+    username: "root"
+    password: "h+zZTdYokCV91r57jVO8rKmEgCyCNBCKRZqPf4gNg3c="
+    jpa:
+      showSql: "true"
+thread:
+  default:
+    type: "single"
+jetx:
+  config:
+    jetx.import.classes: "net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.domain.models.*, net.ufrog.leo.service.beans.**"
+    trim.directive.comments: "true"
+log4j:
+  rootLogger: "INFO, CONSOLE"
+  appender:
+    CONSOLE: "org.apache.log4j.ConsoleAppender"
+    CONSOLE.layout: "org.apache.log4j.PatternLayout"
+    CONSOLE.layout.ConversionPattern: "%d{HH:mm:ss.SSS} %-5p ~ %m%n"
+    #FILE: "org.apache.log4j.DailyRollingFileAppender"
+    #FILE.File: "/Users/ultrafrog/logs/leo-console.log"
+    #FILE.DatePattern: "'.'yyyy-MM-dd"
+    #FILE.layout: "org.apache.log4j.PatternLayout"
+    #FILE.layout.ConversionPattern: "[%d{HH:mm:ss.SSS}][%-5p]%l:%m%n"
+  logger:
+    app: "DEBUG"
+leo:
+  host: "http://localhost:7086/server"
+  app:
+    id: "19ae06ac-0a29-11e7-8989-9ffd19844ced"
+    secret: "2ajrIM4Kf6fyn1FbH0bfpZ5XkLEMUji5W0VddFJxNa5nePwrbRJ90PsDiFpbWN6Z"

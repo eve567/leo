@@ -11,9 +11,9 @@ import net.ufrog.common.app.App;
  */
 public class LeoConfig {
 
-    private static final String KEY_LEO_HOST         = "leo.host";
-    private static final String KEY_LEO_APP_ID       = "leo.app.id";
-    private static final String KEY_LEO_APP_SECURITY = "leo.app.security";
+    private static final String KEY_LEO_HOST        = "leo.host";
+    private static final String KEY_LEO_APP_ID      = "leo.app.id";
+    private static final String KEY_LEO_APP_SECRET  = "leo.app.secret";
 
     /**
      * @return application config for leo host
@@ -32,7 +32,7 @@ public class LeoConfig {
     /**
      * @return application config for leo app security
      */
-    public static String getLeoAppSecurity() {
-        return App.config(KEY_LEO_APP_SECURITY);
+    public static String getLeoAppSecret() {
+        return App.config(KEY_LEO_APP_SECRET);
     }
 }

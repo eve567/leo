@@ -49,7 +49,7 @@
         <project.build.sourceVersion>1.8</project.build.sourceVersion>
 
         <version.this>1.0.0</version.this>
-        <version.ufrog.common>0.0.3</version.ufrog.common>
+        <version.ufrog.common>0.0.4</version.ufrog.common>
         <version.slf4j>1.7.25</version.slf4j>
         <version.spring>4.3.9.RELEASE</version.spring>
         <version.spring.data>1.11.4.RELEASE</version.spring.data>

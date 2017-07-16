@@ -1,7 +1,6 @@
 package net.ufrog.leo.client;
 
 import net.ufrog.common.Logger;
-import net.ufrog.common.web.app.WebApp;
 import net.ufrog.common.web.app.WebAppFilter;
 
 import javax.servlet.*;
@@ -25,11 +24,9 @@ public class LeoAppFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        if (!WebApp.resource(servletRequest)) {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-            HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-            servletRequest.setAttribute(WebAppFilter.PARAM_KEY, LeoApp.create(httpServletRequest, httpServletResponse));
-        }
+        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+        servletRequest.setAttribute(WebAppFilter.PARAM_KEY, LeoApp.create(httpServletRequest, httpServletResponse));
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

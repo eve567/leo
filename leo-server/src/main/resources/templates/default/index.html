@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${App::config('console_title')}</title>
-    <link rel="shortcut icon" href="${app.common}/ufrog/img/favicon.png" type="image/png" />
-    <link rel="stylesheet" type="text/css" href="${app.common}/bootstrap/3_3_7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="${app.common}/bootstrap/3_3_7/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" type="text/css" href="${app.common}/font_awesome/4_7_0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="${app.common}/ufrog/css/ufrog-bootstrap.min.css?ver=${app.version}">
-    <link rel="stylesheet" type="text/css" href="${app.common}/leo/css/leo-server.min.css?ver=${app.version}">
+    <link rel="shortcut icon" href="${app.resourceCommon}/ufrog/img/favicon.png" type="image/png" />
+    <link rel="stylesheet" type="text/css" href="${app.resourceCommon}/bootstrap/3_3_7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="${app.resourceCommon}/bootstrap/3_3_7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="${app.resourceCommon}/font_awesome/4_7_0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="${app.resourceCommon}/ufrog/css/ufrog-bootstrap.min.css?ver=${app.version}">
+    <link rel="stylesheet" type="text/css" href="${app.resourceCommon}/leo/css/leo-server.min.css?ver=${app.version}">
 </head>
 <body ng-controller="indexCtrl">
 
@@ -41,14 +41,14 @@
 <div class="container container-server ng-fade" ng-include="bodyUrl"></div>
 <!-- body -->
 
-<script type="text/javascript" src="${app.common}/jquery/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="${app.common}/bootstrap/3_3_7/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="${app.common}/angular/1_6_2/angular.min.js"></script>
-<script type="text/javascript" src="${app.common}/angular/1_6_2/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="${app.common}/ufrog/js/ufrog-angular-common.min.js?ver=${app.version}"></script>
-<script type="text/javascript" src="${app.common}/ufrog/js/ufrog-angular-bootstrap.min.js?ver=${app.version}"></script>
-<script type="text/javascript" src="${app.common}/ufrog/js/ufrog-angular-request.min.js?ver=${app.version}"></script>
-<script type="text/javascript" src="${app.common}/leo/js/leo-server.min.js?ver=${app.version}"></script>
+<script type="text/javascript" src="${app.resourceCommon}/jquery/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="${app.resourceCommon}/bootstrap/3_3_7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${app.resourceCommon}/angular/1_6_2/angular.min.js"></script>
+<script type="text/javascript" src="${app.resourceCommon}/angular/1_6_2/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="${app.resourceCommon}/ufrog/js/ufrog-angular-common.min.js?ver=${app.version}"></script>
+<script type="text/javascript" src="${app.resourceCommon}/ufrog/js/ufrog-angular-bootstrap.min.js?ver=${app.version}"></script>
+<script type="text/javascript" src="${app.resourceCommon}/ufrog/js/ufrog-angular-request.min.js?ver=${app.version}"></script>
+<script type="text/javascript" src="${app.resourceHost}/js/leo-server.min.js?ver=${app.version}"></script>
 <script type="text/javascript">
     'use strict';
     function indexCtrl($scope) {

@@ -59,8 +59,8 @@ public class LeoApp extends SpringWebApp {
     /**
      * @return leo app security
      */
-    public String getAppSecurity() {
-        return LeoConfig.getLeoAppSecurity();
+    public String getAppSecret() {
+        return LeoConfig.getLeoAppSecret();
     }
 
     /**

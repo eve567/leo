@@ -9,7 +9,7 @@ pattern:
 path:
   resource:
     common: "//localhost:7086/static/resources"
-    app: "//localhost:7086/static/resources/leo"
+    host: "//localhost:7086/static/resources/leo"
     theme: "//localhost:7086/static/resources/leo/default"
 cache:
   default:
@@ -17,14 +17,14 @@ cache:
     prefix: "leo_"
 datasource:
   primary:
-    url: "jdbc:mysql://103.20.249.125:3306/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC"
+    url: "jdbc:mysql://103.20.249.125:13306/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC"
     username: "root"
-    password: "mSTta2o8+i8emsDWOD+3wamEgCyCNBCKRZqPf4gNg3c="
+    password: "h+zZTdYokCV91r57jVO8rKmEgCyCNBCKRZqPf4gNg3c="
     jpa:
       showSql: "true"
 thread:
-  scheduled:
-    type: "scheduled"
+  default:
+    type: "single"
 jetx:
   config:
     jetx.import.classes: "net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.domain.models.*, net.ufrog.leo.service.beans.**"
