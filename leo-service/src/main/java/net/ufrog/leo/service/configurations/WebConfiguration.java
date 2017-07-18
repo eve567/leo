@@ -1,10 +1,10 @@
-package net.ufrog.leo.server.configurations;
+package net.ufrog.leo.service.configurations;
 
 import net.ufrog.common.jetbrick.SpringJetxConfigurations;
 import net.ufrog.common.spring.SpringConfigurations;
+import net.ufrog.common.spring.exception.ExceptionLogger;
 import net.ufrog.common.spring.fastjson.FastJsonpHttpMessageConverter;
 import net.ufrog.common.spring.interceptor.TokenInterceptor;
-import net.ufrog.leo.server.SecurityInterception;
 import net.ufrog.leo.service.PropService;
 import net.ufrog.leo.service.beans.DatabasePropertiesManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-07-14
+ * @version 0.1, 2017-07-17
  * @since 0.1
  */
 @Configuration
@@ -58,12 +58,17 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        exceptionResolvers.add(SpringConfigurations.exceptionResolver("result", "", null, "sign", "/sign_out", "_not_sign::"));
+        String errorView = "result";
+        String partViewSuffix = "";
+        String notSignView = "sign";
+        String notSignUri = "/sign_out";
+        String notSignPrefix = "_not_sign::";
+        ExceptionLogger exceptionLogger = null;
+        exceptionResolvers.add(SpringConfigurations.exceptionResolver(errorView, partViewSuffix, exceptionLogger, notSignView, notSignUri, notSignPrefix));
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new SecurityInterception()).excludePathPatterns("/sign", "/sign_in", "/sign_out", "/authenticate", "/api/*");
         registry.addInterceptor(new LocaleChangeInterceptor());
         registry.addInterceptor(new TokenInterceptor());
         registry.addInterceptor(SpringConfigurations.propertiesInterceptor(new DatabasePropertiesManager(propService)));

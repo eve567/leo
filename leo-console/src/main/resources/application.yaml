@@ -27,7 +27,7 @@ thread:
     type: "single"
 jetx:
   config:
-    jetx.import.classes: "net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.domain.models.*, net.ufrog.leo.service.beans.**"
+    jetx.import.classes: "net.ufrog.common.app.App, net.ufrog.leo.client.LeoApp, net.ufrog.leo.domain.models.*, net.ufrog.leo.service.beans.**"
     trim.directive.comments: "true"
 log4j:
   rootLogger: "INFO, CONSOLE"

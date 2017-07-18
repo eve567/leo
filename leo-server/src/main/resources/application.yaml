@@ -43,4 +43,4 @@ log4j:
   logger:
     app: "DEBUG"
 leo:
-  accessTokenManager: "net.ufrog.leo.server.DevAccessTokenManager"
+  accessTokenManager: "net.ufrog.leo.server.MemAccessTokenManager"

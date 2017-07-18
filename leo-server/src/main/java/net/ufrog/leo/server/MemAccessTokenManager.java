@@ -1,6 +1,5 @@
 package net.ufrog.leo.server;
 
-import net.ufrog.common.app.AppUser;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.App;
 
@@ -12,13 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * 开发访问令牌管理实现
+ * 内存访问令牌管理实现
  *
  * @author ultrafrog, ufrog.net@gmail.com
  * @version 0.1, 2017-03-14
  * @since 0.1
  */
-public class DevAccessTokenManager implements AccessTokenManager {
+public class MemAccessTokenManager extends AccessTokenManager {
 
     private static Map<String, AccessToken> mAccessToken = new ConcurrentHashMap<>();
     private static Map<String, List<AccessToken>> mUserAccessToken = new ConcurrentHashMap<>();
@@ -30,13 +29,6 @@ public class DevAccessTokenManager implements AccessTokenManager {
 
         mAccessToken.put(accessToken.getToken(), accessToken);
         mUserAccessToken.get(accessToken.getUserId()).add(accessToken);
-    }
-
-    @Override
-    public AccessToken online(AppUser appUser, App app, String ip) {
-        AccessToken accessToken = new AccessToken(appUser, app, ip);
-        online(accessToken);
-        return accessToken;
     }
 
     @Override
@@ -59,7 +51,14 @@ public class DevAccessTokenManager implements AccessTokenManager {
     }
 
     @Override
-    public AccessToken get(String token) {
-        return mAccessToken.get(token);
+    public AccessToken get(String token, String appId) {
+        AccessToken accessToken = mAccessToken.get(token);
+        validate(accessToken, appId);
+        return accessToken;
+    }
+
+    @Override
+    public List<AccessToken> getAll() {
+        return new ArrayList<>(mAccessToken.values());
     }
 }

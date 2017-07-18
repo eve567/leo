@@ -3,8 +3,8 @@ package net.ufrog.leo.console;
 import net.ufrog.common.spring.SpringConfigurations;
 import net.ufrog.common.utils.Codecs;
 import net.ufrog.leo.client.LeoAppFilter;
-import net.ufrog.leo.console.configurations.ContextConfiguration;
-import net.ufrog.leo.console.configurations.WebConfiguration;
+import net.ufrog.leo.service.configurations.ContextConfiguration;
+import net.ufrog.leo.service.configurations.WebConfiguration;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

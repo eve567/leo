@@ -3,7 +3,7 @@
  */
 (function(ng, undefined) {'use strict';
     /** 模块定义 */
-    ng.module('leoApp', ['ngSanitize', 'ngAnimate', 'ugCommon', 'ugBootstrap', 'ugRequest'])
+    ng.module('leoApp', ['ngSanitize', 'ngAnimate', 'ugCommon', 'ugBootstrap', 'ugRequest', 'leoApi'])
 
         /** 全局配置 */
         .config(['$controllerProvider', function($controllerProvider) {

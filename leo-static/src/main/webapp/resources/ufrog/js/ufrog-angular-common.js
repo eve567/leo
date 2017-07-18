@@ -217,6 +217,16 @@
                             }
                         });
                         return $data;
+                    },
+
+                    /** 脚本路径 */
+                    scriptPath: function(names) {
+                        var $selector = [], $tags;
+                        ng.forEach($this.valid.arr(names) ? names : [names], function(n, i) {
+                            $selector[i] = 'script[src*="' + n + '"]';
+                        });
+                        $tags = $this.$($selector.join(','));
+                        return ($tags.length > 0) ? $tags.get(0).src.substr(0, $tags.get(0).src.lastIndexOf('/') + 1) : undefined;
                     }
                 }
             };

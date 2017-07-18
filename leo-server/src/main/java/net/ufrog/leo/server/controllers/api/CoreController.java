@@ -2,6 +2,8 @@ package net.ufrog.leo.server.controllers.api;
 
 import net.ufrog.common.Link;
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.client.LeoAppUser;
+import net.ufrog.leo.client.api.beans.AppUserResp;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.Nav;
 import net.ufrog.leo.server.AccessToken;
@@ -52,28 +54,43 @@ public class CoreController {
     }
 
     /**
+     * 读取当前用户
+     *
+     * @param token 令牌
+     * @param appId 应用编号
+     * @return 当前应用用户
+     */
+    @GetMapping("/user/{token}/{appId}")
+    public AppUserResp getUser(@PathVariable("token") String token, @PathVariable("appId") String appId) {
+        LeoAppUser leoAppUser = AccessTokenManager.get().get(token, appId).getAppUser();
+        return new AppUserResp(leoAppUser.getId(), leoAppUser.getAccount(), leoAppUser.getName(), leoAppUser.getToken());
+    }
+
+    /**
      * 查询应用
      *
      * @param token 令牌
+     * @param appId 应用编号
      * @return 应用列表
      */
-    @GetMapping("/apps/{token}")
-    public List<App> findApps(@PathVariable("token") String token) {
-        AccessToken accessToken = AccessTokenManager.get().get(token);
+    @GetMapping("/apps/{token}/{appId}")
+    public List<App> findApps(@PathVariable("token") String token, @PathVariable("appId") String appId) {
+        AccessToken accessToken = AccessTokenManager.get().get(token, appId);
         return securityService.filter(appService.findAll(), accessToken.getUserId());
     }
 
     /**
      * 查询导航
      *
-     * @param token 令牌
      * @param type 类型
      * @param parentId 上级导航
+     * @param token 令牌
+     * @param appId 应用编号
      * @return 导航列表
      */
-    @GetMapping("/navs/{token}/{type}/{parentId}")
-    public List<Nav> findNavs(@PathVariable("token") String token, @PathVariable("type") String type, @PathVariable("parentId") String parentId) {
-        AccessToken accessToken = AccessTokenManager.get().get(token);
+    @GetMapping("/navs/{type}/{parentId}/{token}/{appId}")
+    public List<Nav> findNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("token") String token, @PathVariable("appId") String appId) {
+        AccessToken accessToken = AccessTokenManager.get().get(token, appId);
         List<Nav> lNav = Strings.equals("root", parentId) ? navService.findRoot(type, accessToken.getAppId()) : navService.findByParentId(parentId);
 
         lNav.stream().filter(nav -> nav.getPath().startsWith("@")).forEach(nav -> nav.setPath(nav.getPath().replace("@", net.ufrog.common.app.App.current().toString())));
