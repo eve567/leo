@@ -92,8 +92,9 @@ public class CoreController {
     public List<Nav> findNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("token") String token, @PathVariable("appId") String appId) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
         List<Nav> lNav = Strings.equals("root", parentId) ? navService.findRoot(type, accessToken.getAppId()) : navService.findByParentId(parentId);
+        App app = appService.findById(appId);
 
-        lNav.stream().filter(nav -> nav.getPath().startsWith("@")).forEach(nav -> nav.setPath(nav.getPath().replace("@", net.ufrog.common.app.App.current().toString())));
+        lNav.stream().filter(nav -> nav.getPath().startsWith("@")).forEach(nav -> nav.setPath(nav.getPath().replace("@", app.getUrl())));
         return securityService.filter(Link.sort(lNav), accessToken.getUserId());
     }
 }

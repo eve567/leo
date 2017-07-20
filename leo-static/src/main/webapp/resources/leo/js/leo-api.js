@@ -46,7 +46,7 @@
                     if ($common.valid.str(url)) {
                         $this.$config.scope.bodyUrl = url + (url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
                     } else if ($common.valid.obj($this.$config.scope.$subnav)) {
-                        $this.$config.scope.bodyUrl = $this.$config.scope.$subnav.url + ($this.$config.scope.$subnav.url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
+                        $this.$config.scope.bodyUrl = $this.$config.scope.$subnav.path + ($this.$config.scope.$subnav.path.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
                     } else {
                         console.error('wrong url or nav setting');
                     }

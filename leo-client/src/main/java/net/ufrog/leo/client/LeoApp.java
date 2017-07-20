@@ -4,7 +4,6 @@ import net.ufrog.common.Logger;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.cache.Caches;
-import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.client.api.APIs;
