@@ -3,7 +3,6 @@ package net.ufrog.leo.server;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.common.utils.Strings;
-import net.ufrog.leo.client.LeoException;
 import net.ufrog.leo.client.api.beans.Resp;
 import net.ufrog.leo.domain.models.App;
 

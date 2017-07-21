@@ -1,5 +1,11 @@
 package net.ufrog.leo.console.controllers;
 
+import net.ufrog.common.app.App;
+import net.ufrog.leo.client.LeoApp;
+import net.ufrog.leo.client.LeoAppUser;
+import net.ufrog.leo.client.api.APIs;
+import net.ufrog.leo.client.api.beans.AppResp;
+import net.ufrog.leo.client.api.beans.ListResp;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +28,7 @@ public class NavController {
      */
     @GetMapping({"", "/", "/index"})
     public String index() {
+        ListResp<AppResp> lrAppResp = APIs.findApps(((LeoAppUser) App.user()).getToken());
         return "nav/index";
     }
 }

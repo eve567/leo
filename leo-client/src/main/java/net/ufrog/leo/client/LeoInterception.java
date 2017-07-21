@@ -2,6 +2,7 @@ package net.ufrog.leo.client;
 
 import net.ufrog.common.Logger;
 import net.ufrog.common.app.App;
+import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.RequestParam;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,8 +26,11 @@ public class LeoInterception implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         RequestParam requestParam = RequestParam.current();
         if (requestParam.getParams().containsKey(getParamKey())) {
+            String paramStr = requestParam.getParamString(getParamKey());
+
             Logger.info("received user request from leo...");
             App.current(LeoApp.class).setAccessToken(requestParam.getValue(getParamKey()));
+            httpServletResponse.sendRedirect(httpServletRequest.getRequestURL() + (Strings.empty(paramStr) ? "" : "?") + paramStr);
         }
         App.user();
         return true;

@@ -35,4 +35,21 @@ public interface AppService {
      * @return 应用列表
      */
     List<App> findAll();
+
+    /**
+     * 读取所有应用<br>缓存读写
+     *
+     * @return 应用列表
+     */
+    List<App> getAll();
+
+    /**
+     * 清除应用缓存
+     *
+     * @param id 应用编号
+     */
+    void clear(String id);
+
+    /** 清除所有应用缓存 */
+    void clearAll();
 }

@@ -1,9 +1,10 @@
 package net.ufrog.leo.server.controllers.api;
 
-import net.ufrog.common.Link;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.client.LeoAppUser;
+import net.ufrog.leo.client.api.beans.AppResp;
 import net.ufrog.leo.client.api.beans.AppUserResp;
+import net.ufrog.leo.client.api.beans.ListResp;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.Nav;
 import net.ufrog.leo.server.AccessToken;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +31,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class CoreController {
+
+    private static final String NAV_ROOT    = "root";
+    private static final String NAV_PREFIX  = "@";
 
     /** 应用业务接口 */
     private AppService appService;
@@ -74,9 +79,21 @@ public class CoreController {
      * @return 应用列表
      */
     @GetMapping("/apps/{token}/{appId}")
-    public List<App> findApps(@PathVariable("token") String token, @PathVariable("appId") String appId) {
+    public ListResp<AppResp> findApps(@PathVariable("token") String token, @PathVariable("appId") String appId) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
-        return securityService.filter(appService.findAll(), accessToken.getUserId());
+        List<App> lApp = securityService.filter(appService.getAll(), accessToken.getUserId());
+        ListResp<AppResp> lrAppResp = new ListResp<>();
+
+        lApp.forEach(app -> {
+            AppResp appResp = new AppResp();
+            appResp.setId(app.getId());
+            appResp.setName(app.getName());
+            appResp.setCode(app.getCode());
+            appResp.setLogo(app.getLogo());
+            appResp.setColor(app.getColor());
+            lrAppResp.add(appResp);
+        });
+        return lrAppResp;
     }
 
     /**
@@ -91,10 +108,10 @@ public class CoreController {
     @GetMapping("/navs/{type}/{parentId}/{token}/{appId}")
     public List<Nav> findNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("token") String token, @PathVariable("appId") String appId) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
-        List<Nav> lNav = Strings.equals("root", parentId) ? navService.findRoot(type, accessToken.getAppId()) : navService.findByParentId(parentId);
-        App app = appService.findById(appId);
+        List<Nav> lNav = Strings.equals(NAV_ROOT, parentId) ? navService.getRoot(type, accessToken.getAppId()) : navService.getByParentId(parentId);
+        App app = appService.getById(appId);
 
-        lNav.stream().filter(nav -> nav.getPath().startsWith("@")).forEach(nav -> nav.setPath(nav.getPath().replace("@", app.getUrl())));
-        return securityService.filter(Link.sort(lNav), accessToken.getUserId());
+        lNav.stream().filter(nav -> nav.getPath().startsWith(NAV_PREFIX)).forEach(nav -> nav.setPath(nav.getPath().replace(NAV_PREFIX, app.getUrl())));
+        return securityService.filter(lNav, accessToken.getUserId());
     }
 }

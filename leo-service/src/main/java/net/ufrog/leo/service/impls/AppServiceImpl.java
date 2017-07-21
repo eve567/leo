@@ -24,6 +24,7 @@ import java.util.List;
 public class AppServiceImpl implements AppService {
 
     private static final String CACHE_APP   = "app_";
+    private static final String CACHE_APPS  = "apps";
 
     /** 应用仓库 */
     private AppRepository appRepository;
@@ -56,5 +57,26 @@ public class AppServiceImpl implements AppService {
     @Override
     public List<App> findAll() {
         return appRepository.findAll(Domains.sort(Sort.Direction.ASC, "code"));
+    }
+
+    @Override
+    public List<App> getAll() {
+        @SuppressWarnings("unchecked")
+        List<App> lApp = Caches.get(CACHE_APPS, List.class);
+        if (lApp == null) {
+            lApp = findAll();
+            Caches.set(CACHE_APPS, lApp);
+        }
+        return lApp;
+    }
+
+    @Override
+    public void clear(String id) {
+        Caches.safeDelete(CACHE_APP, id);
+    }
+
+    @Override
+    public void clearAll() {
+        Caches.safeDelete(CACHE_APPS);
     }
 }

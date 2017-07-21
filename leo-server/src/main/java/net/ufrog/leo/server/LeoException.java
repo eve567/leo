@@ -1,4 +1,4 @@
-package net.ufrog.leo.client;
+package net.ufrog.leo.server;
 
 import net.ufrog.common.exception.ServiceException;
 

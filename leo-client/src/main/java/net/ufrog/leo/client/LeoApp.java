@@ -43,7 +43,7 @@ public class LeoApp extends SpringWebApp {
             LeoAppUser leoAppUser = Caches.get(CACHE_TOKEN, token, LeoAppUser.class);
             if (leoAppUser == null) {
                 // 请求当前用户
-                AppUserResp appUserResp = APIs.getUser(token, LeoConfig.getLeoAppId());
+                AppUserResp appUserResp = APIs.getUser(token);
                 if (appUserResp.isSuccess()) {
                     leoAppUser = new LeoAppUser(appUserResp.getId(), appUserResp.getAccount(), appUserResp.getName());
                     leoAppUser.setToken(appUserResp.getToken());
@@ -69,7 +69,7 @@ public class LeoApp extends SpringWebApp {
      *
      * @param accessToken 访问令牌
      */
-    public void setAccessToken(String accessToken) {
+    void setAccessToken(String accessToken) {
         session(SESSION_TOKEN, accessToken);
     }
 

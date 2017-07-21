@@ -3,7 +3,6 @@ package net.ufrog.leo.server;
 import net.ufrog.common.spring.exception.ExceptionHandler;
 import net.ufrog.common.spring.exception.ExceptionLogger;
 import net.ufrog.common.spring.exception.ExceptionResolver;
-import net.ufrog.leo.client.LeoException;
 import net.ufrog.leo.client.api.beans.Resp;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -22,6 +21,6 @@ public class LeoExceptionExceptionHandler implements ExceptionHandler<LeoExcepti
 
     @Override
     public ModelAndView handle(LeoException e, String requestType, String errorView, String partViewSuffix, View jsonView, ExceptionLogger exceptionLogger) {
-        return ExceptionResolver.modelAndView(ExceptionResolver.REQUEST_TYPE_JSON, errorView, partViewSuffix, jsonView, new Resp(e.getRespCode()));
+        return ExceptionResolver.modelAndView(ExceptionResolver.REQUEST_TYPE_JSON, errorView, partViewSuffix, jsonView, ExceptionResolver.KEY_MODEL_EXCEPTION, new Resp(e.getRespCode()));
     }
 }
