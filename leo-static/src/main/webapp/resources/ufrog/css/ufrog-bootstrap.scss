@@ -163,6 +163,33 @@ body {
     border-top-left-radius: 0;
   }
 }
+.panel-heading-group {
+  float: right !important;
+  margin: -10px -15px -10px 0;
+  padding: 0;
+  border-left: 1px solid #dddddd;
+  list-style: none;
+  li {
+    float: left;
+    border-left: 1px solid #fafafa;
+    border-right: 1px solid #dddddd;
+    a {
+      display: inline-block;
+      line-height: 41px;
+      padding: 0 10px;
+      &:link {}
+      &:visited {}
+      &:hover {
+        background-color: #fafafa;
+        text-decoration: none;
+      }
+      &:active {}
+    }
+    &:last-child {
+      border-right-width: 0;
+    }
+  }
+}
 
 /* alert style for angular bootstrap */
 .alert-fixed {

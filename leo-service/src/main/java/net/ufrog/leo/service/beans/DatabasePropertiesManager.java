@@ -25,7 +25,6 @@ public class DatabasePropertiesManager implements PropertiesManager {
      *
      * @param propService 系统属性业务接口
      */
-    @Autowired
     public DatabasePropertiesManager(PropService propService) {
         this.propService = propService;
     }

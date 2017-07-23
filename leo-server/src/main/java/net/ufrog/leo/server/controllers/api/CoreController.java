@@ -5,6 +5,7 @@ import net.ufrog.leo.client.LeoAppUser;
 import net.ufrog.leo.client.api.beans.AppResp;
 import net.ufrog.leo.client.api.beans.AppUserResp;
 import net.ufrog.leo.client.api.beans.ListResp;
+import net.ufrog.leo.client.api.beans.NavResp;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.Nav;
 import net.ufrog.leo.server.AccessToken;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -81,10 +81,9 @@ public class CoreController {
     @GetMapping("/apps/{token}/{appId}")
     public ListResp<AppResp> findApps(@PathVariable("token") String token, @PathVariable("appId") String appId) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
-        List<App> lApp = securityService.filter(appService.getAll(), accessToken.getUserId());
         ListResp<AppResp> lrAppResp = new ListResp<>();
 
-        lApp.forEach(app -> {
+        securityService.filter(appService.getAll(), accessToken.getUserId()).forEach(app -> {
             AppResp appResp = new AppResp();
             appResp.setId(app.getId());
             appResp.setName(app.getName());
@@ -106,12 +105,22 @@ public class CoreController {
      * @return 导航列表
      */
     @GetMapping("/navs/{type}/{parentId}/{token}/{appId}")
-    public List<Nav> findNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("token") String token, @PathVariable("appId") String appId) {
+    public ListResp<NavResp> findNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("token") String token, @PathVariable("appId") String appId) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
         List<Nav> lNav = Strings.equals(NAV_ROOT, parentId) ? navService.getRoot(type, accessToken.getAppId()) : navService.getByParentId(parentId);
+        ListResp<NavResp> lrNavResp = new ListResp<>();
         App app = appService.getById(appId);
 
-        lNav.stream().filter(nav -> nav.getPath().startsWith(NAV_PREFIX)).forEach(nav -> nav.setPath(nav.getPath().replace(NAV_PREFIX, app.getUrl())));
-        return securityService.filter(lNav, accessToken.getUserId());
+        securityService.filter(lNav, accessToken.getUserId()).forEach(nav -> {
+            NavResp navResp = new NavResp();
+            navResp.setId(nav.getId());
+            navResp.setName(nav.getName());
+            navResp.setSubname(nav.getSubname());
+            navResp.setCode(nav.getCode());
+            navResp.setUrl(nav.getPath().startsWith(NAV_PREFIX) ? nav.getPath().replace(NAV_PREFIX, app.getUrl()) : nav.getPath());
+            navResp.setTarget(nav.getTarget());
+            lrNavResp.add(navResp);
+        });
+        return lrNavResp;
     }
 }

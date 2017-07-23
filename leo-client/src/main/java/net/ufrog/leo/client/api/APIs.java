@@ -5,9 +5,11 @@ import jodd.http.HttpRequest;
 import jodd.http.HttpResponse;
 import net.ufrog.common.CoreConfig;
 import net.ufrog.common.Logger;
+import net.ufrog.common.app.App;
 import net.ufrog.common.exception.NotSignException;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.client.LeoApp;
 import net.ufrog.leo.client.LeoConfig;
 import net.ufrog.leo.client.api.beans.AppResp;
 import net.ufrog.leo.client.api.beans.AppUserResp;
@@ -43,12 +45,11 @@ public class APIs {
     /**
      * 查询应用
      *
-     * @param token 令牌
      * @return 应用列表
      */
     @SuppressWarnings("unchecked")
-    public static ListResp<AppResp> findApps(String token) {
-        HttpResponse response = HttpRequest.get(String.format(LeoConfig.getLeoHost() + URI_APPS, token, LeoConfig.getLeoAppId())).charset("utf-8").send();
+    public static ListResp<AppResp> findApps() {
+        HttpResponse response = HttpRequest.get(String.format(LeoConfig.getLeoHost() + URI_APPS, App.current(LeoApp.class).getAccessToken(), LeoConfig.getLeoAppId())).charset("utf-8").send();
         return parseBytes(response.bodyBytes(), ListResp.class);
     }
 
@@ -60,7 +61,7 @@ public class APIs {
      * @param <T> 范型
      * @return 解析对象
      */
-    static <T> T parseBytes(byte[] bytes, Class<T> type) {
+    private static <T> T parseBytes(byte[] bytes, Class<T> type) {
         String body = new String(bytes, CoreConfig.getCharset());
         Logger.trace("body str: %s", body);
 

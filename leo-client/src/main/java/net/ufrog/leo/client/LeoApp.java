@@ -65,12 +65,12 @@ public class LeoApp extends SpringWebApp {
     }
 
     /**
-     * 设置访问令牌
+     * 读取访问令牌
      *
-     * @param accessToken 访问令牌
+     * @return 访问令牌
      */
-    void setAccessToken(String accessToken) {
-        session(SESSION_TOKEN, accessToken);
+    public String getAccessToken() {
+        return LeoAppUser.class.cast(getUser()).getToken();
     }
 
     /**
@@ -92,6 +92,15 @@ public class LeoApp extends SpringWebApp {
      */
     public String getAppSecret() {
         return LeoConfig.getLeoAppSecret();
+    }
+
+    /**
+     * 设置访问令牌
+     *
+     * @param accessToken 访问令牌
+     */
+    void setAccessToken(String accessToken) {
+        session(SESSION_TOKEN, accessToken);
     }
 
     /**

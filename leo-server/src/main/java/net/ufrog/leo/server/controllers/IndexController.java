@@ -101,11 +101,13 @@ public class IndexController {
     public String signOut() {
         AppUser appUser = App.current().getUser();
         if (appUser != null) {
+            WebApp app = App.current(WebApp.class);
             List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
             if (lAccessToken != null) {
                 lAccessToken.forEach(accessToken -> AccessTokenManager.get().offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
             }
-            App.current().setUser(null);
+            app.setUser(null);
+            app.session(SESSION_ACCESS_TOKENS, new ArrayList<>());
         }
         return signIn();
     }

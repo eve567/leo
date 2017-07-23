@@ -30,14 +30,14 @@
                 /** 查询应用 */
                 apps: function(callback) {
                     $this.$jsonp([$this.$config.host, $this.$constant.uri.core.apps, $this.$config.accessToken, $this.$config.appId].join('/'), function(data) {
-                        (callback || ng.noop)(data);
+                        (callback || ng.noop)(data.content);
                     });
                 },
 
                 /** 查询导航 */
                 navs: function(parent, callback) {
                     $this.$jsonp([$this.$config.host, $this.$constant.uri.core.navs, '99', parent.id, $this.$config.accessToken, $this.$config.appId].join('/'), function(data) {
-                        (callback || ng.noop)(data);
+                        (callback || ng.noop)(data.content);
                     });
                 },
 
@@ -46,7 +46,7 @@
                     if ($common.valid.str(url)) {
                         $this.$config.scope.bodyUrl = url + (url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
                     } else if ($common.valid.obj($this.$config.scope.$subnav)) {
-                        $this.$config.scope.bodyUrl = $this.$config.scope.$subnav.path + ($this.$config.scope.$subnav.path.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
+                        $this.$config.scope.bodyUrl = $this.$config.scope.$subnav.url + ($this.$config.scope.$subnav.url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
                     } else {
                         console.error('wrong url or nav setting');
                     }
@@ -68,7 +68,11 @@
                         method: 'jsonp',
                         url: url
                     }).then(function(data) {
-                        (success || ng.noop)(data.data);
+                        if (data.data.success) {
+                            (success || ng.noop)(data.data);
+                        } else {
+                            console.error(data.data);
+                        }
                     }, function(data) {
                         console.error(data);
                         (error || ng.noop)(data.data);

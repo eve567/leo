@@ -63,8 +63,7 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
         String notSignView = "sign";
         String notSignUri = "/sign_out";
         String notSignPrefix = "_not_sign::";
-        ExceptionLogger exceptionLogger = null;
-        exceptionResolvers.add(SpringConfigurations.exceptionResolver(errorView, partViewSuffix, exceptionLogger, notSignView, notSignUri, notSignPrefix));
+        exceptionResolvers.add(SpringConfigurations.exceptionResolver(errorView, partViewSuffix, null, notSignView, notSignUri, notSignPrefix));
     }
 
     @Override
