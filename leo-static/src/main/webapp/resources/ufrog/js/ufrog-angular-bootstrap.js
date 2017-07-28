@@ -377,7 +377,7 @@
             };
         })
 
-        /** 表格合并单元格 */
+        /** 表格合并单元格指令 */
         .directive('colSpan', [function() {
             return {
                 restrict: '',
@@ -398,6 +398,44 @@
                 replace: true,
                 transclude: true,
                 template: '<span><i class="text-danger">*</i>&nbsp;<ng-transclude></ng-transclude></span>'
+            };
+        }])
+
+        /** 面板标题栏下拉指令 */
+        .directive('panelHeadingDropdown', [function() {
+            return {
+                restrict: 'A,E',
+                replace: true,
+                scope: true,
+                transclude: true,
+                template: '<li ng-transclude></li>',
+                link: function($scope, $element) {
+                    ng.extend($scope, {
+                        // 初始化
+                        $init: function() {
+                            $scope.$isOpen = false;
+                            $scope.$linkOnClick();
+                            $scope.$winOnClick();
+                        },
+
+                        // 绑定元素单击事件　
+                        $linkOnClick: function() {
+                            $element.find('a:first-child').on('click', function() {
+                                $element.addClass('open');
+                                return false;
+                            });
+                        },
+
+                        // 窗口点击事件
+                        $winOnClick: function() {
+                            ng.element(window).on('click', function() {
+                                if ($element.hasClass('open')) {
+                                    $element.removeClass('open');
+                                }
+                            });
+                        }
+                    }).$init();
+                }
             };
         }]);
 })(window.angular);

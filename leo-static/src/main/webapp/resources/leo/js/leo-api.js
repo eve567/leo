@@ -89,7 +89,7 @@
                 replace: true,
                 transclude: true,
                 scope: true,
-                templateUrl: $common.ctrl.scriptPath(['leo-api.min.js', 'leo-api.js']) + '/layout.html',
+                templateUrl: $common.ctrl.scriptPath(['leo-api.min.js', 'leo-api.js']) + '/leo-api-layout.html',
                 link: function($scope, $element, $attrs) {
                     ng.extend($scope, {
                         // 初始化

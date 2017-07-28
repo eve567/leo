@@ -1,26 +1,174 @@
-<div class="panel panel-default">
+<div class="panel panel-default" ng-controller="navCtrl">
     <div class="panel-heading clearfix">
         <span class="pull-left">功能说明</span>
         <ul class="panel-heading-group">
-            <li><a href="#">添加用户&nbsp;<fa i="caret-down"></fa></a></li>
-            <li><a href="#">添加用户</a></li>
-            <li><a href="#">添加用户</a></li>
-            <li><a href="#">添加用户</a></li>
+            <li panel-heading-dropdown>
+                <a href="#"><span ng-bind="current.app.name"></span>&nbsp;<fa i="caret-down"></fa></a>
+                <ul class="panel-heading-dropdown">
+                    <li ng-repeat="app in $apps"><a href="#" ng-click="appFn.active(app)"><fa i="caret-right">&nbsp;<span ng-bind="app.name"></span></fa></a></li>
+                </ul>
+            </li>
         </ul>
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-sm-6"></div>
+            <!-- tree -->
             <div class="col-sm-6">
-                <form name="navForm" action="#" method="post" class="form-horizontal">
+                <tree ng-model="navs"></tree>
+            </div>
+            <!-- tree -->
+
+            <!-- form -->
+            <div class="col-sm-6">
+                <form name="navForm" action="#" method="post" class="form-horizontal" ng-submit="navFn.save($event)">
                     <div class="form-group">
-                        <label class="col-sm-1 control-label">名称</label>
+                        <label class="col-sm-1 control-label"><rq>名称</rq></label>
                         <div class="col-sm-4">
-                            <input name="name" title="名称" class="form-control" placeholder="请填写功能名称" ng-model="nav.name">
+                            <input name="name" title="名称" class="form-control" placeholder="请填写功能名称" ng-model="nav.name" required maxlength="20">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">副称</label>
+                        <div class="col-sm-4">
+                            <input name="subname" title="副称" class="form-control" placeholder="请填写功能副称" ng-model="nav.subname">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">代码</label>
+                        <div class="col-sm-4">
+                            <input name="code" title="代码" class="form-control" placeholder="请填写功能代码" ng-model="nav.code" required maxlength="50" pattern="^\w+$">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">地址</label>
+                        <div class="col-sm-6">
+                            <input name="path" title="地址" class="form-control" placeholder="@/" ng-model="nav.path" required type="url">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">目标</label>
+                        <div class="col-sm-2">
+                            <input name="target" title="目标" class="form-control" placeholder="_blank" ng-model="nav.target" required>
+                        </div>
+                    </div>
+                    <div class="form-group margin-bottom-zero">
+                        <div class="col-sm-offset-1 col-sm-11">
+                            <button class="btn btn-success" ng-disabled="navFn.disabledSaveBtn()">
+                                <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;保存</fa></span>
+                                <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+                            </button>
+                            <button type="button" class="btn btn-default" ng-disabled="ctrl.status('navForm', ['locked'])"><fa i="times-circle">&nbsp;取消</fa></button>
                         </div>
                     </div>
                 </form>
             </div>
+            <!-- form -->
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    'use strict';
+    function navCtrl($scope) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.ctrl.status('saveBtn', 'standby');
+                $scope.ctrl.status('navForm', 'locked');
+                $scope.appFn.active($scope.$apps[0]);
+            },
+
+            // 导航功能集合
+            navFn: {
+                // 查询导航
+                find: function(nav, callback) {
+                    var isRoot = !$scope.valid.obj(nav), parentId = isRoot ? 'root' : nav.id, arr = isRoot ? $scope.navs = [] : nav.children = [];
+                    $scope.get('${app}/nav/find/99/' + parentId + '/' + $scope.current.app.id, function(children) {
+                        angular.forEach(children, function(child) {
+                            arr.push($scope.navFn.setupTree(child));
+                            if (isRoot) {
+                                arr.push({
+                                    name: '<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>',
+                                    $fn: {
+                                        node: function(node) {
+                                            console.log('just add root.', node);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        (callback || angular.noop)(children);
+                    });
+                },
+
+                // 表单处理
+                form: function(nav) {
+                    $scope.ctrl.status('navForm', 'unlocked');
+                    $scope.nav = angular.extend({path: '@/', target: '_blank', type: '99'}, nav);
+                },
+
+                // 保存
+                save: function($event) {
+                    $scope.ctrl.stop($event);
+                },
+
+                // 判断保存按钮是否有效
+                disabledSaveBtn: function() {
+                    if ($scope.ctrl.status('navForm', ['locked'])) return true;
+                    else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    else if ($scope.navForm.$invalid) return true;
+                    return false;
+                },
+
+                // 设置导航树属性
+                setupTree: function(nav) {
+                    return angular.extend({
+                        $fn: {
+                            load: $scope.navFn.find
+                        },
+                        $operations: [
+                            {
+                                icon: 'fa-minus-square',
+                                class: 'text-danger',
+                                title: '删除',
+                                fn: function(node) {
+                                    console.log('it\'s delete', node);
+                                }
+                            },
+                            {
+                                icon: 'fa-pencil-square',
+                                class: 'text-primary',
+                                title: '编辑',
+                                fn: function(node) {
+                                    console.log('it\'s modify', node);
+                                }
+                            },
+                            {
+                                icon: 'fa-plus-square',
+                                class: 'text-success',
+                                title: '添加',
+                                fn: function(node) {
+                                    console.log('it\'s add', node);
+                                }
+                            }
+                        ]
+                    }, nav);
+                }
+            },
+
+            // 应用功能集合
+            appFn: {
+                // 激活应用
+                active: function(app) {
+                    if ($scope.current.app !== app) {
+                        $scope.current.app = app;
+                        $scope.navFn.find();
+                    }
+                }
+            },
+
+            //
+            current: {}
+        }).init();
+    }
+</script>

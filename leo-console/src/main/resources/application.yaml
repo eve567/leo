@@ -21,15 +21,14 @@ datasource:
     username: "root"
     password: "h+zZTdYokCV91r57jVO8rKmEgCyCNBCKRZqPf4gNg3c="
     jpa:
-      showSql: "true"
+      showSql: true
 thread:
   default:
     type: "single"
 jetx:
   config:
-    trim.directive.comments: true
     jetx.import.classes: "net.ufrog.common.app.App, net.ufrog.leo.client.LeoApp, net.ufrog.leo.domain.models.*, net.ufrog.leo.service.beans.**"
-    jetx.template.loaders.reloadable: true
+    jetx.trim.directive.comments: true
 log4j:
   rootLogger: "INFO, CONSOLE"
   appender:
