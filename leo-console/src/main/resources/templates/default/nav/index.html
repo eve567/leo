@@ -24,31 +24,41 @@
                     <div class="form-group">
                         <label class="col-sm-1 control-label"><rq>名称</rq></label>
                         <div class="col-sm-4">
-                            <input name="name" title="名称" class="form-control" placeholder="请填写功能名称" ng-model="nav.name" required maxlength="20">
+                            <input name="name" title="名称" class="form-control" placeholder="请填写功能名称" ng-model="nav.name" required maxlength="20" ng-disabled="ctrl.status('navForm', ['locked'])">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-1 control-label">副称</label>
                         <div class="col-sm-4">
-                            <input name="subname" title="副称" class="form-control" placeholder="请填写功能副称" ng-model="nav.subname">
+                            <input name="subname" title="副称" class="form-control" placeholder="请填写功能副称" ng-model="nav.subname" ng-disabled="ctrl.status('navForm', ['locked'])">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-1 control-label">代码</label>
                         <div class="col-sm-4">
-                            <input name="code" title="代码" class="form-control" placeholder="请填写功能代码" ng-model="nav.code" required maxlength="50" pattern="^\w+$">
+                            <input name="code" title="代码" class="form-control" placeholder="请填写功能代码" ng-model="nav.code" required maxlength="50" pattern="^\w+$" ng-disabled="ctrl.status('navForm', ['locked'])">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-1 control-label">地址</label>
                         <div class="col-sm-6">
-                            <input name="path" title="地址" class="form-control" placeholder="@/" ng-model="nav.path" required type="url">
+                            <input name="path" title="地址" class="form-control" placeholder="@/" ng-model="nav.path" required type="url" ng-disabled="ctrl.status('navForm', ['locked'])">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-1 control-label">目标</label>
                         <div class="col-sm-2">
-                            <input name="target" title="目标" class="form-control" placeholder="_blank" ng-model="nav.target" required>
+                            <input name="target" title="目标" class="form-control" placeholder="_blank" ng-model="nav.target" required ng-disabled="ctrl.status('navForm', ['locked'])">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">&nbsp;</label>
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">插入</span>
+                                <select title="选择功能" class="form-control" ng-options="n.name for n in $navs" ng-model="nav.prev" ng-disabled="ctrl.status('navForm', ['locked'])"></select>
+                                <span class="input-group-addon">之后</span>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group margin-bottom-zero">
@@ -90,9 +100,7 @@
                                 arr.push({
                                     name: '<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>',
                                     $fn: {
-                                        node: function(node) {
-                                            console.log('just add root.', node);
-                                        }
+                                        node: $scope.navFn.treeFn.addRoot
                                     }
                                 });
                             }
@@ -102,9 +110,19 @@
                 },
 
                 // 表单处理
-                form: function(nav) {
+                form: function(nav, parent) {
                     $scope.ctrl.status('navForm', 'unlocked');
-                    $scope.nav = angular.extend({path: '@/', target: '_blank', type: '99'}, nav);
+                    if (!$scope.valid.empty(nav)) {
+                        $scope.nav = nav;
+                        $scope.$navs = $scope.array.remove(nav.$parent.children.concat(), nav);
+                        $scope.object.delete($scope.nav, ['creator', 'createTime', 'updater', 'updateTime']);
+                    } else {
+                        $scope.nav = {path: '@/', target: '_blank', type: '99'};
+                        if (!$scope.valid.empty(parent)) {
+
+                        }
+                    }
+                    $scope.nav.prev = $scope.$navs.length === 0 ? {name: '-'} : $scope.$navs[$scope.$navs.length - 1];
                 },
 
                 // 保存
@@ -123,36 +141,61 @@
                 // 设置导航树属性
                 setupTree: function(nav) {
                     return angular.extend({
+                        //
                         $fn: {
                             load: $scope.navFn.find
                         },
+
+                        //
                         $operations: [
+                            //
                             {
                                 icon: 'fa-minus-square',
                                 class: 'text-danger',
                                 title: '删除',
-                                fn: function(node) {
-                                    console.log('it\'s delete', node);
-                                }
+                                fn: $scope.navFn.treeFn.add
                             },
+
+                            //
                             {
                                 icon: 'fa-pencil-square',
                                 class: 'text-primary',
                                 title: '编辑',
-                                fn: function(node) {
-                                    console.log('it\'s modify', node);
-                                }
+                                fn: $scope.navFn.treeFn.edit
                             },
+
+                            //
                             {
                                 icon: 'fa-plus-square',
                                 class: 'text-success',
                                 title: '添加',
-                                fn: function(node) {
-                                    console.log('it\'s add', node);
-                                }
+                                fn: $scope.navFn.treeFn.remove
                             }
                         ]
                     }, nav);
+                },
+
+                // 树形功能集合
+                treeFn: {
+                    // 添加根级
+                    addRoot: function() {
+                        $scope.navFn.form();
+                    },
+
+                    //
+                    add: function(node) {
+
+                    },
+
+                    //
+                    edit: function(node) {
+
+                    },
+
+                    //
+                    remove: function(node) {
+
+                    }
                 }
             },
 

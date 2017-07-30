@@ -103,6 +103,31 @@ body {
   opacity: 1;
 }
 
+.ng-slide.ng-enter,
+.ng-slide.ng-leave,
+.ng-slide.ng-hide,
+.ng-slide.ng-hide-add,
+.ng-slide.ng-hide-remove {
+  @include transition();
+  position: relative;
+  display: block;
+}
+.ng-slide.ng-leave.ng-leave-active,
+.ng-slide.ng-enter,
+.ng-slide.ng-hide-add.ng-hide-add-active,
+.ng-slide.ng-hide-remove {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+}
+.ng-slide.ng-enter.ng-enter-active,
+.ng-slide.ng-leave,
+.ng-slide.ng-hide-remove.ng-hide-remove-active,
+.ng-slide.ng-hide-add {
+  opacity: 1;
+  max-height: 499px;
+}
+
 /* override style */
 .container-fluid {
   padding-right: $spacing;

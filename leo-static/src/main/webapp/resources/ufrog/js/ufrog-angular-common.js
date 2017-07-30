@@ -7,7 +7,7 @@
 
         /** 服务定义 */
         .service('$common', ['$window', '$filter', function($window, $filter) {
-            var $this = {
+            var _ = {
                 /** jQuery */
                 $: jq,
 
@@ -60,17 +60,17 @@
 
                     /** 判断数据是否为空 */
                     empty: function(data) {
-                        if ($this.valid.undefined(data) || data === null) return true;
-                        else if ($this.valid.arr(data) && data.length === 0) return true;
-                        else if ($this.valid.str(data) && data === '') return true;
+                        if (_.valid.undefined(data) || data === null) return true;
+                        else if (_.valid.arr(data) && data.length === 0) return true;
+                        else if (_.valid.str(data) && data === '') return true;
                         return false;
                     },
 
                     /** 判断数据是否相同 */
                     equals: function(one, another, keys) {
-                        if ($this.valid.obj(one) && $this.valid.obj(another)) {
+                        if (_.valid.obj(one) && _.valid.obj(another)) {
                             var $bool = true;
-                            ng.forEach($this.valid.arr(keys) ? keys : [keys], function(k) {
+                            ng.forEach(_.valid.arr(keys) ? keys : [keys], function(k) {
                                 if (one[k] !== another[k]) $bool = false;
                             });
                             return $bool;
@@ -84,17 +84,17 @@
                 array: {
                     /** 判断数据是否在数组中 */
                     in: function(array, data, key) {
-                        var $pos = -1;
+                        var $idx = -1;
                         ng.forEach(array, function(val, idx) {
-                            if ($this.valid.equals(data, val, key || 'id')) $pos = idx;
+                            if (_.valid.equals(data, val, key || 'id')) $idx = idx;
                         });
-                        return $pos;
+                        return $idx;
                     },
 
                     /** 将数据加入数组中 */
                     add: function(array, data, idx) {
-                        if (!$this.valid.arr(array)) array = [];
-                        if ($this.valid.undefined(idx)) {
+                        if (!_.valid.arr(array)) array = [];
+                        if (_.valid.undefined(idx)) {
                             array.push(data);
                         } else {
                             array.splice(idx, 0, data);
@@ -104,12 +104,24 @@
 
                     /** 替换数组中数据 */
                     replace: function(array, data, key) {
-                        var $idx = $this.array.in(array, data, key);
+                        var $idx = _.array.in(array, data, key);
                         if ($idx >= 0) {
                             array.splice($idx, 1, data);
                         } else {
                             $scope.array.add(array, data);
                         }
+                        return array;
+                    },
+
+                    /** 移除数组中数据 */
+                    remove: function(array, data, key) {
+                        var $idx = _.array.in(array, data, key);
+                        if ($idx >= 0) {
+                            array.splice($idx, 1);
+                        } else {
+                            console.warn('cannot find element', data);
+                        }
+                        return array;
                     },
 
                     /** 清空数组 */
@@ -122,7 +134,7 @@
                 object: {
                     /** 删除对象属性 */
                     delete: function(data, keys) {
-                        if (!$this.valid.arr(keys)) keys = [keys];
+                        if (!_.valid.arr(keys)) keys = [keys];
                         ng.forEach(keys, function(key) {
                             delete(data[key]);
                         });
@@ -130,7 +142,7 @@
 
                     /** 解析成对象或转换成字符串 */
                     json: function(data) {
-                        if ($this.valid.str(data)) {
+                        if (_.valid.str(data)) {
                             return ng.fromJson(data);
                         } else {
                             return ng.toJSON(data);
@@ -159,24 +171,24 @@
 
                     /** 检查是否时间数据 */
                     check: function(date) {
-                        return $this.valid.date(date) ? date : $this.date.current();
+                        return _.valid.date(date) ? date : _.date.current();
                     },
 
                     /** 生成时间戳 */
                     timestamp: function(date) {
-                        return $this.date.check(date).valueOf();
+                        return _.date.check(date).valueOf();
                     },
 
                     /** 格式化时间 */
                     format: function(pattern, date) {
-                        return $filter('date')($this.date.check(date), pattern || 'yyyy-MM-dd HH:mm:ss');
+                        return $filter('date')(_.date.check(date), pattern || 'yyyy-MM-dd HH:mm:ss');
                     },
 
                     /** 时间累加 */
                     add: function(qty, type, date, pattern) {
-                        var $unit = ($this.date.$mType[type] || $this.date.$mType.d),
-                            $date = new Date($this.date.timestamp(date) + qty * $unit);
-                        return $this.valid.defined(pattern) ? $this.date.format(pattern, $date) : $date;
+                        var $unit = (_.date.$mType[type] || _.date.$mType.d),
+                            $date = new Date(_.date.timestamp(date) + qty * $unit);
+                        return _.valid.defined(pattern) ? _.date.format(pattern, $date) : $date;
                     }
                 },
 
@@ -186,10 +198,10 @@
 
                     /** 状态设定判断 */
                     status: function(name, status) {
-                        if ($this.valid.arr(status)) {
-                            return $this.array.in(status, $this.ctrl.$mStatus[name]) >= 0;
+                        if (_.valid.arr(status)) {
+                            return _.array.in(status, _.ctrl.$mStatus[name]) >= 0;
                         } else {
-                            $this.ctrl.$mStatus[name] = status;
+                            _.ctrl.$mStatus[name] = status;
                         }
                     },
 
@@ -208,7 +220,7 @@
                     formData: function(data) {
                         var $data = new FormData();
                         ng.forEach(data, function(val, idx) {
-                            if ($this.valid.arr(val)) {
+                            if (_.valid.arr(val)) {
                                 ng.forEach(val, function(v) {
                                     $data.append(idx, v);
                                 });
@@ -222,15 +234,15 @@
                     /** 脚本路径 */
                     scriptPath: function(names) {
                         var $selector = [], $tags;
-                        ng.forEach($this.valid.arr(names) ? names : [names], function(n, i) {
+                        ng.forEach(_.valid.arr(names) ? names : [names], function(n, i) {
                             $selector[i] = 'script[src*="' + n + '"]';
                         });
-                        $tags = $this.$($selector.join(','));
+                        $tags = _.$($selector.join(','));
                         return ($tags.length > 0) ? $tags.get(0).src.substr(0, $tags.get(0).src.lastIndexOf('/') + 1) : undefined;
                     }
                 }
             };
-            return $this;
+            return _;
         }])
 
         /** 图标指令 */

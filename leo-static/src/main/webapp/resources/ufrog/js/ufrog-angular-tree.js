@@ -7,7 +7,7 @@
 
         /** 服务定义 */
         .service('$tree', ['$common', function($common) {
-            var $this = {
+            var _ = {
                 $config: {
                     icon: {
                         spin: 'fa-spinner fa-spin',
@@ -24,13 +24,13 @@
                 collapse: function(node) {
                     if ($common.valid.arr(node)) {
                         ng.forEach(node, function(n) {
-                            $this.collapse(n);
+                            _.collapse(n);
                         });
                     } else if ($common.valid.obj(node)) {
-                        $this.$init(node);
+                        _.$init(node);
                         if ($common.valid.undefined(node.$status.collapsed)) {
                             if ($common.valid.undefined(node.children) && $common.valid.fn(node.$fn.load)) {
-                                $this.loadChildren(node);
+                                _.$loadChildren(node);
                             } else if ($common.valid.undefined(node.children)) {
                                 node.children = [];
                             } if ($common.valid.defined(node.children) && node.children.length > 0) {
@@ -45,18 +45,18 @@
                 },
 
                 /** 查询下级节点 */
-                loadChildren: function(node) {
+                $loadChildren: function(node) {
                     if ($common.valid.arr(node)) {
                         ng.forEach(node, function(n) {
-                            $this.loadChildren(n);
+                            _.$loadChildren(n);
                         });
                     } else if ($common.valid.obj(node) && $common.valid.fn(node.$fn.load)) {
-                        $this.$init(node);
+                        _.$init(node);
                         node.$status.loading = true;
                         node.$fn.load(node, function(children) {
                             node.$status.loading = false;
-                            $this.$init(children, node);
-                            $this.collapse(node);
+                            _.$init(children, node);
+                            _.collapse(node);
                         });
                     }
                 },
@@ -65,20 +65,18 @@
                 $init: function(node, parent) {
                     if ($common.valid.arr(node)) {
                         ng.forEach(node, function(n) {
-                            $this.$init(n, parent);
+                            _.$init(n, parent);
                         });
                     } else if ($common.valid.obj(node) && (node.$status || {}).inited !== true) {
-                        console.log(node);
                         if ($common.valid.undefined(node.$fn)) node.$fn = {};
                         if ($common.valid.undefined(node.$status)) node.$status = {};
                         if ($common.valid.undefined(node.$operations)) node.$operations = [];
                         if ($common.valid.undefined(node.$parent) && $common.valid.obj(parent)) node.$parent = parent;
                         node.$status.inited = true;
-                        console.log(node);
                     }
                 }
             };
-            return $this;
+            return _;
         }])
 
         /** 树形指令 */
@@ -129,6 +127,11 @@
                             } else if (node.$status.check === 'ban') {
                                 return $scope.$service.$config.icon.ban;
                             }
+                        },
+
+                        // 判断是否纯功能
+                        $isFn: function(node) {
+                            return ($common.valid.obj(node) && $common.valid.fn((node.$fn || {}).node));
                         },
 
                         $service: $tree

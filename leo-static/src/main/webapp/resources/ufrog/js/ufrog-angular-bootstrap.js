@@ -7,14 +7,14 @@
 
         /** 服务定义 */
         .service('$bootstrap', ['$timeout', '$common', function($timeout, $common) {
-            var $this = {
+            var _ = {
                 $config: null,
 
                 /** 配置 */
                 config: function(context, scope) {
-                    $this.$config = $this.$config || {};
-                    $this.$config.context = context;
-                    $this.$config.scope = scope;
+                    _.$config = _.$config || {};
+                    _.$config.context = context;
+                    _.$config.scope = scope;
                 },
 
                 /** 警告工具 */
@@ -24,44 +24,44 @@
 
                     /** 配置 */
                     config: function(data, signOutFlag, signView, delay) {
-                        $this.alert.$config = $this.alert.$config || {};
-                        $this.alert.$config.signOutFlag = signOutFlag;
-                        $this.alert.$config.signView = signView;
-                        $this.alert.$config.delay = delay || 5000;
-                        $this.alert.$object = data;
+                        _.alert.$config = _.alert.$config || {};
+                        _.alert.$config.signOutFlag = signOutFlag;
+                        _.alert.$config.signView = signView;
+                        _.alert.$config.delay = delay || 5000;
+                        _.alert.$object = data;
                     },
 
                     /** 显示警告层 */
                     show: function(data) {
                         if (data.show !== false) {
-                            $this.alert.$object = $this.alert.$object || {};
-                            $this.alert.$object.type = ng.lowercase(data.type);
-                            $this.alert.$object.message = data.message || data.messages.join('<br>');
-                            $this.alert.$object.show = !$common.valid.empty($this.alert.$object.message);
+                            _.alert.$object = _.alert.$object || {};
+                            _.alert.$object.type = ng.lowercase(data.type);
+                            _.alert.$object.message = data.message || data.messages.join('<br>');
+                            _.alert.$object.show = !$common.valid.empty(_.alert.$object.message);
 
                             if (data.delay !== -1) {
                                 $timeout(function() {
-                                    $this.alert.hide();
-                                }, data.delay || $this.alert.$config.delay);
+                                    _.alert.hide();
+                                }, data.delay || _.alert.$config.delay);
                             }
                         }
                     },
 
                     /** 隐藏警告层 */
                     hide: function() {
-                        $this.alert.$object = $this.alert.$object || {};
-                        $this.alert.$object.show = false;
+                        _.alert.$object = _.alert.$object || {};
+                        _.alert.$object.show = false;
                     },
 
                     /** 检查结果并自动显示 */
                     check: function(data) {
                         if (data && data.result) {
-                            if ($common.valid.str(data.data) && data.data.indexOf($this.alert.$config.signOutFlag) === 0) {
-                                $common.ctrl.redirect($this.alert.$config.signView);
+                            if ($common.valid.str(data.data) && data.data.indexOf(_.alert.$config.signOutFlag) === 0) {
+                                $common.ctrl.redirect(_.alert.$config.signView);
                                 return false;
                             } else {
-                                $this.alert.show(data);
-                                return $this.alert.$object.type === 'success';
+                                _.alert.show(data);
+                                return _.alert.$object.type === 'success';
                             }
                         } else {
                             return true;
@@ -84,11 +84,11 @@
 
                 /** 分页工具 */
                 page: function(data, dname, pname, scope) {
-                    (scope || $this.$config.scope)[dname] = data.content;
-                    (scope || $this.$config.scope)[pname || 'pagination'] = {current: data.number, size: data.size, total: data.totalElements, pages: data.totalPages};
+                    (scope || _.$config.scope)[dname] = data.content;
+                    (scope || _.$config.scope)[pname || 'pagination'] = {current: data.number, size: data.size, total: data.totalElements, pages: data.totalPages};
                 }
             };
-            return $this;
+            return _;
         }])
 
         /** 警告指令 */
