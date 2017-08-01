@@ -34,30 +34,34 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-1 control-label">代码</label>
+                        <label class="col-sm-1 control-label"><rq>代码</rq></label>
                         <div class="col-sm-4">
                             <input name="code" title="代码" class="form-control" placeholder="请填写功能代码" ng-model="nav.code" required maxlength="50" pattern="^\w+$" ng-disabled="ctrl.status('navForm', ['locked'])">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-1 control-label">地址</label>
+                        <label class="col-sm-1 control-label"><rq>地址</rq></label>
                         <div class="col-sm-6">
                             <input name="path" title="地址" class="form-control" placeholder="@/" ng-model="nav.path" required type="url" ng-disabled="ctrl.status('navForm', ['locked'])">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-1 control-label">目标</label>
+                        <label class="col-sm-1 control-label"><rq>目标</rq></label>
                         <div class="col-sm-2">
                             <input name="target" title="目标" class="form-control" placeholder="_blank" ng-model="nav.target" required ng-disabled="ctrl.status('navForm', ['locked'])">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-1 control-label">&nbsp;</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-offset-1 col-sm-6">
                             <div class="input-group">
                                 <span class="input-group-addon">插入</span>
-                                <select title="选择功能" class="form-control" ng-options="n.name for n in $navs" ng-model="nav.prev" ng-disabled="ctrl.status('navForm', ['locked'])"></select>
-                                <span class="input-group-addon">之后</span>
+                                <select title="请选择相邻功能" class="form-control" ng-options="n.name for n in neighbours" ng-model="nav.neighbour" ng-disabled="ctrl.status('navForm', ['locked'])"></select>
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="ctrl.status('navForm', ['locked'])"><span ng-bind="current.position.name"></span> <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        <li ng-repeat="pos in positions" ng-click="current.position = pos"><a href="#" ng-bind="pos.name"></a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -67,7 +71,7 @@
                                 <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;保存</fa></span>
                                 <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
                             </button>
-                            <button type="button" class="btn btn-default" ng-disabled="ctrl.status('navForm', ['locked'])"><fa i="times-circle">&nbsp;取消</fa></button>
+                            <button type="button" class="btn btn-default" ng-click="navFn.cancel()" ng-disabled="ctrl.status('navForm', ['locked'])"><fa i="times-circle">&nbsp;取消</fa></button>
                         </div>
                     </div>
                 </form>
@@ -77,57 +81,67 @@
     </div>
 </div>
 
+<!--suppress JSUnresolvedVariable, JSUnresolvedFunction, ReservedWordAsName, JSUnusedLocalSymbols -->
 <script type="text/javascript">
     'use strict';
-    function navCtrl($scope) {
+    function navCtrl($scope, $tree, $timeout) {
         angular.extend($scope, {
             // 初始化
             init: function() {
                 $scope.ctrl.status('saveBtn', 'standby');
                 $scope.ctrl.status('navForm', 'locked');
                 $scope.appFn.active($scope.$apps[0]);
+                $scope.current.position = $scope.positions[0];
             },
 
             // 导航功能集合
             navFn: {
                 // 查询导航
-                find: function(nav, callback) {
+                find: function(nav) {
                     var isRoot = !$scope.valid.obj(nav), parentId = isRoot ? 'root' : nav.id, arr = isRoot ? $scope.navs = [] : nav.children = [];
-                    $scope.get('${app}/nav/find/99/' + parentId + '/' + $scope.current.app.id, function(children) {
+                    $scope.get('${app}/nav/find/' + $scope.navFn.defaultNav.type + '/' + parentId + '/' + $scope.current.app.id, function(children) {
                         angular.forEach(children, function(child) {
-                            arr.push($scope.navFn.setupTree(child));
+                            arr.push($scope.treeFn.setup(child));
                             if (isRoot) {
-                                arr.push({
-                                    name: '<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>',
-                                    $fn: {
-                                        node: $scope.navFn.treeFn.addRoot
-                                    }
-                                });
+                                arr.push($scope.treeFn.nodeFnAddRoot);
                             }
                         });
-                        (callback || angular.noop)(children);
                     });
                 },
 
                 // 表单处理
-                form: function(nav, parent) {
-                    $scope.ctrl.status('navForm', 'unlocked');
+                form: function(parent, nav) {
                     if (!$scope.valid.empty(nav)) {
-                        $scope.nav = nav;
-                        $scope.$navs = $scope.array.remove(nav.$parent.children.concat(), nav);
+                        $scope.nav = angular.extend({}, $scope.navFn.defaultNav, nav);
+                        $scope.neighbours = $scope.navFn.toNeighbours($scope.array.remove(parent.children.concat(), nav));
                         $scope.object.delete($scope.nav, ['creator', 'createTime', 'updater', 'updateTime']);
-                    } else {
-                        $scope.nav = {path: '@/', target: '_blank', type: '99'};
-                        if (!$scope.valid.empty(parent)) {
 
-                        }
+                        angular.forEach($scope.neighbours, function(n) {
+                            if (n.nextId === $scope.nav.id) {
+                                $scope.nav.neighbour = n;
+                            }
+                        });
+                    } else {
+                        $scope.nav = angular.extend({}, $scope.navFn.defaultNav);
+                        $scope.nav.parentId = parent.id;
+                        $scope.neighbours = $scope.navFn.toNeighbours(parent.children.concat());
+                    } if ($scope.valid.empty($scope.nav.neighbour)) {
+                        $scope.nav.neighbour = $scope.neighbours[$scope.neighbours.length - 1];
                     }
-                    $scope.nav.prev = $scope.$navs.length === 0 ? {name: '-'} : $scope.$navs[$scope.$navs.length - 1];
+                    $scope.current.position = $scope.positions[0];
+                    $scope.ctrl.status('navForm', 'unlocked');
                 },
 
                 // 保存
                 save: function($event) {
                     $scope.ctrl.stop($event);
+                },
+
+                // 取消
+                cancel: function() {
+                    $scope.$navs = [];
+                    $scope.nav = {};
+                    $scope.ctrl.status('navForm', 'locked');
                 },
 
                 // 判断保存按钮是否有效
@@ -138,63 +152,86 @@
                     return false;
                 },
 
-                // 设置导航树属性
-                setupTree: function(nav) {
+                // 获得所有相邻元素
+                toNeighbours: function(navs) {
+                    navs = navs || [];
+                    angular.forEach(navs, function(n) {
+                        if ($tree.$isFn(n)) {
+                            $scope.array.remove(navs, n);
+                        }
+                    });
+                    return $scope.valid.empty(navs) ? [{name: '(つ´ω`)つ只能放在第一个'}] : navs;
+                },
+
+                // 默认功能
+                defaultNav: {
+                    path: '@/',
+                    target: '_blank',
+                    type: '99'
+                }
+            },
+
+            // 树形功能集合
+            treeFn: {
+                // 添加顶级节点
+                addRoot: function() {
+                    $scope.navFn.form({});
+                },
+
+                // 添加节点
+                add: function(node) {
+                    $timeout(function() {
+                        $scope.navFn.form(node);
+                    }, 200);
+                },
+
+                // 编辑节点
+                edit: function(node) {
+                    $timeout(function() {
+                        console.log(node);
+                        $scope.navFn.form((node.$parent || {children: $scope.navs}), node);
+                    }, 200);
+                },
+
+                // 移除节点
+                remove: function(node) {
+                    console.log('it is remove node: ', node);
+                },
+
+                // 设置节点参数
+                setup: function(node) {
                     return angular.extend({
-                        //
                         $fn: {
                             load: $scope.navFn.find
                         },
-
-                        //
                         $operations: [
-                            //
                             {
                                 icon: 'fa-minus-square',
                                 class: 'text-danger',
                                 title: '删除',
-                                fn: $scope.navFn.treeFn.add
+                                fn: $scope.treeFn.remove
                             },
-
-                            //
                             {
                                 icon: 'fa-pencil-square',
                                 class: 'text-primary',
                                 title: '编辑',
-                                fn: $scope.navFn.treeFn.edit
+                                fn: $scope.treeFn.edit
                             },
-
-                            //
                             {
                                 icon: 'fa-plus-square',
                                 class: 'text-success',
                                 title: '添加',
-                                fn: $scope.navFn.treeFn.remove
+                                fn: $scope.treeFn.add
                             }
                         ]
-                    }, nav);
+                    }, node);
                 },
 
-                // 树形功能集合
-                treeFn: {
-                    // 添加根级
-                    addRoot: function() {
-                        $scope.navFn.form();
-                    },
-
-                    //
-                    add: function(node) {
-
-                    },
-
-                    //
-                    edit: function(node) {
-
-                    },
-
-                    //
-                    remove: function(node) {
-
+                // 添加顶级节点功能
+                nodeFnAddRoot: {
+                    name: '<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>',
+                    $fn: {
+                        node: $scope.treeFn.addRoot
                     }
                 }
             },
@@ -209,6 +246,18 @@
                     }
                 }
             },
+
+            // 位置选项
+            positions: [
+                {
+                    name: '之后',
+                    type: 'next'
+                },
+                {
+                    name: '之前',
+                    type: 'prev'
+                }
+            ],
 
             //
             current: {}

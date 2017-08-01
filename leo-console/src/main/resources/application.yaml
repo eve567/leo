@@ -28,7 +28,10 @@ thread:
 jetx:
   config:
     jetx.import.classes: "net.ufrog.common.app.App, net.ufrog.leo.client.LeoApp, net.ufrog.leo.domain.models.*, net.ufrog.leo.service.beans.**"
-    jetx.trim.directive.comments: true
+    jetx.trim.directive.comments: "true"
+    jetx.template.loaders: "$loader"
+    $loader: "jetbrick.template.loader.ClasspathResourceLoader"
+    $loader.reloadable: "true"
 log4j:
   rootLogger: "INFO, CONSOLE"
   appender:

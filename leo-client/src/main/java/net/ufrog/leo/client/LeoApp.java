@@ -47,7 +47,7 @@ public class LeoApp extends SpringWebApp {
                 // 请求当前用户
                 AppUserResp appUserResp = APIs.getUser(token);
                 if (appUserResp.isSuccess()) {
-                    leoAppUser = new LeoAppUser(appUserResp.getId(), appUserResp.getAccount(), appUserResp.getName());
+                    leoAppUser = new LeoAppUser(IDConverter.convert(appUserResp.getId()), appUserResp.getAccount(), appUserResp.getName());
                     leoAppUser.setToken(appUserResp.getToken());
                     Caches.set(CACHE_TOKEN, token, leoAppUser, "5min");
                     Logger.debug("cache app user by token: %s", token);

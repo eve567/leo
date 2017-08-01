@@ -6,7 +6,7 @@
     ng.module('ugTree', ['ugCommon'])
 
         /** 服务定义 */
-        .service('$tree', ['$common', function($common) {
+        .service('$tree', ['$common', '$timeout', function($common, $timeout) {
             var _ = {
                 $config: {
                     icon: {
@@ -33,7 +33,7 @@
                                 _.$loadChildren(node);
                             } else if ($common.valid.undefined(node.children)) {
                                 node.children = [];
-                            } if ($common.valid.defined(node.children) && node.children.length > 0) {
+                            } if ($common.valid.defined(node.children)) {
                                 node.$status.collapsed = true;
                             }
                         } else if (node.$status.collapsed === false) {
@@ -53,12 +53,21 @@
                     } else if ($common.valid.obj(node) && $common.valid.fn(node.$fn.load)) {
                         _.$init(node);
                         node.$status.loading = true;
-                        node.$fn.load(node, function(children) {
-                            node.$status.loading = false;
-                            _.$init(children, node);
-                            _.collapse(node);
-                        });
+                        node.$fn.load(node);
+                        _.$checkLoadStatus(node);
+                        _.$init(node.children, node);
+                        _.collapse(node);
+                        node.$status.loading = false;
                     }
+                },
+
+                /** 执行操作 */
+                $doOperation: function(node, operation) {
+                    if ($common.valid.empty(node.$status.collapsed) || node.$status.collapsed === false) {
+                        _.collapse(node);
+                        _.$checkLoadStatus(node);
+                    }
+                    (operation.fn || ng.noop)(node);
                 },
 
                 /** 初始化节点 */
@@ -74,6 +83,23 @@
                         if ($common.valid.undefined(node.$parent) && $common.valid.obj(parent)) node.$parent = parent;
                         node.$status.inited = true;
                     }
+                },
+
+                /** 判断是否纯功能 */
+                $isFn: function(node) {
+                    return ($common.valid.obj(node) && $common.valid.fn((node.$fn || {}).node));
+                },
+
+                /** 检查加载状态 */
+                $checkLoadStatus: function(node, times) {
+                    times = times || 0;
+                    $timeout(function() {
+                        if ($common.valid.undefined(node.children) && times < 10) {
+                            _.$checkLoadStatus(node, times++);
+                        } else if (times >= 10) {
+                            console.log('cannot check node load status', node);
+                        }
+                    }, 200);
                 }
             };
             return _;
@@ -127,11 +153,6 @@
                             } else if (node.$status.check === 'ban') {
                                 return $scope.$service.$config.icon.ban;
                             }
-                        },
-
-                        // 判断是否纯功能
-                        $isFn: function(node) {
-                            return ($common.valid.obj(node) && $common.valid.fn((node.$fn || {}).node));
                         },
 
                         $service: $tree
