@@ -118,8 +118,6 @@
                         var $idx = _.array.in(array, data, key);
                         if ($idx >= 0) {
                             array.splice($idx, 1);
-                        } else {
-                            console.warn('cannot find element', data);
                         }
                         return array;
                     },

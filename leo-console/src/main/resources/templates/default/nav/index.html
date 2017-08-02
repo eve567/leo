@@ -14,7 +14,7 @@
         <div class="row">
             <!-- tree -->
             <div class="col-sm-6">
-                <tree ng-model="navs"></tree>
+                <tree ng-model="tree.children"></tree>
             </div>
             <!-- tree -->
 
@@ -81,7 +81,7 @@
     </div>
 </div>
 
-<!--suppress JSUnresolvedVariable, JSUnresolvedFunction, ReservedWordAsName, JSUnusedLocalSymbols -->
+<!--suppress JSUnresolvedFunction, JSUnresolvedVariable, JSUnusedLocalSymbols, ReservedWordAsName -->
 <script type="text/javascript">
     'use strict';
     function navCtrl($scope, $tree, $timeout) {
@@ -98,13 +98,10 @@
             navFn: {
                 // 查询导航
                 find: function(nav) {
-                    var isRoot = !$scope.valid.obj(nav), parentId = isRoot ? 'root' : nav.id, arr = isRoot ? $scope.navs = [] : nav.children = [];
-                    $scope.get('${app}/nav/find/' + $scope.navFn.defaultNav.type + '/' + parentId + '/' + $scope.current.app.id, function(children) {
+                    $scope.get(['${app}/nav/find', $scope.navFn.defaultProperties.type, nav.id, nav.appId].join('/'), function(children) {
+                        $tree.loaded(nav, children);
                         angular.forEach(children, function(child) {
-                            arr.push($scope.treeFn.setup(child));
-                            if (isRoot) {
-                                arr.push($scope.treeFn.nodeFnAddRoot);
-                            }
+                            $scope.treeFn.setup(child);
                         });
                     });
                 },
@@ -112,8 +109,8 @@
                 // 表单处理
                 form: function(parent, nav) {
                     if (!$scope.valid.empty(nav)) {
-                        $scope.nav = angular.extend({}, $scope.navFn.defaultNav, nav);
-                        $scope.neighbours = $scope.navFn.toNeighbours($scope.array.remove(parent.children.concat(), nav));
+                        $scope.nav = angular.extend({}, $scope.navFn.defaultProperties, nav);
+                        $scope.neighbours = $scope.navFn.getNeighbours($scope.array.remove(parent.children.concat(), nav));
                         $scope.object.delete($scope.nav, ['creator', 'createTime', 'updater', 'updateTime']);
 
                         angular.forEach($scope.neighbours, function(n) {
@@ -122,9 +119,9 @@
                             }
                         });
                     } else {
-                        $scope.nav = angular.extend({}, $scope.navFn.defaultNav);
+                        $scope.nav = angular.extend({}, $scope.navFn.defaultProperties);
                         $scope.nav.parentId = parent.id;
-                        $scope.neighbours = $scope.navFn.toNeighbours(parent.children.concat());
+                        $scope.neighbours = $scope.navFn.getNeighbours(parent.children.concat());
                     } if ($scope.valid.empty($scope.nav.neighbour)) {
                         $scope.nav.neighbour = $scope.neighbours[$scope.neighbours.length - 1];
                     }
@@ -153,7 +150,7 @@
                 },
 
                 // 获得所有相邻元素
-                toNeighbours: function(navs) {
+                getNeighbours: function(navs) {
                     navs = navs || [];
                     angular.forEach(navs, function(n) {
                         if ($tree.$isFn(n)) {
@@ -163,8 +160,8 @@
                     return $scope.valid.empty(navs) ? [{name: '(つ´ω`)つ只能放在第一个'}] : navs;
                 },
 
-                // 默认功能
-                defaultNav: {
+                // 默认属性
+                defaultProperties: {
                     path: '@/',
                     target: '_blank',
                     type: '99'
@@ -173,65 +170,65 @@
 
             // 树形功能集合
             treeFn: {
-                // 添加顶级节点
-                addRoot: function() {
-                    $scope.navFn.form({});
-                },
-
-                // 添加节点
-                add: function(node) {
-                    $timeout(function() {
-                        $scope.navFn.form(node);
-                    }, 200);
-                },
-
-                // 编辑节点
-                edit: function(node) {
-                    $timeout(function() {
-                        console.log(node);
-                        $scope.navFn.form((node.$parent || {children: $scope.navs}), node);
-                    }, 200);
-                },
-
-                // 移除节点
-                remove: function(node) {
-                    console.log('it is remove node: ', node);
-                },
-
-                // 设置节点参数
+                // 设置树形节点
                 setup: function(node) {
-                    return angular.extend({
-                        $fn: {
-                            load: $scope.navFn.find
-                        },
-                        $operations: [
-                            {
-                                icon: 'fa-minus-square',
-                                class: 'text-danger',
-                                title: '删除',
-                                fn: $scope.treeFn.remove
-                            },
-                            {
-                                icon: 'fa-pencil-square',
-                                class: 'text-primary',
-                                title: '编辑',
-                                fn: $scope.treeFn.edit
-                            },
-                            {
-                                icon: 'fa-plus-square',
-                                class: 'text-success',
-                                title: '添加',
-                                fn: $scope.treeFn.add
-                            }
-                        ]
-                    }, node);
+                    if (node.id === 'root') {
+                        node.children.push({
+
+                        });
+                    } else {
+                        $tree.addLoadFn($scope.navFn.find, node);
+                        $tree.addOperations([
+                            $scope.treeDefine.operations.add,
+                            $scope.treeDefine.operations.edit,
+                            $scope.treeDefine.operations.remove
+                        ], node);
+                    }
+                }
+            },
+
+            // 树形定义
+            treeDefine: {
+                // 节点功能
+                nodeFn: {
+                    add: {
+                        name: '<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>',
+                        $fn: function() {
+                            $scope.navFn.form({});
+                        }
+                    }
                 },
 
-                // 添加顶级节点功能
-                nodeFnAddRoot: {
-                    name: '<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>',
-                    $fn: {
-                        node: $scope.treeFn.addRoot
+                // 操作功能
+                operations: {
+                    // 添加操作
+                    add: {
+                        icon: 'fa-plus-square',
+                        class: '',
+                        title: '添加',
+                        fn: function(node) {
+                            $scope.navFn.form(node);
+                        }
+                    },
+
+                    // 编辑操作
+                    edit: {
+                        icon: 'fa-pencil-square',
+                        class: 'text-primary',
+                        title: '编辑',
+                        fn: function(node) {
+                            $scope.navFn.form(node.$parent || ({children: $scope.navs}), node);
+                        }
+                    },
+
+                    // 移除操作
+                    remove: {
+                        icon: 'fa-minus-square',
+                        class: 'text-danger',
+                        title: '删除',
+                        fn: function(node) {
+                            console.log('it is remove', node);
+                        }
                     }
                 }
             },
@@ -241,8 +238,12 @@
                 // 激活应用
                 active: function(app) {
                     if ($scope.current.app !== app) {
+                        $scope.tree = {
+                            id: 'root',
+                            appId: app.id
+                        };
+                        $scope.navFn.load($scope.tree);
                         $scope.current.app = app;
-                        $scope.navFn.find();
                     }
                 }
             },

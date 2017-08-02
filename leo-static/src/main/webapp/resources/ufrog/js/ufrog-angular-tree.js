@@ -6,7 +6,7 @@
     ng.module('ugTree', ['ugCommon'])
 
         /** 服务定义 */
-        .service('$tree', ['$common', '$timeout', function($common, $timeout) {
+        .service('$tree', ['$common', function($common) {
             var _ = {
                 $config: {
                     icon: {
@@ -27,10 +27,9 @@
                             _.collapse(n);
                         });
                     } else if ($common.valid.obj(node)) {
-                        _.$init(node);
                         if ($common.valid.undefined(node.$status.collapsed)) {
                             if ($common.valid.undefined(node.children) && $common.valid.fn(node.$fn.load)) {
-                                _.$loadChildren(node);
+                                _.load(node);
                             } else if ($common.valid.undefined(node.children)) {
                                 node.children = [];
                             } if ($common.valid.defined(node.children)) {
@@ -45,61 +44,67 @@
                 },
 
                 /** 查询下级节点 */
-                $loadChildren: function(node) {
+                load: function(node) {
                     if ($common.valid.arr(node)) {
                         ng.forEach(node, function(n) {
-                            _.$loadChildren(n);
+                            _.load(n);
                         });
                     } else if ($common.valid.obj(node) && $common.valid.fn(node.$fn.load)) {
-                        _.$init(node);
                         node.$status.loading = true;
                         node.$fn.load(node);
-                        _.$checkLoadStatus(node);
-                        _.$init(node.children, node);
-                        _.collapse(node);
-                        node.$status.loading = false;
                     }
                 },
 
-                /** 执行操作 */
-                $doOperation: function(node, operation) {
-                    if ($common.valid.empty(node.$status.collapsed) || node.$status.collapsed === false) {
-                        _.collapse(node);
-                        _.$checkLoadStatus(node);
-                    }
-                    (operation.fn || ng.noop)(node);
+                /** 加载完成处理 */
+                loaded: function(parent, children) {
+                    ng.forEach(children, function(child) {
+                        child.$fn = child.$fn || {};
+                        child.$status = child.$status || {};
+                        child.$operations = child.$operations || [];
+                        child.$parent = parent;
+                    });
+                    _.collapse(parent);
+                    parent.children = children;
+                    parent.$status.loading = false;
                 },
 
-                /** 初始化节点 */
-                $init: function(node, parent) {
-                    if ($common.valid.arr(node)) {
-                        ng.forEach(node, function(n) {
-                            _.$init(n, parent);
-                        });
-                    } else if ($common.valid.obj(node) && (node.$status || {}).inited !== true) {
-                        if ($common.valid.undefined(node.$fn)) node.$fn = {};
-                        if ($common.valid.undefined(node.$status)) node.$status = {};
-                        if ($common.valid.undefined(node.$operations)) node.$operations = [];
-                        if ($common.valid.undefined(node.$parent) && $common.valid.obj(parent)) node.$parent = parent;
-                        node.$status.inited = true;
+                /** 添加功能节点 */
+                createFn: function(name, fn) {
+                    return {
+                        name: name,
+                        $fn: fn
+                    };
+                },
+
+                /** 执行功能节点 */
+                doFn: function(node) {
+                    if (_.isFn(node)) {
+                        node.$fn(node);
+                    } else {
+                        console.error('the node is not fn', node);
                     }
                 },
 
                 /** 判断是否纯功能 */
-                $isFn: function(node) {
-                    return ($common.valid.obj(node) && $common.valid.fn((node.$fn || {}).node));
+                isFn: function(node) {
+                    return ($common.valid.obj(node) && $common.valid.fn(node.$fn));
                 },
 
-                /** 检查加载状态 */
-                $checkLoadStatus: function(node, times) {
-                    times = times || 0;
-                    $timeout(function() {
-                        if ($common.valid.undefined(node.children) && times < 10) {
-                            _.$checkLoadStatus(node, times++);
-                        } else if (times >= 10) {
-                            console.log('cannot check node load status', node);
-                        }
-                    }, 200);
+                /** 添加操作 */
+                addOperations: function(operations, node) {
+                    node.$operations = node.$operations || [];
+                    operations = $common.valid.arr(operations) ? operations : [operations];
+                    ng.forEach(operations, function(operation) {
+                        node.$operations.push(operation);
+                    });
+                },
+
+                /** 执行操作 */
+                doOperation: function(node, operation) {
+                    if ($common.valid.empty(node.$status.collapsed) || node.$status.collapsed === false) {
+                        _.collapse(node);
+                    }
+                    (operation.fn || ng.noop)(node);
                 }
             };
             return _;
@@ -132,7 +137,6 @@
 
                         // 展示图标样式
                         $collapseIcon: function(node) {
-                            $scope.$service.$init(node);
                             if (node.$status.loading === true) {
                                 return $scope.$service.$config.icon.spin;
                             } else if ($common.valid.arr(node.children) && node.children.length === 0) {
