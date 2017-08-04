@@ -7,7 +7,7 @@
 
         /** 定义服务 */
         .service('$leo', ['$http', '$common', function($http, $common) {
-            var $this = {
+            var $_ = {
                 $config: {},
                 $constant: {
                     jsonp: 'jsonp=JSON_CALLBACK',
@@ -21,22 +21,22 @@
 
                 /** 配置 */
                 config: function(host, accessToken, appId, scope) {
-                    $this.$config.host = host;
-                    $this.$config.accessToken = accessToken;
-                    $this.$config.appId = appId;
-                    $this.$config.scope = scope;
+                    $_.$config.host = host;
+                    $_.$config.accessToken = accessToken;
+                    $_.$config.appId = appId;
+                    $_.$config.scope = scope;
                 },
 
                 /** 查询应用 */
                 apps: function(callback) {
-                    $this.$jsonp([$this.$config.host, $this.$constant.uri.core.apps, $this.$config.accessToken, $this.$config.appId].join('/'), function(data) {
+                    $_.$jsonp([$_.$config.host, $_.$constant.uri.core.apps, $_.$config.accessToken, $_.$config.appId].join('/'), function(data) {
                         (callback || ng.noop)(data.content);
                     });
                 },
 
                 /** 查询导航 */
                 navs: function(parent, callback) {
-                    $this.$jsonp([$this.$config.host, $this.$constant.uri.core.navs, '99', parent.id, $this.$config.accessToken, $this.$config.appId].join('/'), function(data) {
+                    $_.$jsonp([$_.$config.host, $_.$constant.uri.core.navs, '99', parent.id, $_.$config.accessToken, $_.$config.appId].join('/'), function(data) {
                         (callback || ng.noop)(data.content);
                     });
                 },
@@ -44,9 +44,9 @@
                 /** 刷新视图 */
                 refresh: function(url) {
                     if ($common.valid.str(url)) {
-                        $this.$config.scope.bodyUrl = url + (url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
-                    } else if ($common.valid.obj($this.$config.scope.$subnav)) {
-                        $this.$config.scope.bodyUrl = $this.$config.scope.$subnav.url + ($this.$config.scope.$subnav.url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
+                        $_.$config.scope.bodyUrl = url + (url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
+                    } else if ($common.valid.obj($_.$config.scope.$subnav)) {
+                        $_.$config.scope.bodyUrl = $_.$config.scope.$subnav.url + ($_.$config.scope.$subnav.url.indexOf('?') >= 0 ? '&' : '?') + $common.date.timestamp();
                     } else {
                         console.error('wrong url or nav setting');
                     }
@@ -54,8 +54,8 @@
 
                 /** 全屏切换 */
                 fullscreen: function(bool) {
-                    $this.$config.scope.$fullscreen = $common.valid.defined(bool) ? bool : ($this.$config.scope.$fullscreen !== true);
-                    if ($this.$config.scope.$fullscreen) {
+                    $_.$config.scope.$fullscreen = $common.valid.defined(bool) ? bool : ($_.$config.scope.$fullscreen !== true);
+                    if ($_.$config.scope.$fullscreen) {
                         $common.$('body').addClass('fullscreen');
                     } else {
                         $common.$('body').removeClass('fullscreen');
@@ -79,7 +79,7 @@
                     });
                 }
             };
-            return $this;
+            return $_;
         }])
 
         /** 布局指令 */
@@ -104,7 +104,7 @@
                             });
                             $leo.config($scope.$host, $scope.$accessToken, $scope.$appId, $scope);
                             $scope.$dom();
-                            $scope.$find({id: 'root', root: true});
+                            $scope.$find({id: '_root', root: true});
                             $leo.apps(function(data) {
                                 $scope.$apps = data;
                             });

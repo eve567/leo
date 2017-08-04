@@ -2,9 +2,12 @@ package net.ufrog.leo.service.impls;
 
 import net.ufrog.common.Link;
 import net.ufrog.common.cache.Caches;
+import net.ufrog.common.exception.ServiceException;
 import net.ufrog.leo.domain.models.Nav;
+import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.repositories.NavRepository;
 import net.ufrog.leo.service.NavService;
+import net.ufrog.leo.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,55 +30,70 @@ public class NavServiceImpl implements NavService {
     /** 导航仓库 */
     private NavRepository navRepository;
 
+    /** 权限业务接口 */
+    private SecurityService securityService;
+
     /**
      * 构造函数
      *
      * @param navRepository 导航仓库
+     * @param securityService 权限业务接口
      */
     @Autowired
-    public NavServiceImpl(NavRepository navRepository) {
+    public NavServiceImpl(NavRepository navRepository, SecurityService securityService) {
         this.navRepository = navRepository;
+        this.securityService = securityService;
     }
 
     @Override
-    public List<Nav> findRoot(String type, String appId) {
-        return Link.sort(navRepository.findByTypeAndAppIdAndParentIdIsNull(type, appId));
+    public List<Nav> findChildren(String type, String appId, String parentId) {
+        return Link.sort(navRepository.findByTypeAndAppIdAndParentId(type, appId, parentId), Nav.LAST_KEY);
     }
 
     @Override
-    public List<Nav> getRoot(String type, String appId) {
-        @SuppressWarnings("unchecked")
-        List<Nav> lNav = Caches.get(CACHE_NAV, type + "-" + appId, List.class);
+    public List<Nav> getChildren(String type, String appId, String parentId) {
+        String key = getCacheKey(type, appId, parentId);
+        @SuppressWarnings("unchecked") List<Nav> lNav = Caches.get(CACHE_NAV, key, List.class);
         if (lNav == null) {
-            lNav = findRoot(type, appId);
-            Caches.set(CACHE_NAV, type + "-" + appId, lNav);
+            lNav = findChildren(type, appId, parentId);
+            Caches.set(CACHE_NAV, key, lNav);
         }
         return lNav;
     }
 
     @Override
-    public List<Nav> findByParentId(String parentId) {
-        return Link.sort(navRepository.findByParentId(parentId));
-    }
+    @Transactional
+    public Nav create(Nav nav) {
+        List<Nav> lNav = navRepository.findByTypeAndAppIdAndParentIdAndCode(nav.getType(), nav.getAppId(), nav.getParentId(), nav.getCode());
+        if (lNav.size() == 0) {
+            Nav prev = navRepository.findByParentIdAndNextId(nav.getParentId(), nav.getNextId());
+            navRepository.save(nav);
+            if (prev != null) {
+                prev.setNextId(nav.getId());
+                navRepository.save(prev);
+            }
 
-    @Override
-    public List<Nav> getByParentId(String parentId) {
-        @SuppressWarnings("unchecked")
-        List<Nav> lNav = Caches.get(CACHE_NAV, parentId, List.class);
-        if (lNav == null) {
-            lNav = findByParentId(parentId);
-            Caches.set(CACHE_NAV, parentId, lNav);
+            securityService.createResource(Resource.Type.NAV, nav.getId());
+            clear(nav.getType(), nav.getAppId(), nav.getParentId());
+            return nav;
         }
-        return lNav;
+        throw new ServiceException("nav code '" + nav.getCode() + "' duplicate.", "service.nav.failure.duplicate");
     }
 
     @Override
-    public void clearRoot(String type, String appId) {
-        clear(type + "-" + appId);
+    public void clear(String type, String appId, String parentId) {
+        Caches.safeDelete(CACHE_NAV, getCacheKey(type, appId, parentId));
     }
 
-    @Override
-    public void clear(String parentId) {
-        Caches.safeDelete(CACHE_NAV, parentId);
+    /**
+     * 获取缓存键值
+     *
+     * @param type 类型
+     * @param appId 应用编号
+     * @param parentId 上级编号
+     * @return 缓存键值
+     */
+    private String getCacheKey(String type, String appId, String parentId) {
+        return type + "-" + appId + "-" + parentId;
     }
 }

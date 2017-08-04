@@ -17,19 +17,32 @@ import java.util.List;
 public interface NavRepository extends JpaRepository<Nav, String> {
 
     /**
-     * 通过应用编号查询根级导航数据
+     * 通过类型/应用编号/上级编号查询导航数据
      *
      * @param type 类型
      * @param appId 应用编号
-     * @return 根级导航列表
-     */
-    List<Nav> findByTypeAndAppIdAndParentIdIsNull(String type, String appId);
-
-    /**
-     * 通过上级编号查询导航数据
-     *
      * @param parentId 上级编号
      * @return 导航列表
      */
-    List<Nav> findByParentId(String parentId);
+    List<Nav> findByTypeAndAppIdAndParentId(String type, String appId, String parentId);
+
+    /**
+     * 通过类型/应用编号/上级编号/代码查询导航数据
+     *
+     * @param type 类型
+     * @param appId 应用编号
+     * @param parentId 上级编号
+     * @param code 代码
+     * @return 导航列表
+     */
+    List<Nav> findByTypeAndAppIdAndParentIdAndCode(String type, String appId, String parentId, String code);
+
+    /**
+     * 通过上级编号和相邻编号查询数据
+     *
+     * @param parentId 上级编号
+     * @param nextId 相邻编号
+     * @return 导航对象
+     */
+    Nav findByParentIdAndNextId(String parentId, String nextId);
 }

@@ -15,6 +15,8 @@ public class Nav extends Model implements Link<String> {
 
     private static final long serialVersionUID = -5945791295949876544L;
 
+    public static final String PARENT_ID_ROOT  = "_root";
+
     /** 名称 */
     @javax.persistence.Column(name = "vc_name")
     private java.lang.String name;

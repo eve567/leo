@@ -67,6 +67,15 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
+    @Transactional
+    public Resource createResource(String type, String referenceId) {
+        Resource resource = new Resource();
+        resource.setType(type);
+        resource.setReferenceId(referenceId);
+        return resourceRepository.save(resource);
+    }
+
+    @Override
     public void clearResourceMapping(String userId) {
         Caches.safeDelete(CACHE_USER_RESOURCES, userId);
     }
@@ -96,9 +105,15 @@ public class SecurityServiceImpl implements SecurityService {
         return typeMapping;
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * 读取授权资源
+     *
+     * @param userId 用户编号
+     * @param type 类型
+     * @return 授权资源列表
+     */
     private List<String> getAllowedResource(String userId, String type) {
-        Map<String, List<String>> mResource = Caches.get(CACHE_USER_RESOURCES, userId, Map.class);
+        @SuppressWarnings("unchecked") Map<String, List<String>> mResource = Caches.get(CACHE_USER_RESOURCES, userId, Map.class);
         if (mResource == null) mResource = new HashMap<>();
         if (!mResource.containsKey(type)) {
             List<RoleResource> lRoleResource = securityJpql.findRoleResourceByUserIdAndType(userId, type);

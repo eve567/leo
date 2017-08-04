@@ -5,7 +5,7 @@
             <li panel-heading-dropdown>
                 <a href="#"><span ng-bind="current.app.name"></span>&nbsp;<fa i="caret-down"></fa></a>
                 <ul class="panel-heading-dropdown">
-                    <li ng-repeat="app in $apps"><a href="#" ng-click="appFn.active(app)"><fa i="caret-right">&nbsp;<span ng-bind="app.name"></span></fa></a></li>
+                    <li ng-repeat="app in $apps|exclude:current.app"><a href="#" ng-click="appFn.active(app)"><fa i="caret-right">&nbsp;<span ng-bind="app.name"></span></fa></a></li>
                 </ul>
             </li>
         </ul>
@@ -14,7 +14,7 @@
         <div class="row">
             <!-- tree -->
             <div class="col-sm-6">
-                <tree ng-model="tree.children"></tree>
+                <tree ng-model="navs"></tree>
             </div>
             <!-- tree -->
 
@@ -25,6 +25,10 @@
                         <label class="col-sm-1 control-label"><rq>名称</rq></label>
                         <div class="col-sm-4">
                             <input name="name" title="名称" class="form-control" placeholder="请填写功能名称" ng-model="nav.name" required maxlength="20" ng-disabled="ctrl.status('navForm', ['locked'])">
+                            <alert-pop field="navForm.name">
+                                <alert-pop-item type="required">必须填写功能名称</alert-pop-item>
+                                <alert-pop-item type="maxlength">功能名称不能超过20个字符</alert-pop-item>
+                            </alert-pop>
                         </div>
                     </div>
                     <div class="form-group">
@@ -37,18 +41,29 @@
                         <label class="col-sm-1 control-label"><rq>代码</rq></label>
                         <div class="col-sm-4">
                             <input name="code" title="代码" class="form-control" placeholder="请填写功能代码" ng-model="nav.code" required maxlength="50" pattern="^\w+$" ng-disabled="ctrl.status('navForm', ['locked'])">
+                            <alert-pop field="navForm.code">
+                                <alert-pop-item type="required">必须填写功能代码</alert-pop-item>
+                                <alert-pop-item type="maxlength">功能名称不能超过50个字符</alert-pop-item>
+                                <alert-pop-item type="pattern">功能名称只能使用数字和字母</alert-pop-item>
+                            </alert-pop>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-1 control-label"><rq>地址</rq></label>
                         <div class="col-sm-6">
-                            <input name="path" title="地址" class="form-control" placeholder="@/" ng-model="nav.path" required type="url" ng-disabled="ctrl.status('navForm', ['locked'])">
+                            <input name="path" title="地址" class="form-control" placeholder="@/" ng-model="nav.path" required ng-disabled="ctrl.status('navForm', ['locked'])">
+                            <alert-pop field="navForm.path">
+                                <alert-pop-item type="required">必须填写功能地址</alert-pop-item>
+                            </alert-pop>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-1 control-label"><rq>目标</rq></label>
                         <div class="col-sm-2">
                             <input name="target" title="目标" class="form-control" placeholder="_blank" ng-model="nav.target" required ng-disabled="ctrl.status('navForm', ['locked'])">
+                            <alert-pop field="navForm.target">
+                                <alert-pop-item type="required">必须填写功能目标</alert-pop-item>
+                            </alert-pop>
                         </div>
                     </div>
                     <div class="form-group">
@@ -59,7 +74,7 @@
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="ctrl.status('navForm', ['locked'])"><span ng-bind="current.position.name"></span> <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                        <li ng-repeat="pos in positions" ng-click="current.position = pos"><a href="#" ng-bind="pos.name"></a></li>
+                                        <li ng-repeat="pos in positions|exclude:current.position:'type'" ng-click="current.position = pos"><a href="#" ng-bind="pos.name"></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -81,17 +96,14 @@
     </div>
 </div>
 
-<!--suppress JSUnresolvedFunction, JSUnresolvedVariable, JSUnusedLocalSymbols, ReservedWordAsName -->
+<!--suppress JSUnresolvedFunction, JSUnresolvedVariable, JSUnusedLocalSymbols, ReservedWordAsName, JSUnusedGlobalSymbols -->
 <script type="text/javascript">
     'use strict';
     function navCtrl($scope, $tree, $timeout) {
         angular.extend($scope, {
             // 初始化
             init: function() {
-                $scope.ctrl.status('saveBtn', 'standby');
-                $scope.ctrl.status('navForm', 'locked');
                 $scope.appFn.active($scope.$apps[0]);
-                $scope.current.position = $scope.positions[0];
             },
 
             // 导航功能集合
@@ -101,7 +113,7 @@
                     $scope.get(['${app}/nav/find', $scope.navFn.defaultProperties.type, nav.id, nav.appId].join('/'), function(children) {
                         $tree.loaded(nav, children);
                         angular.forEach(children, function(child) {
-                            $scope.treeFn.setup(child);
+                            $scope.navFn.setup(child);
                         });
                     });
                 },
@@ -110,8 +122,7 @@
                 form: function(parent, nav) {
                     if (!$scope.valid.empty(nav)) {
                         $scope.nav = angular.extend({}, $scope.navFn.defaultProperties, nav);
-                        $scope.neighbours = $scope.navFn.getNeighbours($scope.array.remove(parent.children.concat(), nav));
-                        $scope.object.delete($scope.nav, ['creator', 'createTime', 'updater', 'updateTime']);
+                        $scope.neighbours = $scope.navFn.copy(parent.children, nav);
 
                         angular.forEach($scope.neighbours, function(n) {
                             if (n.nextId === $scope.nav.id) {
@@ -120,11 +131,13 @@
                         });
                     } else {
                         $scope.nav = angular.extend({}, $scope.navFn.defaultProperties);
+                        $scope.nav.appId = parent.appId;
                         $scope.nav.parentId = parent.id;
-                        $scope.neighbours = $scope.navFn.getNeighbours(parent.children.concat());
+                        $scope.neighbours = $scope.navFn.copy(parent.children);
                     } if ($scope.valid.empty($scope.nav.neighbour)) {
                         $scope.nav.neighbour = $scope.neighbours[$scope.neighbours.length - 1];
                     }
+                    $scope.current.parent = parent;
                     $scope.current.position = $scope.positions[0];
                     $scope.ctrl.status('navForm', 'unlocked');
                 },
@@ -132,13 +145,40 @@
                 // 保存
                 save: function($event) {
                     $scope.ctrl.stop($event);
+                    $scope.ctrl.status('saveBtn', 'processing');
+                    $scope.navFn.nextId();
+
+                    var nav = angular.extend({}, $scope.nav);
+                    $scope.object.delete(nav, ['creator', 'createTime', 'updater', 'updateTime', 'children', 'neighbour', '$status', '$fn', '$operations', '$parent', '$setup']);
+                    if ($scope.valid.empty(nav.id)) {
+                        $scope.navFn.create(nav);
+                    } else {
+                        $scope.navFn.update(nav);
+                    }
+                },
+
+                // 创建功能
+                create: function(nav) {
+                    $scope.post('${app}/nav/create', nav, function(data) {
+                        $tree.reload($scope.current.parent);
+                        $scope.navFn.cancel();
+                    }, function(data) {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 更新功能
+                update: function(nav) {
+                    console.log('it is update', nav);
                 },
 
                 // 取消
                 cancel: function() {
-                    $scope.$navs = [];
                     $scope.nav = {};
+                    $scope.current.position = $scope.positions[0];
                     $scope.ctrl.status('navForm', 'locked');
+                    $scope.ctrl.status('saveBtn', 'standby');
+                    $scope.ctrl.resetForm($scope.navForm);
                 },
 
                 // 判断保存按钮是否有效
@@ -150,14 +190,32 @@
                 },
 
                 // 获得所有相邻元素
-                getNeighbours: function(navs) {
-                    navs = navs || [];
-                    angular.forEach(navs, function(n) {
-                        if ($tree.$isFn(n)) {
-                            $scope.array.remove(navs, n);
-                        }
-                    });
-                    return $scope.valid.empty(navs) ? [{name: '(つ´ω`)つ只能放在第一个'}] : navs;
+                copy: function(navs, nav) {
+                    navs = (navs || []).concat();
+                    $scope.array.remove(navs, nav);
+                    return navs.length === 0 ? [$scope.treeDefine.lastPosition] : navs;
+                },
+
+                // 设置树形节点
+                setup: function(node) {
+                    if (!node.$setup) {
+                        node.$setup = true;
+                        $tree.setLoadFn($scope.navFn.find, node);
+                        $tree.addOperations([
+                            $scope.treeDefine.operations.remove,
+                            $scope.treeDefine.operations.edit,
+                            $scope.treeDefine.operations.add
+                        ], node);
+                    }
+                },
+
+                // 设置相邻编号
+                nextId: function() {
+                    if ($scope.current.position.type === 'next') {
+                        $scope.nav.nextId = $scope.nav.neighbour.nextId;
+                    } else if ($scope.current.position.type === 'prev') {
+                        $scope.nav.nextId = $scope.nav.neighbour.id;
+                    }
                 },
 
                 // 默认属性
@@ -168,43 +226,14 @@
                 }
             },
 
-            // 树形功能集合
-            treeFn: {
-                // 设置树形节点
-                setup: function(node) {
-                    if (node.id === 'root') {
-                        node.children.push({
-
-                        });
-                    } else {
-                        $tree.addLoadFn($scope.navFn.find, node);
-                        $tree.addOperations([
-                            $scope.treeDefine.operations.add,
-                            $scope.treeDefine.operations.edit,
-                            $scope.treeDefine.operations.remove
-                        ], node);
-                    }
-                }
-            },
-
             // 树形定义
             treeDefine: {
-                // 节点功能
-                nodeFn: {
-                    add: {
-                        name: '<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>',
-                        $fn: function() {
-                            $scope.navFn.form({});
-                        }
-                    }
-                },
-
                 // 操作功能
                 operations: {
                     // 添加操作
                     add: {
                         icon: 'fa-plus-square',
-                        class: '',
+                        class: 'text-success',
                         title: '添加',
                         fn: function(node) {
                             $scope.navFn.form(node);
@@ -217,7 +246,7 @@
                         class: 'text-primary',
                         title: '编辑',
                         fn: function(node) {
-                            $scope.navFn.form(node.$parent || ({children: $scope.navs}), node);
+                            $scope.navFn.form(node.$parent, node);
                         }
                     },
 
@@ -230,6 +259,13 @@
                             console.log('it is remove', node);
                         }
                     }
+                },
+
+                //
+                lastPosition: {
+                    id: '_last',
+                    nextId: '_last',
+                    name: '(つ´ω`)つ只能放在第一个'
                 }
             },
 
@@ -238,12 +274,16 @@
                 // 激活应用
                 active: function(app) {
                     if ($scope.current.app !== app) {
-                        $scope.tree = {
-                            id: 'root',
-                            appId: app.id
-                        };
-                        $scope.navFn.load($scope.tree);
                         $scope.current.app = app;
+                        $scope.navs = [];
+                        $scope.root = {
+                            id: '_root',
+                            appId: app.id,
+                            children: $scope.navs
+                        };
+                        $scope.navFn.cancel();
+                        $scope.navFn.setup($scope.root);
+                        $tree.load($scope.root);
                     }
                 }
             },

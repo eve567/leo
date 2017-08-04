@@ -61,8 +61,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public List<App> getAll() {
-        @SuppressWarnings("unchecked")
-        List<App> lApp = Caches.get(CACHE_APPS, List.class);
+        @SuppressWarnings("unchecked") List<App> lApp = Caches.get(CACHE_APPS, List.class);
         if (lApp == null) {
             lApp = findAll();
             Caches.set(CACHE_APPS, lApp);

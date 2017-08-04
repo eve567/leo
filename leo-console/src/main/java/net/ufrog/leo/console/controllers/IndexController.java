@@ -3,8 +3,6 @@ package net.ufrog.leo.console.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.stream.IntStream;
-
 /**
  * 索引控制器
  *
@@ -23,5 +21,15 @@ public class IndexController {
     @GetMapping({"", "/", "/index"})
     public String index() {
         return "index";
+    }
+
+    /**
+     * 注销
+     *
+     * @return view for sign
+     */
+    @GetMapping("/sign_out")
+    public String signOut() {
+        return "sign";
     }
 }

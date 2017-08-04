@@ -7,7 +7,7 @@
 
         /** 服务定义 */
         .service('$tree', ['$common', function($common) {
-            var _ = {
+            var $_ = {
                 $config: {
                     icon: {
                         spin: 'fa-spinner fa-spin',
@@ -24,12 +24,13 @@
                 collapse: function(node) {
                     if ($common.valid.arr(node)) {
                         ng.forEach(node, function(n) {
-                            _.collapse(n);
+                            $_.collapse(n);
                         });
                     } else if ($common.valid.obj(node)) {
+                        node.$status = node.$status || {};
                         if ($common.valid.undefined(node.$status.collapsed)) {
                             if ($common.valid.undefined(node.children) && $common.valid.fn(node.$fn.load)) {
-                                _.load(node);
+                                $_.load(node);
                             } else if ($common.valid.undefined(node.children)) {
                                 node.children = [];
                             } if ($common.valid.defined(node.children)) {
@@ -47,47 +48,43 @@
                 load: function(node) {
                     if ($common.valid.arr(node)) {
                         ng.forEach(node, function(n) {
-                            _.load(n);
+                            $_.load(n);
                         });
                     } else if ($common.valid.obj(node) && $common.valid.fn(node.$fn.load)) {
+                        node.$status = node.$status || {};
                         node.$status.loading = true;
                         node.$fn.load(node);
                     }
                 },
 
-                /** 加载完成处理 */
-                loaded: function(parent, children) {
-                    ng.forEach(children, function(child) {
-                        child.$fn = child.$fn || {};
-                        child.$status = child.$status || {};
-                        child.$operations = child.$operations || [];
-                        child.$parent = parent;
-                    });
-                    _.collapse(parent);
-                    parent.children = children;
-                    parent.$status.loading = false;
-                },
-
-                /** 添加功能节点 */
-                createFn: function(name, fn) {
-                    return {
-                        name: name,
-                        $fn: fn
-                    };
-                },
-
-                /** 执行功能节点 */
-                doFn: function(node) {
-                    if (_.isFn(node)) {
-                        node.$fn(node);
-                    } else {
-                        console.error('the node is not fn', node);
+                /** 重加载下级节点 */
+                reload: function(node) {
+                    if ($common.valid.arr(node)) {
+                        ng.forEach(node, function(n) {
+                            $_.reload(n);
+                        });
+                    } else if ($common.valid.obj(node)) {
+                        $common.array.empty(node.children);
+                        node.$status.collapsed = false;
+                        $_.load(node);
                     }
                 },
 
-                /** 判断是否纯功能 */
-                isFn: function(node) {
-                    return ($common.valid.obj(node) && $common.valid.fn(node.$fn));
+                /** 加载完成处理 */
+                loaded: function(parent, children) {
+                    parent.children = parent.children || [];
+                    ng.forEach(children, function(child) {
+                        child.$parent = parent;
+                        parent.children.push(child);
+                    });
+                    $_.collapse(parent);
+                    parent.$status.loading = false;
+                },
+
+                /** 设置加载方法 */
+                setLoadFn: function(fn, node) {
+                    node.$fn = node.$fn || {};
+                    node.$fn.load = fn;
                 },
 
                 /** 添加操作 */
@@ -102,12 +99,12 @@
                 /** 执行操作 */
                 doOperation: function(node, operation) {
                     if ($common.valid.empty(node.$status.collapsed) || node.$status.collapsed === false) {
-                        _.collapse(node);
+                        $_.collapse(node);
                     }
                     (operation.fn || ng.noop)(node);
                 }
             };
-            return _;
+            return $_;
         }])
 
         /** 树形指令 */
@@ -137,6 +134,7 @@
 
                         // 展示图标样式
                         $collapseIcon: function(node) {
+                            node.$status = node.$status || {};
                             if (node.$status.loading === true) {
                                 return $scope.$service.$config.icon.spin;
                             } else if ($common.valid.arr(node.children) && node.children.length === 0) {
@@ -150,6 +148,7 @@
 
                         // 复选框图标样式
                         $checkboxIcon: function(node) {
+                            node.$status = node.$status || {};
                             if ($common.valid.undefined(node.$status.check) || node.$status.check === 'unchecked') {
                                 return $scope.$service.$config.icon.unchecked;
                             } else if (node.$status.check === 'checked') {

@@ -7,14 +7,14 @@
 
         /** 服务定义 */
         .service('$bootstrap', ['$timeout', '$common', function($timeout, $common) {
-            var _ = {
+            var $_ = {
                 $config: null,
 
                 /** 配置 */
                 config: function(context, scope) {
-                    _.$config = _.$config || {};
-                    _.$config.context = context;
-                    _.$config.scope = scope;
+                    $_.$config = $_.$config || {};
+                    $_.$config.context = context;
+                    $_.$config.scope = scope;
                 },
 
                 /** 警告工具 */
@@ -24,44 +24,44 @@
 
                     /** 配置 */
                     config: function(data, signOutFlag, signView, delay) {
-                        _.alert.$config = _.alert.$config || {};
-                        _.alert.$config.signOutFlag = signOutFlag;
-                        _.alert.$config.signView = signView;
-                        _.alert.$config.delay = delay || 5000;
-                        _.alert.$object = data;
+                        $_.alert.$config = $_.alert.$config || {};
+                        $_.alert.$config.signOutFlag = signOutFlag;
+                        $_.alert.$config.signView = signView;
+                        $_.alert.$config.delay = delay || 5000;
+                        $_.alert.$object = data;
                     },
 
                     /** 显示警告层 */
                     show: function(data) {
                         if (data.show !== false) {
-                            _.alert.$object = _.alert.$object || {};
-                            _.alert.$object.type = ng.lowercase(data.type);
-                            _.alert.$object.message = data.message || data.messages.join('<br>');
-                            _.alert.$object.show = !$common.valid.empty(_.alert.$object.message);
+                            $_.alert.$object = $_.alert.$object || {};
+                            $_.alert.$object.type = ng.lowercase(data.type);
+                            $_.alert.$object.message = data.message || data.messages.join('<br>');
+                            $_.alert.$object.show = !$common.valid.empty($_.alert.$object.message);
 
                             if (data.delay !== -1) {
                                 $timeout(function() {
-                                    _.alert.hide();
-                                }, data.delay || _.alert.$config.delay);
+                                    $_.alert.hide();
+                                }, data.delay || $_.alert.$config.delay);
                             }
                         }
                     },
 
                     /** 隐藏警告层 */
                     hide: function() {
-                        _.alert.$object = _.alert.$object || {};
-                        _.alert.$object.show = false;
+                        $_.alert.$object = $_.alert.$object || {};
+                        $_.alert.$object.show = false;
                     },
 
                     /** 检查结果并自动显示 */
                     check: function(data) {
                         if (data && data.result) {
-                            if ($common.valid.str(data.data) && data.data.indexOf(_.alert.$config.signOutFlag) === 0) {
-                                $common.ctrl.redirect(_.alert.$config.signView);
+                            if ($common.valid.str(data.data) && data.data.indexOf($_.alert.$config.signOutFlag) === 0) {
+                                $common.ctrl.redirect($_.alert.$config.signView);
                                 return false;
                             } else {
-                                _.alert.show(data);
-                                return _.alert.$object.type === 'success';
+                                $_.alert.show(data);
+                                return $_.alert.$object.type === 'success';
                             }
                         } else {
                             return true;
@@ -84,11 +84,11 @@
 
                 /** 分页工具 */
                 page: function(data, dname, pname, scope) {
-                    (scope || _.$config.scope)[dname] = data.content;
-                    (scope || _.$config.scope)[pname || 'pagination'] = {current: data.number, size: data.size, total: data.totalElements, pages: data.totalPages};
+                    (scope || $_.$config.scope)[dname] = data.content;
+                    (scope || $_.$config.scope)[pname || 'pagination'] = {current: data.number, size: data.size, total: data.totalElements, pages: data.totalPages};
                 }
             };
-            return _;
+            return $_;
         }])
 
         /** 警告指令 */
@@ -283,7 +283,7 @@
                 template: [
                     '<div>',
                         '<div class="input-group">',
-                            '<input type="text" class="form-control" ng-value="$filenames()" readonly>',
+                            '<input class="form-control" ng-value="$filenames()" readonly>',
                             '<span class="input-group-btn">',
                                 '<button type="button" class="btn btn-default btn-fixed" ng-bind="btnValue"></button>',
                             '</span>',
@@ -330,7 +330,7 @@
         }])
 
         /** 表单验证提示指令 */
-        .directive('alertPop', function() {
+        .directive('alertPop', ['$timeout', function($timeout) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -343,7 +343,9 @@
                     ng.extend($scope, {
                         // 初始化
                         $init: function() {
-                            $element.css('left', $element.prev().outerWidth() + 20).append('<p class="alert-pop-triangle"></p>');
+                            $timeout(function() {
+                                $element.css('left', $element.prev().outerWidth() + 20).append('<p class="alert-pop-triangle"></p>');
+                            }, 1000);
                         },
 
                         // 判断是否无效
@@ -354,7 +356,7 @@
                     }).$init();
                 }
             };
-        })
+        }])
 
         /** 表单验证提示元素指令 */
         .directive('alertPopItem', function() {

@@ -1,6 +1,7 @@
 package net.ufrog.leo.service;
 
 import net.ufrog.leo.domain.models.ID;
+import net.ufrog.leo.domain.models.Resource;
 
 import java.util.List;
 
@@ -22,6 +23,15 @@ public interface SecurityService {
      * @return 过滤后的资源列表
      */
     <T extends ID> List<T> filter(List<T> lResource, String userId);
+
+    /**
+     * 创建资源
+     *
+     * @param type 类型
+     * @param referenceId 相关编号
+     * @return 资源
+     */
+    Resource createResource(String type, String referenceId);
 
     /**
      * 清空用户资源映射缓存

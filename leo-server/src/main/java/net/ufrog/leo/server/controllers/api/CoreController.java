@@ -1,6 +1,5 @@
 package net.ufrog.leo.server.controllers.api;
 
-import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.client.LeoAppUser;
 import net.ufrog.leo.client.api.beans.AppResp;
 import net.ufrog.leo.client.api.beans.AppUserResp;
@@ -32,7 +31,6 @@ import java.util.List;
 @RequestMapping("/api")
 public class CoreController {
 
-    private static final String NAV_ROOT    = "root";
     private static final String NAV_PREFIX  = "@";
 
     /** 应用业务接口 */
@@ -107,7 +105,7 @@ public class CoreController {
     @GetMapping("/navs/{type}/{parentId}/{token}/{appId}")
     public ListResp<NavResp> findNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("token") String token, @PathVariable("appId") String appId) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
-        List<Nav> lNav = Strings.equals(NAV_ROOT, parentId) ? navService.getRoot(type, accessToken.getAppId()) : navService.getByParentId(parentId);
+        List<Nav> lNav = navService.findChildren(type, appId, parentId);
         ListResp<NavResp> lrNavResp = new ListResp<>();
         App app = appService.getById(appId);
 

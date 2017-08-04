@@ -14,51 +14,39 @@ import java.util.List;
 public interface NavService {
 
     /**
-     * 查询根级导航
+     * 查询下级导航
      *
      * @param type 类型
      * @param appId 应用编号
-     * @return 根导航列表
-     */
-    List<Nav> findRoot(String type, String appId);
-
-    /**
-     * 读取根级导航<br>缓存读取
-     *
-     * @param type 类型
-     * @param appId 应用编号
-     * @return 根导航列表
-     */
-    List<Nav> getRoot(String type, String appId);
-
-    /**
-     * 通过上级编号查询导航
-     *
      * @param parentId 上级编号
      * @return 导航列表
      */
-    List<Nav> findByParentId(String parentId);
+    List<Nav> findChildren(String type, String appId, String parentId);
 
     /**
-     * 通过上级编号读取导航<br>缓存读取
-     *
-     * @param parentId 上级编号
-     * @return 导航列表
-     */
-    List<Nav> getByParentId(String parentId);
-
-    /**
-     * 清除根级导航缓存
+     * 读取下级导航<br>缓存读取
      *
      * @param type 类型
      * @param appId 应用编号
+     * @param parentId 上级编号
+     * @return 导航列表
      */
-    void clearRoot(String type, String appId);
+    List<Nav> getChildren(String type, String appId, String parentId);
+
+    /**
+     * 创建导航
+     *
+     * @param nav 导航对象
+     * @return 持久化导航对象
+     */
+    Nav create(Nav nav);
 
     /**
      * 清除导航缓存
      *
+     * @param type 类型
+     * @param appId 应用编号
      * @param parentId 上级编号
      */
-    void clear(String parentId);
+    void clear(String type, String appId, String parentId);
 }
