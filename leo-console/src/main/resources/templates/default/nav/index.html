@@ -14,7 +14,7 @@
         <div class="row">
             <!-- tree -->
             <div class="col-sm-6">
-                <tree ng-model="navs"></tree>
+                <tree ng-model="tree"></tree>
             </div>
             <!-- tree -->
 
@@ -201,11 +201,9 @@
                     if (!node.$setup) {
                         node.$setup = true;
                         $tree.setLoadFn($scope.navFn.find, node);
-                        $tree.addOperations([
-                            $scope.treeDefine.operations.remove,
-                            $scope.treeDefine.operations.edit,
-                            $scope.treeDefine.operations.add
-                        ], node);
+                        $tree.addOperation('fa-minus-square', 'text-danger', '删除', $scope.treeDefine.operations.remove, node);
+                        $tree.addOperation('fa-pencil-square', 'text-primary', '编辑', $scope.treeDefine.operations.edit, node);
+                        $tree.addOperation('fa-plus-square', 'text-success', '添加', $scope.treeDefine.operations.add, node);
                     }
                 },
 
@@ -226,49 +224,6 @@
                 }
             },
 
-            // 树形定义
-            treeDefine: {
-                // 操作功能
-                operations: {
-                    // 添加操作
-                    add: {
-                        icon: 'fa-plus-square',
-                        class: 'text-success',
-                        title: '添加',
-                        fn: function(node) {
-                            $scope.navFn.form(node);
-                        }
-                    },
-
-                    // 编辑操作
-                    edit: {
-                        icon: 'fa-pencil-square',
-                        class: 'text-primary',
-                        title: '编辑',
-                        fn: function(node) {
-                            $scope.navFn.form(node.$parent, node);
-                        }
-                    },
-
-                    // 移除操作
-                    remove: {
-                        icon: 'fa-minus-square',
-                        class: 'text-danger',
-                        title: '删除',
-                        fn: function(node) {
-                            console.log('it is remove', node);
-                        }
-                    }
-                },
-
-                //
-                lastPosition: {
-                    id: '_last',
-                    nextId: '_last',
-                    name: '(つ´ω`)つ只能放在第一个'
-                }
-            },
-
             // 应用功能集合
             appFn: {
                 // 激活应用
@@ -276,15 +231,47 @@
                     if ($scope.current.app !== app) {
                         $scope.current.app = app;
                         $scope.navs = [];
-                        $scope.root = {
-                            id: '_root',
-                            appId: app.id,
-                            children: $scope.navs
-                        };
+                        $scope.tree = {};
+                        $scope.tree.id = '_root';
+                        $scope.tree.appId = app.id;
+                        $scope.navFn.setup($scope.tree);
                         $scope.navFn.cancel();
-                        $scope.navFn.setup($scope.root);
-                        $tree.load($scope.root);
+                        $tree.load($scope.tree);
+                        $tree.addNodeFn('<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>', $scope.treeDefine.addRoot, $scope.tree);
                     }
+                }
+            },
+
+            // 树形定义
+            treeDefine: {
+                // 操作功能
+                operations: {
+                    // 添加操作
+                    add: function(node) {
+                        $scope.navFn.form(node);
+                    },
+
+                    // 编辑操作
+                    edit: function(node) {
+                        $scope.navFn.form(node.$parent, node);
+                    },
+
+                    // 移除操作
+                    remove: function(node) {
+                        console.log('it is remove', node);
+                    }
+                },
+
+                //
+                addRoot: function() {
+                    $scope.navFn.form($scope.tree);
+                },
+
+                //
+                lastPosition: {
+                    id: '_last',
+                    nextId: '_last',
+                    name: '(つ´ω`)つ只能放在第一个'
                 }
             },
 

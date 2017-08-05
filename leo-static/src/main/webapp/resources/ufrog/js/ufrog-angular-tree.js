@@ -88,11 +88,13 @@
                 },
 
                 /** 添加操作 */
-                addOperations: function(operations, node) {
+                addOperation: function(icon, cls, title, fn, node) {
                     node.$operations = node.$operations || [];
-                    operations = $common.valid.arr(operations) ? operations : [operations];
-                    ng.forEach(operations, function(operation) {
-                        node.$operations.push(operation);
+                    node.$operations.push({
+                        icon: icon,
+                        cls: cls,
+                        title: title,
+                        fn: fn
                     });
                 },
 
@@ -102,6 +104,16 @@
                         $_.collapse(node);
                     }
                     (operation.fn || ng.noop)(node);
+                },
+
+                /** 添加节点功能 */
+                addNodeFn: function(html, fn, node) {
+                    node.$nodeFns = node.$nodeFns || [];
+                    node.$nodeFns.push({
+                        html: html,
+                        fn: fn
+                    });
+                    console.log(node);
                 }
             };
             return $_;

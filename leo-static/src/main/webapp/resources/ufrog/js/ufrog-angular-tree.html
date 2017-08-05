@@ -1,11 +1,14 @@
-<ul class="ng-slide">
-    <li ng-repeat="node in ngModel">
+<ul class="ng-slide" ng-show="ngModel.$status.collapsed">
+    <li ng-repeat="node in ngModel.children">
         <p class="clearfix">
             <a href="#" class="pull-left text-muted" ng-click="$service.collapse(node)"><i class="fa fa-fw" ng-class="$collapseIcon(node)"></i></a>
             <a href="#" class="pull-left text-muted" ng-if="valid.fn(node.$fn.check) || valid.fn(node.$fn.ban)"><i class="fa fa-fw" ng-class="$checkboxIcon(node)"></i></a>
             <span class="pull-left" ng-bind="node.name"></span>
-            <a href="#" class="pull-right" title="{{operation.title}}" ng-repeat="operation in node.$operations" ng-click="$service.doOperation(node, operation)" ng-class="operation.class"><i class="fa fa-fw" ng-class="operation.icon"></i></a>
+            <a href="#" class="pull-right" title="{{operation.title}}" ng-repeat="operation in node.$operations" ng-click="$service.doOperation(node, operation)" ng-class="operation.cls"><i class="fa fa-fw" ng-class="operation.icon"></i></a>
         </p>
-        <tree ng-model="node.children" ng-show="node.$status.collapsed"></tree>
+        <tree ng-model="node"></tree>
+    </li>
+    <li ng-repeat="nodeFn in ngModel.$nodeFns">
+        <a href="#" ng-click="nodeFn.fn(node, nodeFn)" ng-bind-html="nodeFn.html"></a>
     </li>
 </ul>
