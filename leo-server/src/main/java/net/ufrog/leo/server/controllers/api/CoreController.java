@@ -105,7 +105,7 @@ public class CoreController {
     @GetMapping("/navs/{type}/{parentId}/{token}/{appId}")
     public ListResp<NavResp> findNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("token") String token, @PathVariable("appId") String appId) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
-        List<Nav> lNav = navService.findChildren(type, appId, parentId);
+        List<Nav> lNav = navService.getChildren(type, appId, parentId);
         ListResp<NavResp> lrNavResp = new ListResp<>();
         App app = appService.getById(appId);
 

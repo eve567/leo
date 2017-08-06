@@ -42,6 +42,14 @@ public interface NavService {
     Nav create(Nav nav);
 
     /**
+     * 更新导航
+     *
+     * @param nav 导航对象
+     * @return 更新后导航对象
+     */
+    Nav update(Nav nav);
+
+    /**
      * 清除导航缓存
      *
      * @param type 类型

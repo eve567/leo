@@ -3,6 +3,8 @@ package net.ufrog.leo.service.impls;
 import net.ufrog.common.Link;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.exception.ServiceException;
+import net.ufrog.common.utils.Objects;
+import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.Nav;
 import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.repositories.NavRepository;
@@ -76,6 +78,24 @@ public class NavServiceImpl implements NavService {
             securityService.createResource(Resource.Type.NAV, nav.getId());
             clear(nav.getType(), nav.getAppId(), nav.getParentId());
             return nav;
+        }
+        throw new ServiceException("nav code '" + nav.getCode() + "' duplicate.", "service.nav.failure.duplicate");
+    }
+
+    @Override
+    @Transactional
+    public Nav update(Nav nav) {
+        List<Nav> lNav = navRepository.findByTypeAndAppIdAndParentIdAndCode(nav.getType(), nav.getAppId(), nav.getParentId(), nav.getCode());
+        Nav oNav = navRepository.findOne(nav.getId());
+        if (lNav.size() == 0 || (lNav.size() == 1 && Strings.equals(nav.getId(), lNav.get(0).getId()))) {
+            Nav prev = navRepository.findByParentIdAndNextId(nav.getParentId(), nav.getNextId());
+            if (prev != null && !Strings.equals(prev.getId(), nav.getId())) {
+                prev.setNextId(nav.getId());
+                navRepository.save(prev);
+            }
+
+            Objects.copyProperties(oNav, nav, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
+            return navRepository.save(oNav);
         }
         throw new ServiceException("nav code '" + nav.getCode() + "' duplicate.", "service.nav.failure.duplicate");
     }

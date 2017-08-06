@@ -2,7 +2,7 @@ package net.ufrog.leo.console.controllers;
 
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
-import net.ufrog.common.utils.Strings;
+import net.ufrog.common.utils.Objects;
 import net.ufrog.leo.domain.models.Nav;
 import net.ufrog.leo.service.NavService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,12 +68,20 @@ public class NavController {
     @PostMapping("/create")
     @ResponseBody
     public Result<Nav> create(@RequestBody Nav nav) {
-        nav.setName(nav.getName().trim());
-        nav.setCode(nav.getCode().trim());
-        nav.setPath(nav.getPath().trim());
-        nav.setTarget(nav.getTarget().trim());
-        nav.setParentId(nav.getParentId().trim());
-        if (!Strings.empty(nav.getSubname())) nav.setSubname(nav.getSubname().trim());
+        Objects.trimStringFields(nav, "id", "creator", "updater");
         return Result.success(navService.create(nav), App.message("nav.create.success", nav.getName()));
+    }
+
+    /**
+     * 更新导航
+     *
+     * @param nav 导航
+     * @return 更新结果
+     */
+    @PutMapping("/update")
+    @ResponseBody
+    public Result<Nav> update(@RequestBody Nav nav) {
+        Objects.trimStringFields(nav, "id", "creator", "updater");
+        return Result.success(navService.update(nav), App.message("nav.update.success", nav.getName()));
     }
 }
