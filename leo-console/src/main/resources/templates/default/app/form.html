@@ -1,0 +1,101 @@
+<div class="panel panel-default">
+    <div class="panel-heading">应用<span ng-if="valid.empty(app.id)">添加</span><span ng-if="!valid.empty(app.id)">「<span ng-bind="app.name"></span>」修改</span></div>
+    <div class="panel-body">
+        <form name="appForm" method="post" action="#" class="form-horizontal" ng-submit="appFn.save($event)">
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><rq>名称</rq></label>
+                <div class="col-sm-2">
+                    <input name="name" class="form-control" placeholder="请填写应用名称" ng-model="app.name" required maxlength="50">
+                    <alert-pop field="appForm.name">
+                        <alert-pop-item type="required">应用名称不能为空</alert-pop-item>
+                        <alert-pop-item type="maxlength">应用名称不能超过50个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><rq>代码</rq></label>
+                <div class="col-sm-2">
+                    <input name="code" class="form-control" placeholder="请填写应用代码" ng-model="app.code" required maxlength="50">
+                    <alert-pop field="appForm.code">
+                        <alert-pop-item type="required">应用代码不能为空</alert-pop-item>
+                        <alert-pop-item type="maxlength">应用名称不能超过50个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label">超时时间</label>
+                <div class="col-sm-2">
+                    <input name="timeout" class="form-control" placeholder="请填写应用登录超时时间" ng-model="app.timeout" maxlength="20">
+                    <alert-pop field="appForm.timeout">
+                        <alert-pop-item type="maxlength">超时时间不能超过20个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-control-static">
+                        <a href="#" popover popover-trigger="hover">
+                            <fa i="info-circle"></fa>
+                            <div class="popover-body">
+                                <ul style="margin: 0; padding: 0; list-style: none;">
+                                    <li><strong><i>min, mn</i></strong>&nbsp;-&nbsp;分钟</li>
+                                    <li><strong><i>h</i></strong>&nbsp;-&nbsp;小时</li>
+                                    <li><strong><i>d</i></strong>&nbsp;-&nbsp;天</li>
+                                    <li><strong><i>P.S.</i></strong>不填写为永久有效</li>
+                                </ul>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label">是否在线</label>
+                <div class="col-sm-10 toggle-switch">
+                    <toggle-switch ng-model="app.status" true="01" false="00"></toggle-switch>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label">是否可见</label>
+                <div class="col-sm-10 toggle-switch">
+                    <toggle-switch ng-model="app.visible" true="01" false="00"></toggle-switch>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label">同时登录</label>
+                <div class="col-sm-10 toggle-switch">
+                    <toggle-switch ng-model="app.mulriple" true="01" false="00"></toggle-switch>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><rq>色值</rq></label>
+                <div class="col-sm-1">
+                    <div class="input-group">
+                        <span class="input-group-addon" ng-bind="app.color|empty:'-'"></span>
+                        <input type="color" name="color" class="form-control" placeholder="选择色值" ng-model="app.color" required>
+                    </div>
+                    <alert-pop field="appForm.color">
+                        <alert-pop-item type="required">应用色值不能为空</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><rq>地址</rq></label>
+                <div class="col-sm-4">
+                    <input type="url" name="url" class="form-control" placeholder="请填写应用访问地址" ng-model="app.url" required maxlength="250">
+                    <alert-pop field="appForm.url">
+                        <alert-pop-item type="required">应用访问地址不能为空</alert-pop-item>
+                        <alert-pop-item type="url">应用访问地址不合法</alert-pop-item>
+                        <alert-pop-item type="maxlength">应用访问地址不能超过250个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group margin-bottom-zero">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <button class="btn btn-success" ng-disabled="appFn.disabledSaveBtn()">
+                        <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;保存</fa></span>
+                        <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="ctrl.status('view', 'grid')"><fa i="times-circle">&nbsp;取消</fa></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

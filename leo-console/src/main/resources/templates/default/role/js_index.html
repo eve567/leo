@@ -1,0 +1,114 @@
+<!--suppress JSUnresolvedVariable, JSUnresolvedFunction -->
+<script type="text/javascript">
+    'use strict';
+    function roleCtrl($scope, $bootstrap) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.appFn.active($scope.$apps[0]);
+            },
+
+            // 角色功能集合
+            roleFn: {
+                // 查询
+                find: function(page, size) {
+                    $scope.ctrl.status('grid', 'loading');
+                    $scope.get('${app}/roles/' + $scope.current.app.id, {page: page, size: size}, function(data) {
+                        $bootstrap.page(data, 'roles');
+                    }, function() {
+                        $scope.ctrl.status('grid', 'loaded');
+                    });
+                },
+
+                // 表单
+                form: function(role) {
+                    $scope.role = angular.extend({}, $scope.roleFn.defaultProperties, role);
+                    $scope.role.appId = $scope.current.app.id;
+                    $scope.object.delete($scope.role, ['creator', 'createTime', 'updater', 'updateTime']);
+                    $scope.ctrl.status('view', 'form');
+                    $scope.ctrl.status('saveBtn', 'standby');
+                },
+
+                // 保存
+                save: function($event) {
+                    $scope.ctrl.stop($event);
+                    $scope.ctrl.status('saveBtn', 'processing');
+                    if ($scope.valid.empty($scope.role.id)) {
+                        $scope.roleFn.create($scope.role);
+                    } else {
+                        $scope.roleFn.update($scope.role);
+                    }
+                },
+
+                // 创建角色
+                create: function(role) {
+                    $scope.post('${app}/role', role, function(data) {
+                        $scope.roleFn.cancel();
+                        $scope.array.add($scope.roles, data.data);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 更新角色
+                update: function(role) {
+                    $scope.put('${app}/role', role, function(data) {
+                        $scope.roleFn.cancel();
+                        $scope.array.replace($scope.roles, data.data);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 删除角色
+                delete: function() {
+                    $scope.ctrl.status('deleteBtn', 'processing');
+                    $scope.delete('${app}/role/' + $scope.current.drole.id, function() {
+                        $bootstrap.modal.hide('roleDeleteModal');
+                        $scope.array.remove($scope.roles, $scope.current.drole);
+                    }, function() {
+                        $scope.ctrl.status('deleteBtn', 'standby');
+                    });
+                },
+
+                // 弹出删除确认框
+                popDeleteModal: function(role) {
+                    $scope.current.drole = role;
+                    $scope.ctrl.status('deleteBtn', 'standby');
+                    $bootstrap.modal.show('roleDeleteModal');
+                },
+
+                // 取消表单
+                cancel: function() {
+                    $scope.ctrl.resetForm($scope.roleForm);
+                    $scope.ctrl.status('view', 'grid');
+                },
+
+                // 判断保存按钮是否有效
+                disabledSaveBtn: function() {
+                    if ($scope.roleForm.$invalid) return true;
+                    else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    return false;
+                },
+
+                //
+                defaultProperties: {
+                    type: '01',
+                    status: '10'
+                }
+            },
+
+            // 应用功能集合
+            appFn: {
+                // 激活应用
+                active: function(app) {
+                    $scope.current.app = app;
+                    $scope.roleFn.find(0);
+                }
+            },
+
+            //
+            current: {}
+        }).init();
+    }
+</script>

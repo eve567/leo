@@ -34,6 +34,15 @@ public interface SecurityService {
     Resource createResource(String type, String referenceId);
 
     /**
+     * 删除资源
+     *
+     * @param type 类型
+     * @param referenceId 相关编号
+     * @return 资源
+     */
+    Resource deleteResource(String type, String referenceId);
+
+    /**
      * 清空用户资源映射缓存
      *
      * @param userId 用户编号

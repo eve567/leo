@@ -1,0 +1,116 @@
+<!--suppress JSUnresolvedVariable, JSUnusedLocalSymbols, JSUnresolvedFunction -->
+<script type="text/javascript">
+    'use strict';
+    function appCtrl($scope, $bootstrap) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.ctrl.status('view', 'grid');
+            },
+
+            // 应用功能集合
+            appFn: {
+                // 查询应用数据
+                find: function(page, size) {
+                    $scope.ctrl.status('grid', 'loading');
+                    $scope.get('${app}/apps', {page: page, size: size}, function(data) {
+                        $bootstrap.page(data, 'apps');
+                    }, function() {
+                        $scope.ctrl.status('grid', 'loaded');
+                    });
+                },
+
+                // 应用表单
+                form: function(app) {
+                    $scope.app = angular.extend({}, $scope.appFn.defaultProperties, app);
+                    $scope.object.delete($scope.app, ['creator', 'createTime', 'updater', 'updateTime']);
+                    $scope.ctrl.status('saveBtn', 'standby');
+                    $scope.ctrl.status('view', 'form');
+                },
+
+                // 保存应用
+                save: function($event) {
+                    $scope.ctrl.stop($event);
+                    $scope.ctrl.status('saveBtn', 'processing');
+
+                    if ($scope.valid.empty($scope.app.id)) {
+                        $scope.appFn.create($scope.app);
+                    } else {
+                        $scope.appFn.update($scope.app);
+                    }
+                },
+
+                // 创建应用
+                create: function(app) {
+                    $scope.post('${app}/app', app, function(data) {
+                        $scope.ctrl.status('view', 'grid');
+                        $scope.array.add($scope.apps, data.data);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 更新应用
+                update: function(app) {
+                    $scope.put('${app}/app', app, function(data) {
+                        $scope.ctrl.status('view', 'grid');
+                        $scope.array.replace($scope.apps, data.data);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                //
+                popSecretModal: function(app) {
+                    $scope.current.app = app;
+                    $scope.current.configType = $scope.appFn.configTypes[0];
+                    $bootstrap.modal.show('appSecretModal');
+                },
+
+                // 判断保存按钮是否有效
+                disabledSaveBtn: function() {
+                    if ($scope.appForm.$invalid) return true;
+                    else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    return false;
+                },
+
+                //
+                defaultProperties: {
+                    status: '00',
+                    visible: '00',
+                    mulriple: '00',
+                    color: '#000000'
+                },
+
+                //
+                configTypes: [
+                    {
+                        name: 'Yaml',
+                        template: function(app) {
+                            return [
+                                'leo:',
+                                '  host: ${app.host}',
+                                '  app:',
+                                '    id: ' + app.id,
+                                '    secret: ' + app.secret
+                            ].join('<br>');
+                        }
+                    },
+                    {
+                        name: 'Properties',
+                        template: function(app) {
+                            return [
+                                'leo.host = ${app.host}',
+                                'leo.app.id = ' + app.id,
+                                'leo.app.secret = ' + app.secret
+                            ].join('<br>');
+                        }
+                    }
+                ]
+            },
+
+            //
+            current: {}
+        }).init();
+    }
+</script>

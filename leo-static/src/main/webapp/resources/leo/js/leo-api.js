@@ -12,6 +12,7 @@
                 $constant: {
                     jsonp: 'jsonp=JSON_CALLBACK',
                     uri: {
+                        signOut: '/sign_out',
                         core: {
                             apps: 'api/apps',
                             navs: 'api/navs'
@@ -70,6 +71,8 @@
                     }).then(function(data) {
                         if (data.data.success) {
                             (success || ng.noop)(data.data);
+                        } else if (data.data.respCode === '0001') {
+                            $common.ctrl.redirect($_.$config.host + $_.$constant.uri.signOut);
                         } else {
                             console.error(data.data);
                         }

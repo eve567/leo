@@ -38,11 +38,12 @@ public interface NavRepository extends JpaRepository<Nav, String> {
     List<Nav> findByTypeAndAppIdAndParentIdAndCode(String type, String appId, String parentId, String code);
 
     /**
-     * 通过上级编号和相邻编号查询数据
+     * 通过上级编号/相邻编号/应用编号查询数据
      *
      * @param parentId 上级编号
      * @param nextId 相邻编号
+     * @param appId 应用编号
      * @return 导航对象
      */
-    Nav findByParentIdAndNextId(String parentId, String nextId);
+    Nav findByParentIdAndNextIdAndAppId(String parentId, String nextId, String appId);
 }

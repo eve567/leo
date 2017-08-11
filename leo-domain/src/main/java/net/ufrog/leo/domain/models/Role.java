@@ -1,5 +1,7 @@
 package net.ufrog.leo.domain.models;
 
+import net.ufrog.common.dict.Dicts;
+
 /**
  * 角色模型
  *
@@ -121,6 +123,15 @@ public class Role extends Model {
      */
     public void setAppId(java.lang.String appId) {
         this.appId = appId;
+    }
+
+    /**
+     * 读取状态名称
+     *
+     * @return 状态名称
+     */
+    public String getStatusName() {
+        return Dicts.name(status, Status.class);
     }
 
     /**

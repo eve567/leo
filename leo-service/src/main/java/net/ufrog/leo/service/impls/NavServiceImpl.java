@@ -66,43 +66,98 @@ public class NavServiceImpl implements NavService {
     @Override
     @Transactional
     public Nav create(Nav nav) {
-        List<Nav> lNav = navRepository.findByTypeAndAppIdAndParentIdAndCode(nav.getType(), nav.getAppId(), nav.getParentId(), nav.getCode());
-        if (lNav.size() == 0) {
-            Nav prev = navRepository.findByParentIdAndNextId(nav.getParentId(), nav.getNextId());
-            navRepository.save(nav);
-            if (prev != null) {
-                prev.setNextId(nav.getId());
-                navRepository.save(prev);
-            }
+        // 检查代码是否重复
+        checkDuplicate(nav);
 
-            securityService.createResource(Resource.Type.NAV, nav.getId());
-            clear(nav.getType(), nav.getAppId(), nav.getParentId());
-            return nav;
+        // 对前邻数据进行处理
+        Nav prev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId());
+        navRepository.save(nav);
+        if (prev != null) {
+            prev.setNextId(nav.getId());
+            navRepository.save(prev);
         }
-        throw new ServiceException("nav code '" + nav.getCode() + "' duplicate.", "service.nav.failure.duplicate");
+
+        // 保存数据
+        securityService.createResource(Resource.Type.NAV, nav.getId());
+        clear(nav.getType(), nav.getAppId(), nav.getParentId());
+        return nav;
     }
 
     @Override
     @Transactional
     public Nav update(Nav nav) {
-        List<Nav> lNav = navRepository.findByTypeAndAppIdAndParentIdAndCode(nav.getType(), nav.getAppId(), nav.getParentId(), nav.getCode());
-        Nav oNav = navRepository.findOne(nav.getId());
-        if (lNav.size() == 0 || (lNav.size() == 1 && Strings.equals(nav.getId(), lNav.get(0).getId()))) {
-            Nav prev = navRepository.findByParentIdAndNextId(nav.getParentId(), nav.getNextId());
-            if (prev != null && !Strings.equals(prev.getId(), nav.getId())) {
-                prev.setNextId(nav.getId());
-                navRepository.save(prev);
-            }
+        // 检查代码是否重复
+        checkDuplicate(nav);
 
-            Objects.copyProperties(oNav, nav, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
-            return navRepository.save(oNav);
+        // 对前后邻数据进行处理
+        Nav oNav = navRepository.findOne(nav.getId());
+        if (!Strings.equals(nav.getNextId(), oNav.getNextId())) {
+            Nav nPrev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId());
+            Nav oPrev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId());
+
+            if (nPrev != null) {
+                nPrev.setNextId(nav.getId());
+                navRepository.save(nPrev);
+            } if (oPrev != null) {
+                oPrev.setNextId(oNav.getNextId());
+                navRepository.save(oPrev);
+            }
         }
-        throw new ServiceException("nav code '" + nav.getCode() + "' duplicate.", "service.nav.failure.duplicate");
+
+        // 更新数据
+        Objects.copyProperties(oNav, nav, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
+        clear(nav.getType(), nav.getAppId(), nav.getParentId());
+        return navRepository.save(oNav);
+    }
+
+    @Override
+    @Transactional
+    public Nav delete(String id) {
+        // 检查是否存在下级
+        Nav nav = navRepository.findOne(id);
+        checkChildren(nav);
+
+        // 处理前邻数据
+        Nav prev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId());
+        if (prev != null) {
+            prev.setNextId(nav.getNextId());
+            navRepository.save(prev);
+        }
+
+        // 删除数据
+        navRepository.delete(nav);
+        securityService.deleteResource(Resource.Type.NAV, nav.getId());
+        clear(nav.getType(), nav.getAppId(), nav.getParentId());
+        return nav;
     }
 
     @Override
     public void clear(String type, String appId, String parentId) {
         Caches.safeDelete(CACHE_NAV, getCacheKey(type, appId, parentId));
+    }
+
+    /**
+     * 检查导航代码是否重复
+     *
+     * @param nav 待检查功能
+     */
+    private void checkDuplicate(Nav nav) {
+        List<Nav> lNav = navRepository.findByTypeAndAppIdAndParentIdAndCode(nav.getType(), nav.getAppId(), nav.getParentId(), nav.getCode());
+        if (lNav.size() > 1 || (lNav.size() == 1 && !Strings.equals(lNav.get(0).getId(), nav.getId()))) {
+            throw new ServiceException("nav code '" + nav.getCode() + "' duplicate.", "service.nav.failure.duplicate");
+        }
+    }
+
+    /**
+     * 判断导航是否存在下级
+     *
+     * @param nav 导航对象
+     */
+    private void checkChildren(Nav nav) {
+        List<Nav> children = findChildren(nav.getType(), nav.getAppId(), nav.getId());
+        if (children != null && children.size() > 0) {
+            throw new ServiceException("nav '" + nav.getName() + " - " + nav.getCode() + "' has children.", "service.nav.failure.has-children");
+        }
     }
 
     /**

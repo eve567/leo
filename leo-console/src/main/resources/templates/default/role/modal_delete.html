@@ -1,0 +1,10 @@
+<modal id="roleDeleteModal" title="确认删除角色？">
+    <p class="text-danger"><fa i="exclamation-triangle">&nbsp;正在删除「<span ng-bind="current.drole.name"></span>」角色！</fa></p>
+    <p class="text-danger margin-bottom-zero"><fa i="exclamation-triangle">&nbsp;删除后所有相关权限都将失效！！！</fa></p>
+
+    <button type="button" class="btn btn-danger" ng-click="roleFn.delete()" ng-disabled="ctrl.status('deleteBtn', ['processing'])">
+        <span ng-show="ctrl.status('deleteBtn', ['standby'])"><fa i="minus-circle">&nbsp;确认删除</fa></span>
+        <span ng-show="ctrl.status('deleteBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+    </button>
+    <button type="button" class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;取消</fa></button>
+</modal>

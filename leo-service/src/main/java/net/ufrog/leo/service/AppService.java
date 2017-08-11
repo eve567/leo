@@ -1,6 +1,7 @@
 package net.ufrog.leo.service;
 
 import net.ufrog.leo.domain.models.App;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -42,6 +43,31 @@ public interface AppService {
      * @return 应用列表
      */
     List<App> getAll();
+
+    /**
+     * 查询所有应用<br>分页查询
+     *
+     * @param page 页码
+     * @param size 分页大小
+     * @return 分页应用数据
+     */
+    Page<App> findAll(Integer page, Integer size);
+
+    /**
+     * 创建应用
+     *
+     * @param app 应用对象
+     * @return 持久化应用对象
+     */
+    App create(App app);
+
+    /**
+     * 更新应用
+     *
+     * @param app 应用对象
+     * @return 持久化应用对象
+     */
+    App update(App app);
 
     /**
      * 清除应用缓存

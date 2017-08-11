@@ -7,6 +7,7 @@ import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.*;
 import net.ufrog.leo.domain.repositories.ResourceRepository;
+import net.ufrog.leo.domain.repositories.RoleResourceRepository;
 import net.ufrog.leo.domain.repositories.UserRepository;
 import net.ufrog.leo.service.SecurityService;
 import org.hibernate.service.spi.ServiceException;
@@ -36,6 +37,9 @@ public class SecurityServiceImpl implements SecurityService {
     /** 资源仓库 */
     private ResourceRepository resourceRepository;
 
+    /** 角色资源仓库 */
+    private RoleResourceRepository roleResourceRepository;
+
     /** 用户仓库 */
     private UserRepository userRepository;
 
@@ -46,12 +50,14 @@ public class SecurityServiceImpl implements SecurityService {
      * 构造函数
      *
      * @param resourceRepository 资源仓库
+     * @param roleResourceRepository 角色资源仓库
      * @param userRepository 用户仓库
      * @param securityJpql 权限脚本
      */
     @Autowired
-    public SecurityServiceImpl(ResourceRepository resourceRepository, UserRepository userRepository, SecurityJpql securityJpql) {
+    public SecurityServiceImpl(ResourceRepository resourceRepository, RoleResourceRepository roleResourceRepository, UserRepository userRepository, SecurityJpql securityJpql) {
         this.resourceRepository = resourceRepository;
+        this.roleResourceRepository = roleResourceRepository;
         this.userRepository = userRepository;
         this.securityJpql = securityJpql;
     }
@@ -73,6 +79,18 @@ public class SecurityServiceImpl implements SecurityService {
         resource.setType(type);
         resource.setReferenceId(referenceId);
         return resourceRepository.save(resource);
+    }
+
+    @Override
+    @Transactional
+    public Resource deleteResource(String type, String referenceId) {
+        Resource resource = resourceRepository.findByTypeAndReferenceId(type, referenceId);
+        if (resource != null) {
+            List<RoleResource> lRoleResource = roleResourceRepository.findByResourceId(resource.getId());
+            roleResourceRepository.delete(lRoleResource);
+            resourceRepository.delete(resource);
+        }
+        return resource;
     }
 
     @Override

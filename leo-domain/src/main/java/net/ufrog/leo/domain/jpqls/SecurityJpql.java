@@ -2,6 +2,7 @@ package net.ufrog.leo.domain.jpqls;
 
 import net.ufrog.common.data.QueryScript;
 import net.ufrog.common.data.hibernate.HibernateJpql;
+import net.ufrog.leo.domain.models.Role;
 import net.ufrog.leo.domain.models.RoleResource;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ public class SecurityJpql extends HibernateJpql {
         QueryScript qs = new QueryScript("from RoleResource rr where 1 = 1");
         qs.and("exists (select 1 from UserRole ur where ur.roleId = rr.roleId and ur.userId = :userId)", Boolean.TRUE, "userId", userId);
         qs.and("exists (select 1 from Resource r where r.id = rr.resourceId and r.type = :type)", Boolean.TRUE, "type", type);
+        qs.and("exists (select 1 from Role r where r.id = rr.roleId and r.status = :status)", Boolean.TRUE, "status", Role.Status.ENABLED);
         return find(qs.getScript(), qs.getArguments(), RoleResource.class);
     }
 }

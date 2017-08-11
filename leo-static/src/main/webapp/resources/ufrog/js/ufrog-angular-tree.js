@@ -113,7 +113,6 @@
                         html: html,
                         fn: fn
                     });
-                    console.log(node);
                 }
             };
             return $_;

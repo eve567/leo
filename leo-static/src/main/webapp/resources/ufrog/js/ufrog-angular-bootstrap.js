@@ -147,7 +147,7 @@
                         '</li>',
                     '</ul>'
                 ].join(''),
-                link: function() {
+                link: function($scope) {
                     ng.extend($scope, {
                         // 初始化
                         $init: function() {
@@ -330,7 +330,7 @@
         }])
 
         /** 表单验证提示指令 */
-        .directive('alertPop', ['$timeout', function($timeout) {
+        .directive('alertPop', [function() {
             return {
                 restrict: 'E',
                 replace: true,
@@ -343,15 +343,20 @@
                     ng.extend($scope, {
                         // 初始化
                         $init: function() {
-                            $timeout(function() {
-                                $element.css('left', $element.prev().outerWidth() + 20).append('<p class="alert-pop-triangle"></p>');
-                            }, 1000);
+                            $element.append('<p class="alert-pop-triangle"></p>');
                         },
 
                         // 判断是否无效
                         $isInvalid: function() {
                             if (ng.isUndefined($scope.field)) return false;
-                            return ($scope.field.$invalid && $scope.field.$dirty);
+                            if ($scope.field.$invalid && $scope.field.$dirty) {
+                                $element.css('left', $element.prev().outerWidth() + 20);
+                                $element.parent().parent().addClass('has-error');
+                                return true;
+                            } else {
+                                $element.parent().parent().removeClass('has-error');
+                                return false;
+                            }
                         }
                     }).$init();
                 }
@@ -382,13 +387,12 @@
         /** 表格合并单元格指令 */
         .directive('colSpan', [function() {
             return {
-                restrict: '',
-                replace: true,
+                restrict: 'A',
                 scope: true,
-                transclude: true,
-                template: '<tr><td colspan="{{$len}}" class="text-center"><ng-transclude></ng-transclude></td></tr>',
                 link: function($scope, $element) {
-                    $scope.$len = $element.parent().parent().find('thead th').length;
+                    $element.attr('colspan', function() {
+                        return ng.element($element.parents('table')[0]).find('thead th').length;
+                    }).addClass('text-center');
                 }
             };
         }])
@@ -437,6 +441,22 @@
                             });
                         }
                     }).$init();
+                }
+            };
+        }])
+
+        /** 气泡框指令 */
+        .directive('popover', [function() {
+            return {
+                restrict: 'A',
+                link: function($scope, $element, $attrs) {
+                    $element.popover({
+                        html: true,
+                        placement: $attrs['popoverPlacement'] || 'right',
+                        title: $attrs['popoverTitle'] || '',
+                        trigger: $attrs['popoverTrigger'] || 'click',
+                        content: $element.find('.popover-body').children()
+                    });
                 }
             };
         }]);

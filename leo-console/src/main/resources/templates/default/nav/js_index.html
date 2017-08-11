@@ -1,0 +1,216 @@
+<!--suppress JSUnresolvedFunction, JSUnresolvedVariable, JSUnusedLocalSymbols, ReservedWordAsName, JSUnusedGlobalSymbols -->
+<script type="text/javascript">
+    'use strict';
+    function navCtrl($scope, $tree, $bootstrap) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.appFn.active($scope.$apps[0]);
+            },
+
+            // 导航功能集合
+            navFn: {
+                // 查询导航
+                find: function(nav) {
+                    $scope.get(['${app}/navs', $scope.navFn.defaultProperties.type, nav.id, nav.appId].join('/'), function(children) {
+                        $tree.loaded(nav, children);
+                        angular.forEach(children, function(child) {
+                            $scope.navFn.setup(child);
+                        });
+                    });
+                },
+
+                // 表单处理
+                form: function(parent, nav) {
+                    if (!$scope.valid.empty(nav)) {
+                        $scope.nav = angular.extend({}, $scope.navFn.defaultProperties, nav);
+                        $scope.neighbours = $scope.navFn.copy(parent.children, nav);
+
+                        angular.forEach($scope.neighbours, function(n) {
+                            if (n.nextId === $scope.nav.id) {
+                                $scope.nav.neighbour = n;
+                            }
+                        });
+                    } else {
+                        $scope.nav = angular.extend({}, $scope.navFn.defaultProperties);
+                        $scope.nav.appId = parent.appId;
+                        $scope.nav.parentId = parent.id;
+                        $scope.neighbours = $scope.navFn.copy(parent.children);
+                    } if ($scope.valid.empty($scope.nav.neighbour)) {
+                        $scope.nav.neighbour = $scope.neighbours[$scope.neighbours.length - 1];
+                    }
+                    $scope.current.parent = parent;
+                    $scope.current.position = $scope.positions[0];
+                    $scope.ctrl.status('navForm', 'unlocked');
+                },
+
+                // 保存
+                save: function($event) {
+                    $scope.ctrl.stop($event);
+                    $scope.ctrl.status('saveBtn', 'processing');
+                    $scope.navFn.nextId();
+
+                    var nav = angular.extend({}, $scope.nav);
+                    $scope.object.delete(nav, ['creator', 'createTime', 'updater', 'updateTime', 'children', 'neighbour', '$status', '$fn', '$operations', '$parent', '$setup']);
+                    if ($scope.valid.empty(nav.id)) {
+                        $scope.navFn.create(nav);
+                    } else {
+                        $scope.navFn.update(nav);
+                    }
+                },
+
+                // 创建功能
+                create: function(nav) {
+                    $scope.post('${app}/nav', nav, function(data) {
+                        $tree.reload($scope.current.parent);
+                        $scope.navFn.cancel();
+                    }, function(data) {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 更新功能
+                update: function(nav) {
+                    $scope.put('${app}/nav', nav, function(data) {
+                        $tree.reload($scope.current.parent);
+                        $scope.navFn.cancel();
+                    }, function(data) {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 删除功能
+                delete: function(nav) {
+                    $scope.ctrl.status('deleteBtn', 'processing');
+                    $scope.delete('${app}/nav/' + nav.id, function() {
+                        $tree.reload($scope.current.parent);
+                    }, function() {
+                        $bootstrap.modal.hide('deleteNavModal');
+                        $scope.ctrl.status('deleteBtn', 'standby');
+                    });
+                },
+
+                // 取消
+                cancel: function() {
+                    $scope.nav = {};
+                    $scope.current.position = $scope.positions[0];
+                    $scope.ctrl.status('navForm', 'locked');
+                    $scope.ctrl.status('saveBtn', 'standby');
+                    $scope.ctrl.resetForm($scope.navForm);
+                },
+
+                // 判断保存按钮是否有效
+                disabledSaveBtn: function() {
+                    if ($scope.ctrl.status('navForm', ['locked'])) return true;
+                    else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    else if ($scope.navForm.$invalid) return true;
+                    return false;
+                },
+
+                // 获得所有相邻元素
+                copy: function(navs, nav) {
+                    navs = (navs || []).concat();
+                    $scope.array.remove(navs, nav);
+                    return navs.length === 0 ? [$scope.treeDefine.lastPosition] : navs;
+                },
+
+                // 设置树形节点
+                setup: function(node) {
+                    if (!node.$setup) {
+                        node.$setup = true;
+                        $tree.setLoadFn($scope.navFn.find, node);
+                        $tree.addOperation('fa-minus-square', 'text-danger', '删除', $scope.treeDefine.operations.remove, node);
+                        $tree.addOperation('fa-pencil-square', 'text-primary', '编辑', $scope.treeDefine.operations.edit, node);
+                        $tree.addOperation('fa-plus-square', 'text-success', '添加', $scope.treeDefine.operations.add, node);
+                    }
+                },
+
+                // 设置相邻编号
+                nextId: function() {
+                    console.log($scope.nav);
+                    if ($scope.current.position.type === 'next' && $scope.nav.id !== $scope.nav.neighbour.nextId) {
+                        $scope.nav.nextId = $scope.nav.neighbour.nextId;
+                    } else if ($scope.current.position.type === 'prev') {
+                        $scope.nav.nextId = $scope.nav.neighbour.id;
+                    }
+                },
+
+                // 默认属性
+                defaultProperties: {
+                    path: '@/',
+                    target: '_blank',
+                    type: '99'
+                }
+            },
+
+            // 应用功能集合
+            appFn: {
+                // 激活应用
+                active: function(app) {
+                    if ($scope.current.app !== app) {
+                        $scope.current.app = app;
+                        $scope.navs = [];
+                        $scope.tree = {};
+                        $scope.tree.id = '_root';
+                        $scope.tree.appId = app.id;
+                        $scope.navFn.setup($scope.tree);
+                        $scope.navFn.cancel();
+                        $tree.load($scope.tree);
+                        $tree.addNodeFn('<i class="fa fa-fw fa-plus-circle"></i><span>添加功能</span>', $scope.treeDefine.addRoot, $scope.tree);
+                    }
+                }
+            },
+
+            // 树形定义
+            treeDefine: {
+                // 操作功能
+                operations: {
+                    // 添加操作
+                    add: function(node) {
+                        $scope.navFn.form(node);
+                    },
+
+                    // 编辑操作
+                    edit: function(node) {
+                        $scope.navFn.form(node.$parent, node);
+                    },
+
+                    // 移除操作
+                    remove: function(node) {
+                        $scope.ctrl.status('deleteBtn', 'standby');
+                        $bootstrap.modal.show('deleteNavModal');
+                        $scope.current.dnav = node;
+                        $scope.current.parent = node.$parent;
+                    }
+                },
+
+                //
+                addRoot: function() {
+                    $scope.navFn.form($scope.tree);
+                },
+
+                //
+                lastPosition: {
+                    id: '_last',
+                    nextId: '_last',
+                    name: '(つ´ω`)つ只能放在第一个'
+                }
+            },
+
+            // 位置选项
+            positions: [
+                {
+                    name: '之后',
+                    type: 'next'
+                },
+                {
+                    name: '之前',
+                    type: 'prev'
+                }
+            ],
+
+            //
+            current: {}
+        }).init();
+    }
+</script>

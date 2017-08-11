@@ -1,0 +1,35 @@
+<div class="panel panel-default">
+    <div class="panel-heading">角色<span ng-if="valid.empty(role.id)">添加</span><span ng-if="!valid.empty(role.id)">「<span ng-bind="role.name"></span>」修改</span></div>
+    <div class="panel-body">
+        <form name="roleForm" method="post" action="#" class="form-horizontal" ng-submit="roleFn.save($event)">
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><rq>名称</rq></label>
+                <div class="col-sm-2">
+                    <input name="name" class="form-control" ng-model="role.name" required maxlength="50">
+                    <alert-pop field="roleForm.name">
+                        <alert-pop-item type="required">角色名称必须填写</alert-pop-item>
+                        <alert-pop-item type="maxlength">角色名称不能超过50个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label">代码</label>
+                <div class="col-sm-2">
+                    <input name="code" class="form-control" ng-model="role.code" maxlength="50">
+                    <alert-pop field="roleForm.code">
+                        <alert-pop-item type="maxlength">角色名称不能超过50个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group margin-bottom-zero">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <button class="btn btn-success" ng-disabled="roleFn.disabledSaveBtn()">
+                        <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;保存</fa></span>
+                        <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="roleFn.cancel()"><fa i="times-circle">&nbsp;取消</fa></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

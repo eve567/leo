@@ -1,5 +1,7 @@
 package net.ufrog.leo.domain.models;
 
+import net.ufrog.common.dict.Dicts;
+
 /**
  * 应用模型
  *
@@ -234,6 +236,33 @@ public class App extends Model {
     }
 
     /**
+     * 读取状态名称
+     *
+     * @return 状态名称
+     */
+    public String getStatusName() {
+        return Dicts.name(status, Status.class);
+    }
+
+    /**
+     * 读取可见名称
+     *
+     * @return 可见名称
+     */
+    public String getVisibleName() {
+        return Dicts.name(visible, Visible.class);
+    }
+
+    /**
+     * 读取多用户名称
+     *
+     * @return 多用户名称
+     */
+    public String getMulripleName() {
+        return Dicts.name(mulriple, Mulriple.class);
+    }
+
+    /**
      * 状态
      *
      * @author ultrafrog
@@ -259,10 +288,10 @@ public class App extends Model {
     public static final class Visible {
 
         @net.ufrog.common.dict.Element("隐藏")
-        public static final String FALSE = "00";
+        public static final String HIDE = "00";
 
-        @net.ufrog.common.dict.Element("可见")
-        public static final String TRUE = "01";
+        @net.ufrog.common.dict.Element("显示")
+        public static final String SHOW = "01";
     }
 
     /**
@@ -274,10 +303,10 @@ public class App extends Model {
      */
     public static final class Mulriple {
 
-        @net.ufrog.common.dict.Element("禁止")
+        @net.ufrog.common.dict.Element("同登互踢")
         public static final String FALSE = "00";
 
-        @net.ufrog.common.dict.Element("允许")
+        @net.ufrog.common.dict.Element("同登允许")
         public static final String TRUE = "01";
     }
 }

@@ -1,0 +1,10 @@
+<modal id="deleteNavModal" title="确认删除功能？">
+    <p class="text-danger"><fa i="exclamation-triangle">&nbsp;正在删除「<span ng-bind="current.dnav.name"></span>&nbsp;-&nbsp;<span ng-bind="current.dnav.code"></span>」功能节点！</fa></p>
+    <p class="text-danger margin-bottom-zero"><fa i="exclamation-triangle">&nbsp;删除后将同步删除所有权限相关配置！！！</fa></p>
+
+    <button type="button" class="btn btn-danger" ng-click="navFn.delete(current.dnav)" ng-disabled="ctrl.status('deleteBtn', ['processing'])">
+        <span ng-show="ctrl.status('deleteBtn', ['standby'])"><fa i="minus-circle">&nbsp;确认删除</fa></span>
+        <span ng-show="ctrl.status('deleteBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+    </button>
+    <button type="button" class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;取消</fa></button>
+</modal>

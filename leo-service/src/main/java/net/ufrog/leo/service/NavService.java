@@ -50,6 +50,13 @@ public interface NavService {
     Nav update(Nav nav);
 
     /**
+     * 删除导航
+     *
+     * @param id 编号
+     */
+    Nav delete(String id);
+
+    /**
      * 清除导航缓存
      *
      * @param type 类型
