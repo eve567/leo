@@ -61,11 +61,11 @@
                 },
 
                 // 删除角色
-                delete: function() {
+                delete: function(role) {
                     $scope.ctrl.status('deleteBtn', 'processing');
-                    $scope.delete('${app}/role/' + $scope.current.drole.id, function() {
+                    $scope.delete('${app}/role/' + role.id, function() {
                         $bootstrap.modal.hide('roleDeleteModal');
-                        $scope.array.remove($scope.roles, $scope.current.drole);
+                        $scope.array.remove($scope.roles, role);
                     }, function() {
                         $scope.ctrl.status('deleteBtn', 'standby');
                     });
