@@ -1,4 +1,4 @@
-<!--suppress JSUnresolvedVariable, JSUnresolvedFunction -->
+<!--suppress JSUnresolvedVariable, JSUnresolvedFunction, JSValidateTypes -->
 <script type="text/javascript">
     'use strict';
     function roleCtrl($scope, $bootstrap) {
@@ -73,9 +73,16 @@
 
                 // 弹出删除确认框
                 popDeleteModal: function(role) {
-                    $scope.current.drole = role;
+                    $scope.current.role = role;
                     $scope.ctrl.status('deleteBtn', 'standby');
                     $bootstrap.modal.show('roleDeleteModal');
+                },
+
+                // 显示绑定视图
+                showBind: function(role) {
+                    $scope.current.role = role;
+                    $scope.resourceFn.findResourceTypes();
+                    $scope.ctrl.status('view', 'resource');
                 },
 
                 // 取消表单
@@ -95,6 +102,29 @@
                 defaultProperties: {
                     type: '01',
                     status: '10'
+                }
+            },
+
+            // 资源功能集合
+            resourceFn: {
+                // 查询资源类型
+                findResourceTypes: function() {
+                    $scope.get('${app}/resource_types/' + $scope.current.app.id + '/selected', function(data) {
+                        $scope.resourceTypes = data;
+                        $scope.resourceFn.active(data[0]);
+                    });
+                },
+
+                // 激活资源类型
+                active: function(resourceType) {
+                    $scope.current.resourceType = resourceType;
+                    $scope.ctrl.status('tab_' + resourceType.type, 'loading');
+                    $scope.get('${app}/resources/' + $scope.current.role.id + '/' + resourceType.code, function(data) {
+                        $scope.resources = data;
+                        $scope.resourceUrl = '${app}/resource/' + resourceType.type + '?' + $scope.date.timestamp();
+                        $scope.ctrl.status('bindBtn', 'standby');
+                        $scope.ctrl.status('tab_' + resourceType.type, 'loaded');
+                    });
                 }
             },
 

@@ -3,12 +3,18 @@ package net.ufrog.leo.console.controllers;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.utils.Objects;
+import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.console.forms.RoleResourceBindForm;
 import net.ufrog.leo.domain.models.Role;
+import net.ufrog.leo.domain.models.RoleResource;
 import net.ufrog.leo.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 角色控制器
@@ -58,6 +64,32 @@ public class RoleController {
     }
 
     /**
+     * 查询绑定资源
+     *
+     * @param roleId 角色编号
+     * @param type 类型
+     * @return 角色资源绑定表单
+     */
+    @GetMapping("/resources/{roleId}/{type}")
+    @ResponseBody
+    public RoleResourceBindForm findResources(@PathVariable("roleId") String roleId, @PathVariable("type") String type) {
+        RoleResourceBindForm roleResourceBindForm = new RoleResourceBindForm();
+        List<String> lAllow = new ArrayList<>();
+        List<String> lBan = new ArrayList<>();
+
+        roleService.findRoleResources(roleId, type).parallelStream().forEach(roleResource -> {
+            if (Strings.equals(RoleResource.Type.ALLOW, roleResource.getType())) {
+                lAllow.add(roleResource.getResourceId());
+            } else if (Strings.equals(RoleResource.Type.BAN, roleResource.getType())) {
+                lBan.add(roleResource.getResourceId());
+            }
+        });
+        roleResourceBindForm.setAllows(lAllow.toArray(new String[0]));
+        roleResourceBindForm.setBans(lBan.toArray(new String[0]));
+        return roleResourceBindForm;
+    }
+
+    /**
      * 创建角色
      *
      * @param role 角色对象
@@ -81,5 +113,29 @@ public class RoleController {
     public Result<Role> update(@RequestBody Role role) {
         Objects.trimStringFields(role, "id", "creator", "updater");
         return Result.success(roleService.update(role), App.message("role.update.success", role.getName()));
+    }
+
+    /**
+     * 删除角色
+     *
+     * @param id 角色编号
+     * @return 删除角色
+     */
+    @DeleteMapping("/role/{id}")
+    @ResponseBody
+    public Result<Role> delete(@PathVariable("id") String id) {
+        Role role = roleService.delete(id);
+        return Result.success(role, App.message("role.delete.success", role.getName()));
+    }
+
+    /**
+     * 资源视图
+     *
+     * @param type 类型
+     * @return view for role/resource_${type}
+     */
+    @GetMapping("/resource/{type}")
+    public String resource(@PathVariable("type") String type) {
+        return "role/resource_" + type;
     }
 }

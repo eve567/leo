@@ -1,7 +1,10 @@
 package net.ufrog.leo.service;
 
 import net.ufrog.leo.domain.models.Role;
+import net.ufrog.leo.domain.models.RoleResource;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 /**
  * 角色业务接口
@@ -23,6 +26,15 @@ public interface RoleService {
     Page<Role> findByAppId(String appId, Integer page, Integer size);
 
     /**
+     * 查询角色资源关系列表
+     *
+     * @param roleId 角色编号
+     * @param type 资源类型
+     * @return 角色资源列表
+     */
+    List<RoleResource> findRoleResources(String roleId, String type);
+
+    /**
      * 创建角色
      *
      * @param role 角色对象
@@ -37,4 +49,12 @@ public interface RoleService {
      * @return 持久化的角色对象
      */
     Role update(Role role);
+
+    /**
+     * 删除角色
+     *
+     * @param id 角色编号
+     * @return 被删除角色对象
+     */
+    Role delete(String id);
 }

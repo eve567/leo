@@ -32,4 +32,18 @@ public class SecurityJpql extends HibernateJpql {
         qs.and("exists (select 1 from Role r where r.id = rr.roleId and r.status = :status)", Boolean.TRUE, "status", Role.Status.ENABLED);
         return find(qs.getScript(), qs.getArguments(), RoleResource.class);
     }
+
+    /**
+     * 通过角色编号和类型查询角色资源关系
+     *
+     * @param roleId 角色编号
+     * @param type 类型
+     * @return 资源列表
+     */
+    public List<RoleResource> findRoleResourceByRoleIdAndType(String roleId, String type) {
+        QueryScript qs = new QueryScript("from RoleResource rr where 1 = 1");
+        qs.and("rr.roleId = :roleId", Boolean.TRUE, "roleId", roleId);
+        qs.and("exists (select 1 from Resource r where r.id = rr.resourceId and r.type = :type)", Boolean.TRUE, "type", type);
+        return find(qs.getScript(), qs.getArguments(), RoleResource.class);
+    }
 }

@@ -2,6 +2,7 @@ package net.ufrog.leo.service.impls;
 
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.utils.Objects;
+import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.models.Role;
 import net.ufrog.leo.domain.models.RoleResource;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 角色业务实现
@@ -36,6 +39,9 @@ public class RoleServiceImpl implements RoleService {
     /** 角色资源仓库 */
     private RoleResourceRepository roleResourceRepository;
 
+    /** 权限脚本 */
+    private SecurityJpql securityJpql;
+
     /**
      * 构造函数
      *
@@ -44,16 +50,22 @@ public class RoleServiceImpl implements RoleService {
      * @param roleResourceRepository 角色资源仓库
      */
     @Autowired
-    public RoleServiceImpl(ResourceRepository resourceRepository, RoleRepository roleRepository, RoleResourceRepository roleResourceRepository) {
+    public RoleServiceImpl(ResourceRepository resourceRepository, RoleRepository roleRepository, RoleResourceRepository roleResourceRepository, SecurityJpql securityJpql) {
         this.resourceRepository = resourceRepository;
         this.roleRepository = roleRepository;
         this.roleResourceRepository = roleResourceRepository;
+        this.securityJpql = securityJpql;
     }
 
     @Override
     public Page<Role> findByAppId(String appId, Integer page, Integer size) {
         Pageable pageable = Domains.pageable(page, size, Domains.sort(Sort.Direction.ASC, "name"));
         return roleRepository.findByAppIdAndType(appId, Role.Type.PUBLIC, pageable);
+    }
+
+    @Override
+    public List<RoleResource> findRoleResources(String roleId, String type) {
+        return securityJpql.findRoleResourceByRoleIdAndType(roleId, type);
     }
 
     @Override
@@ -76,5 +88,13 @@ public class RoleServiceImpl implements RoleService {
         Role oRole = roleRepository.findOne(role.getId());
         Objects.copyProperties(oRole, role, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
         return roleRepository.save(oRole);
+    }
+
+    @Override
+    @Transactional
+    public Role delete(String id) {
+        Role role = roleRepository.findOne(id);
+        role.setStatus(Role.Status.DISABLED);
+        return roleRepository.save(role);
     }
 }

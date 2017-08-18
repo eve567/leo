@@ -30,7 +30,7 @@
             <td ng-bind="role.code"></td>
             <td class="link-group">
                 <a href="#" class="link-group-item" ng-click="roleFn.form(role)">编辑</a>
-                <a href="#" class="link-group-item">资源绑定</a>
+                <a href="#" class="link-group-item" ng-click="roleFn.showBind(role)">资源绑定</a>
                 <a href="#" class="link-group-item" ng-click="roleFn.popDeleteModal(role)">删除</a>
             </td>
         </tr>

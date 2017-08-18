@@ -1,0 +1,16 @@
+<ul class="nav nav-tabs">
+    <li ng-repeat="rt in resourceTypes" ng-class="{active: rt === current.resourceType}">
+        <a href="#" ng-click="resourceFn.active(rt)">
+            <fa i="spinner spin" ng-show="ctrl.status('tab_' + rt.type, ['loading'])">&nbsp;</fa>
+            <span ng-bind="rt.typeName"></span>
+        </a>
+    </li>
+</ul>
+<div class="panel-tab ng-fade" ng-include="resourceUrl"></div>
+<div class="table-footer">
+    <button class="btn btn-success">
+        <span ng-show="ctrl.status('bindBtn', ['standby'])"><fa i="check-square-o">&nbsp;绑定</fa></span>
+        <span ng-show="ctrl.status('bindBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+    </button>
+    <button class="btn btn-default" ng-click="ctrl.status('view', 'grid')"><fa i="times-circle">&nbsp;取消</fa></button>
+</div>

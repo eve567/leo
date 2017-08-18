@@ -3,6 +3,7 @@ $spacing: 20px;
 $font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
 $font-size: 14px;
 $font-size-sm: 12px;
+$font-size-lg: 16px;
 $color-white: #ffffff;
 $color-gray-darker: #222222;
 $color-gray-dark: #333333;
@@ -62,6 +63,12 @@ body {
     padding-right: $spacing/5;
     padding-left: $spacing/10;
   }
+}
+.pointer {
+  cursor: pointer;
+}
+.font-lg {
+  font-size: $font-size-lg;
 }
 
 /* angular styles */

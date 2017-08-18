@@ -1,0 +1,31 @@
+<div class="alert" ng-controller="resultCtrl" ng-class="alertClass()">
+    <ul>
+        <!-- #for(msg: result.messages) -->
+        <li>${msg}</li>
+        <!-- #end -->
+    </ul>
+</div>
+
+<script type="text/javascript">
+    'use strict';
+    function resultCtrl($scope) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+
+            },
+
+            //
+            alertClass: function() {
+                return 'alert-' + $scope.types['${result.type}'];
+            },
+
+            //
+            types: {
+                SUCCESS: 'success',
+                WARNING: 'warning',
+                FAILURE: 'danger'
+            }
+        }).init();
+    }
+</script>

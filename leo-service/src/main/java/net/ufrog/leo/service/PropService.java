@@ -19,4 +19,13 @@ public interface PropService {
      * @return 属性列表
      */
     List<Prop> findAll();
+
+    /**
+     * 保存属性
+     *
+     * @param code 代码
+     * @param value 内容
+     * @return 持久化属性
+     */
+    Prop save(String code, String value);
 }

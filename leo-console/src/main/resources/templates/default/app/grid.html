@@ -40,6 +40,7 @@
             <td class="link-group">
                 <a href="#" class="link-group-item" ng-click="appFn.popSecretModal(app)">应用配置</a>
                 <a href="#" class="link-group-item" ng-click="appFn.form(app)">编辑</a>
+                <a href="#" class="link-group-item" ng-click="appFn.popResourceTypeModal(app)">资源类型</a>
             </td>
         </tr>
         <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(apps)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>

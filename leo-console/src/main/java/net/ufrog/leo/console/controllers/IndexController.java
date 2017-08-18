@@ -1,10 +1,12 @@
 package net.ufrog.leo.console.controllers;
 
 import net.ufrog.common.Result;
+import net.ufrog.common.app.App;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.leo.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -50,9 +52,10 @@ public class IndexController {
      * @return 清空结果
      */
     @GetMapping("/clear")
-    public Result<?> clear() {
+    public String clear(Model model) {
         Caches.clear();
-        return Result.success("success to clear all cache.");
+        model.addAttribute("result", Result.success(App.message("cache.clear.success")));
+        return "result";
     }
 
     @GetMapping("/test")

@@ -86,13 +86,16 @@
         }])
 
         /** 布局指令 */
-        .directive('layout', ['$leo', '$common', function($leo, $common) {
+        .directive('layout', ['$leo', '$common', '$sce', function($leo, $common, $sce) {
+            var tplUrl = $common.ctrl.scriptPath(['leo-api.min.js', 'leo-api.js']) + 'leo-api-layout.html';
+            $sce.trustAsResourceUrl(tplUrl);
+
             return {
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: true,
-                templateUrl: $common.ctrl.scriptPath(['leo-api.min.js', 'leo-api.js']) + '/leo-api-layout.html',
+                templateUrl: tplUrl,
                 link: function($scope, $element, $attrs) {
                     ng.extend($scope, {
                         // 初始化

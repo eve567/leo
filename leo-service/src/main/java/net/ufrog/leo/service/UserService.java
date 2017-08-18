@@ -3,6 +3,7 @@ package net.ufrog.leo.service;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserSignLog;
 import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
@@ -87,6 +88,19 @@ public interface UserService {
      * @return 用户对象
      */
     User freezeOrUnfreeze(String id);
+
+    /**
+     * 创建登录日志
+     *
+     * @param type 类型
+     * @param mode 模式
+     * @param appId 应用编号
+     * @param userId 用户编号
+     * @param platformCode 平台代码
+     * @param remark 备注
+     * @return 用户登录日志
+     */
+    UserSignLog createSignLog(String type, String mode, String appId, String userId, String platformCode, String remark);
 
     /**
      * 用户类型

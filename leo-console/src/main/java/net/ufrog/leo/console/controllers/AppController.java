@@ -1,13 +1,22 @@
 package net.ufrog.leo.console.controllers;
 
 import net.ufrog.common.Result;
+import net.ufrog.common.dict.Dicts;
 import net.ufrog.common.utils.Objects;
+import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.console.forms.AppResourceTypeBindForm;
 import net.ufrog.leo.domain.models.App;
+import net.ufrog.leo.domain.models.AppResource;
+import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 应用控制器
@@ -56,6 +65,47 @@ public class AppController {
     }
 
     /**
+     * 查询所有应用
+     *
+     * @return
+     */
+    @GetMapping("/apps/all")
+    @ResponseBody
+    public List<App> findAll() {
+        return appService.findAll();
+    }
+
+    /**
+     * 查询应用资源关系
+     *
+     * @param id 应用编号
+     * @param type 类型
+     * @return 应用资源关系列表
+     */
+    @GetMapping("/resource_types/{id}/{type}")
+    @ResponseBody
+    public List<AppResource> findResourceTypes(@PathVariable("id") String id, @PathVariable(name = "type", required = false) String type) {
+        List<AppResource> lAppResource = appService.findResourceTypes(id);
+        if (Strings.empty(type)) {
+            List<AppResource> lAR = new ArrayList<>();
+            Map<Object, Dicts.Elem> mResourceType = Dicts.elements(Resource.Type.class);
+
+            mResourceType.entrySet().parallelStream().filter(entry -> {
+                for (AppResource appResource: lAppResource) {
+                    if (Strings.equals(appResource.getType(), String.class.cast(entry.getKey()))) return false;
+                }
+                return true;
+            }).forEach(entry -> {
+                AppResource appResource = new AppResource();
+                appResource.setType(String.class.cast(entry.getKey()));
+                lAR.add(appResource);
+            });
+            lAppResource.addAll(lAR);
+        }
+        return lAppResource;
+    }
+
+    /**
      * 创建应用
      *
      * @param app 应用对象
@@ -79,5 +129,18 @@ public class AppController {
     public Result<App> update(@RequestBody App app) {
         Objects.trimStringFields(app, "id", "creator", "updater");
         return Result.success(appService.update(app), net.ufrog.common.app.App.message("app.update.success", app.getName()));
+    }
+
+    /**
+     * 绑定资源类型
+     *
+     * @param appId 应用编号
+     * @param appResourceTypeBindForm 应用资源类型绑定表单
+     * @return 绑定结果
+     */
+    @PostMapping("/app/bind_resource_types/{appId}")
+    @ResponseBody
+    public Result<List<AppResource>> bind(@PathVariable("appId") String appId, @RequestBody AppResourceTypeBindForm appResourceTypeBindForm) {
+        return Result.success(appService.bindResourceTypes(appId, appResourceTypeBindForm.getResourceTypes()), net.ufrog.common.app.App.message("app.bind.success"));
     }
 }

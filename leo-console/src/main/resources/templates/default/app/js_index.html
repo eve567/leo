@@ -60,11 +60,46 @@
                     });
                 },
 
-                //
+                // 绑定资源
+                bind: function() {
+                    var $types = [];
+                    $scope.ctrl.status('bindBtn', 'processing');
+
+                    // 处理所有绑定的资源类型
+                    angular.forEach($scope.resourceTypes, function(rt) {
+                        if (!$scope.valid.empty(rt.appId)) {
+                            $types.push(rt.type);
+                        }
+                    });
+
+                    // 请求数据
+                    $scope.post('${app}/app/bind_resource_types/' + $scope.current.app.id, {resourceTypes: $types}, function() {
+                        $bootstrap.modal.hide('resourceTypeModal');
+                    }, function() {
+                        $scope.ctrl.status('bindBtn', 'standby');
+                    });
+                },
+
+                // 展示密钥配置弹窗
                 popSecretModal: function(app) {
                     $scope.current.app = app;
                     $scope.current.configType = $scope.appFn.configTypes[0];
                     $bootstrap.modal.show('appSecretModal');
+                },
+
+                // 展示资源类型弹窗
+                popResourceTypeModal: function(app) {
+                    $scope.current.app = app;
+                    $scope.ctrl.status('bindBtn', 'standby');
+                    $bootstrap.modal.show('resourceTypeModal');
+                    $scope.get('${app}/resource_types/' + app.id, function(data) {
+                        $scope.resourceTypes = data;
+                    });
+                },
+
+                // 选择资源类型
+                selectResourceType: function(resourceType) {
+                    resourceType.appId = $scope.valid.empty(resourceType.appId) ? $scope.current.app.id : undefined;
                 },
 
                 // 判断保存按钮是否有效

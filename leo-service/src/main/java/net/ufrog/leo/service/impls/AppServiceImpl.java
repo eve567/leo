@@ -1,12 +1,15 @@
 package net.ufrog.leo.service.impls;
 
+import net.ufrog.common.Logger;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.App;
+import net.ufrog.leo.domain.models.AppResource;
 import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.repositories.AppRepository;
+import net.ufrog.leo.domain.repositories.AppResourceRepository;
 import net.ufrog.leo.service.AppService;
 import net.ufrog.leo.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -37,6 +40,9 @@ public class AppServiceImpl implements AppService {
     /** 应用仓库 */
     private AppRepository appRepository;
 
+    /** 应用资源仓库 */
+    private AppResourceRepository appResourceRepository;
+
     /** 权限业务接口 */
     private SecurityService securityService;
 
@@ -44,11 +50,13 @@ public class AppServiceImpl implements AppService {
      * 构造函数
      *
      * @param appRepository 应用仓库
+     * @param appResourceRepository 应用资源仓库
      * @param securityService 权限业务接口
      */
     @Autowired
-    public AppServiceImpl(AppRepository appRepository, SecurityService securityService) {
+    public AppServiceImpl(AppRepository appRepository, AppResourceRepository appResourceRepository, SecurityService securityService) {
         this.appRepository = appRepository;
+        this.appResourceRepository = appResourceRepository;
         this.securityService = securityService;
     }
 
@@ -89,6 +97,11 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
+    public List<AppResource> findResourceTypes(String id) {
+        return appResourceRepository.findByAppId(id);
+    }
+
+    @Override
     @Transactional
     public App create(App app) {
         app.setSecret(Strings.random(64));
@@ -103,8 +116,26 @@ public class AppServiceImpl implements AppService {
     public App update(App app) {
         App oApp = appRepository.findOne(app.getId());
         Objects.copyProperties(oApp, app, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
+        clear(app.getId());
         clearAll();
         return appRepository.save(oApp);
+    }
+
+    @Override
+    @Transactional
+    public List<AppResource> bindResourceTypes(String id, String[] types) {
+        List<AppResource> lAppResource = appResourceRepository.findByAppId(id);
+        List<AppResource> lAR = new ArrayList<>(types.length);
+        Logger.info("delete %s app resource type reference(s).", lAppResource.size());
+        appResourceRepository.delete(lAppResource);
+
+        Stream.of(types).parallel().forEach(type -> {
+            AppResource appResource = new AppResource();
+            appResource.setType(type);
+            appResource.setAppId(id);
+            lAR.add(appResource);
+        });
+        return appResourceRepository.save(lAR);
     }
 
     @Override

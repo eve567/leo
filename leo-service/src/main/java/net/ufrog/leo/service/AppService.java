@@ -1,6 +1,7 @@
 package net.ufrog.leo.service;
 
 import net.ufrog.leo.domain.models.App;
+import net.ufrog.leo.domain.models.AppResource;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -54,6 +55,14 @@ public interface AppService {
     Page<App> findAll(Integer page, Integer size);
 
     /**
+     * 查询资源类型
+     *
+     * @param id 应用编号
+     * @return 应用资源关系列表
+     */
+    List<AppResource> findResourceTypes(String id);
+
+    /**
      * 创建应用
      *
      * @param app 应用对象
@@ -68,6 +77,15 @@ public interface AppService {
      * @return 持久化应用对象
      */
     App update(App app);
+
+    /**
+     * 绑定资源类型
+     *
+     * @param id 应用编号
+     * @param types 类型数组
+     * @return 绑定的应用资源关系列表
+     */
+    List<AppResource> bindResourceTypes(String id, String[] types);
 
     /**
      * 清除应用缓存

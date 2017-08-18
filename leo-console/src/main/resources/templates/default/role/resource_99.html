@@ -1,0 +1,43 @@
+<div ng-controller="resource99Ctrl">
+    <table class="table table-striped table-hover">
+        <colgroup>
+            <col width="0%">
+            <col width="100%">
+        </colgroup>
+        <thead>
+        <tr>
+            <th><a href="#"><fa i="square-o lg"></fa></a></th>
+            <th>名称</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="app in apps">
+            <td><a href="#"><fa i="square-o lg"></fa></a></td>
+            <td><span ng-bind="app.name"></span>&nbsp;-&nbsp;<span ng-bind="app.code"></span></td>
+        </tr>
+        <tr ng-if="ctrl.status('appGrid', ['loaded']) && valid.empty(apps)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
+        <tr ng-if="ctrl.status('appGrid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    'use strict';
+    function resource99Ctrl($scope) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.findApps();
+            },
+
+            // 查询所有应用
+            findApps: function() {
+                $scope.ctrl.status('appGrid', 'loading');
+                $scope.get('${app}/apps/all', function(data) {
+                    $scope.apps = data;
+                    $scope.ctrl.status('appGrid', 'loaded');
+                });
+            }
+        }).init();
+    }
+</script>

@@ -5,12 +5,15 @@ import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserSignLog;
 import net.ufrog.leo.domain.repositories.UserRepository;
+import net.ufrog.leo.domain.repositories.UserSignLogRepository;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.stream.Stream;
 
 /**
@@ -25,16 +28,21 @@ import java.util.stream.Stream;
 public class UserServiceImpl implements UserService {
 
     /** 用户仓库 */
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    /** 用户登录日志仓库 */
+    private final UserSignLogRepository userSignLogRepository;
 
     /**
      * 构造函数
      *
      * @param userRepository 用户仓库
+     * @param userSignLogRepository 用户登录日志仓库
      */
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserSignLogRepository userSignLogRepository) {
         this.userRepository = userRepository;
+        this.userSignLogRepository = userSignLogRepository;
     }
 
     @Override
@@ -115,5 +123,20 @@ public class UserServiceImpl implements UserService {
             return userRepository.save(user);
         }
         throw new ServiceException("cannot find user or user status invalid.", "service.user.toggle.failure.status");
+    }
+
+    @Override
+    @Transactional
+    public UserSignLog createSignLog(String type, String mode, String appId, String userId, String platformCode, String remark) {
+        UserSignLog userSignLog = new UserSignLog();
+
+        userSignLog.setDatetime(new Date());
+        userSignLog.setType(type);
+        userSignLog.setMode(mode);
+        userSignLog.setAppId(appId);
+        userSignLog.setUserId(userId);
+        userSignLog.setPlatformCode(platformCode);
+        userSignLog.setRemark(remark);
+        return userSignLogRepository.save(userSignLog);
     }
 }

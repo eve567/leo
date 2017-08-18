@@ -13,4 +13,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface PropRepository extends JpaRepository<Prop, String> {
+
+    /**
+     * 通过代码查询属性
+     *
+     * @param code 代码
+     * @return 属性对象
+     */
+    Prop findByCode(String code);
 }

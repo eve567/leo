@@ -119,7 +119,10 @@
         }])
 
         /** 树形指令 */
-        .directive('tree', ['$common', '$tree', function($common, $tree) {
+        .directive('tree', ['$common', '$tree', '$sce', function($common, $tree, $sce) {
+            var tplUrl = $common.ctrl.scriptPath(['ufrog-angular-tree.min.js', 'ufrog-angular-tree.js']) + 'ufrog-angular-tree.html';
+            $sce.trustAsResourceUrl(tplUrl);
+
             return {
                 restrict: 'E',
                 replace: true,
@@ -128,7 +131,7 @@
                     ngModel: '=',
                     autoCollapse: '='
                 },
-                templateUrl: $common.ctrl.scriptPath(['ufrog-angular-tree.min.js', 'ufrog-angular-tree.js']) + '/ufrog-angular-tree.html',
+                templateUrl: tplUrl,
                 link: function($scope, $element) {
                     ng.extend($scope, {
                         // 初始化

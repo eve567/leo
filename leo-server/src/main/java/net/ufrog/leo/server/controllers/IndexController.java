@@ -2,6 +2,7 @@ package net.ufrog.leo.server.controllers;
 
 import net.ufrog.common.Logger;
 import net.ufrog.common.Result;
+import net.ufrog.common.ThreadPools;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
@@ -9,6 +10,7 @@ import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
 import net.ufrog.leo.client.LeoInterception;
 import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserSignLog;
 import net.ufrog.leo.server.AccessToken;
 import net.ufrog.leo.server.AccessTokenManager;
 import net.ufrog.leo.service.AppService;
@@ -104,7 +106,10 @@ public class IndexController {
             WebApp app = App.current(WebApp.class);
             List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
             if (lAccessToken != null) {
-                lAccessToken.forEach(accessToken -> AccessTokenManager.get().offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken()));
+                lAccessToken.forEach(accessToken -> {
+                    AccessTokenManager.get().offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken());
+                    ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_OUT, UserSignLog.Mode.GATEWAY, accessToken.getAppId(), accessToken.getUserId(), null, null));
+                });
             }
             app.setUser(null);
             app.session(SESSION_ACCESS_TOKENS, new ArrayList<>());
@@ -151,6 +156,7 @@ public class IndexController {
             accessToken = AccessTokenManager.get().online(App.user(), app, request.getRemoteAddr());
             lAccessToken.add(accessToken);
             App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, lAccessToken);
+            ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_IN, UserSignLog.Mode.GATEWAY, accessToken.getAppId(), accessToken.getUserId(), null, null));
             Logger.debug("create access token '%s' for app '%s'", accessToken.getToken(), accessToken.getAppId());
         } else {
             accessToken = oAccessToken.get();
