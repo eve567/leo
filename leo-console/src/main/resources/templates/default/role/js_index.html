@@ -119,11 +119,40 @@
                 active: function(resourceType) {
                     $scope.current.resourceType = resourceType;
                     $scope.ctrl.status('tab_' + resourceType.type, 'loading');
-                    $scope.get('${app}/resources/' + $scope.current.role.id + '/' + resourceType.code, function(data) {
-                        $scope.resources = data;
+                    $scope.get('${app}/resources/' + $scope.current.role.id + '/' + resourceType.type, function(data) {
+                        $scope.resource = data;
                         $scope.resourceUrl = '${app}/resource/' + resourceType.type + '?' + $scope.date.timestamp();
                         $scope.ctrl.status('bindBtn', 'standby');
                         $scope.ctrl.status('tab_' + resourceType.type, 'loaded');
+                    });
+                },
+
+                // 判断是否已选中
+                isChecked: function(models) {
+                    angular.forEach(models, function(m) {
+                        m.checked = ($scope.array.in($scope.resource.allows, m.resourceId) >= 0);
+                    });
+                },
+
+                // 选择
+                check: function(model, checked) {
+                    model.checked = $scope.valid.undefined(checked) ? !(model.checked === true) : checked;
+                    if (model.checked === true && $scope.array.in($scope.resource.allows, model.resourceId) === -1) {
+                        $scope.array.add($scope.resource.allows, model.resourceId);
+                    } else if (model.checked === false && $scope.array.in($scope.resource.allows, model.resourceId) >= 0) {
+                        $scope.array.remove($scope.resource.allows, model.resourceId);
+                    }
+                },
+
+                // 绑定资源
+                bind: function() {
+                    $scope.ctrl.status('bindBtn', 'processing');
+                    $scope.resource.roleId = $scope.current.role.id;
+                    $scope.resource.type = $scope.current.resourceType.type;
+                    $scope.post('${app}/bind_resources', $scope.resource, function(data) {
+                        console.log(data);
+                    }, function() {
+                        $scope.ctrl.status('bindBtn', 'standby');
                     });
                 }
             },
@@ -134,6 +163,7 @@
                 active: function(app) {
                     $scope.current.app = app;
                     $scope.roleFn.find(0);
+                    $scope.ctrl.status('view', 'grid');
                 }
             },
 

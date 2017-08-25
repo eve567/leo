@@ -1,7 +1,9 @@
 package net.ufrog.leo.service.impls;
 
+import net.ufrog.common.Logger;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.utils.Objects;
+import net.ufrog.leo.domain.Models;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.models.Role;
@@ -17,7 +19,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 角色业务实现
@@ -55,6 +60,11 @@ public class RoleServiceImpl implements RoleService {
         this.roleRepository = roleRepository;
         this.roleResourceRepository = roleResourceRepository;
         this.securityJpql = securityJpql;
+    }
+
+    @Override
+    public Role findById(String id) {
+        return roleRepository.findOne(id);
     }
 
     @Override
@@ -96,5 +106,30 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findOne(id);
         role.setStatus(Role.Status.DISABLED);
         return roleRepository.save(role);
+    }
+
+    @Override
+    @Transactional
+    public List<RoleResource> bindResources(String roleId, String type, String[] allows, String[] bans) {
+        List<RoleResource> lRoleResource = findRoleResources(roleId, type);
+        roleResourceRepository.delete(lRoleResource);
+        Logger.info("delete %s original role resource reference(s).", lRoleResource.size());
+
+        lRoleResource = new ArrayList<>(allows.length + bans.length);
+        lRoleResource.addAll(newRoleResourceList(roleId, RoleResource.Type.ALLOW, allows));
+        lRoleResource.addAll(newRoleResourceList(roleId, RoleResource.Type.BAN, bans));
+        return roleResourceRepository.save(lRoleResource);
+    }
+
+    /**
+     * 新建角色资源绑定列表
+     *
+     * @param roleId 角色编号
+     * @param type 类型
+     * @param resources 资源数组
+     * @return 角色资源绑定列表
+     */
+    private List<RoleResource> newRoleResourceList(String roleId, String type, String[] resources) {
+        return Stream.of(resources).parallel().map(resource -> Models.newRoleResource(type, roleId, resource)).collect(Collectors.toList());
     }
 }

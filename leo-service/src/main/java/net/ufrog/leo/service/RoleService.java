@@ -1,5 +1,6 @@
 package net.ufrog.leo.service;
 
+import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.models.Role;
 import net.ufrog.leo.domain.models.RoleResource;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,14 @@ import java.util.List;
  * @since 0.1
  */
 public interface RoleService {
+
+    /**
+     * 通过账号查询角色
+     *
+     * @param id 角色编号
+     * @return 角色
+     */
+    Role findById(String id);
 
     /**
      * 通过应用编号查询角色
@@ -57,4 +66,15 @@ public interface RoleService {
      * @return 被删除角色对象
      */
     Role delete(String id);
+
+    /**
+     * 绑定资源
+     *
+     * @param roleId 角色编号
+     * @param type 类型
+     * @param allows 允许数组
+     * @param bans 禁止数组
+     * @return 角色资源关系列表
+     */
+    List<RoleResource> bindResources(String roleId, String type, String[] allows, String[] bans);
 }

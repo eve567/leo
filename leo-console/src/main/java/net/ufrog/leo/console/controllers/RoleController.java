@@ -2,9 +2,13 @@ package net.ufrog.leo.console.controllers;
 
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
+import net.ufrog.common.dict.Dicts;
+import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.console.forms.RoleResourceBindForm;
+import net.ufrog.leo.console.loaders.ResourceLoader;
+import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.models.Role;
 import net.ufrog.leo.domain.models.RoleResource;
 import net.ufrog.leo.service.RoleService;
@@ -27,7 +31,7 @@ import java.util.List;
 public class RoleController {
 
     /** 角色业务接口 */
-    private RoleService roleService;
+    private final RoleService roleService;
 
     /**
      * 构造函数
@@ -50,6 +54,17 @@ public class RoleController {
     }
 
     /**
+     * 资源视图
+     *
+     * @param type 类型
+     * @return view for role/resource_${type}
+     */
+    @GetMapping("/resource/{type}")
+    public String resource(@PathVariable("type") String type) {
+        return "role/resource_" + type;
+    }
+
+    /**
      * 查询所有角色
      *
      * @param appId 应用编号
@@ -61,6 +76,18 @@ public class RoleController {
     @ResponseBody
     public Page<Role> findAll(@PathVariable("appId") String appId, Integer page, Integer size) {
         return roleService.findByAppId(appId, page, size);
+    }
+
+    /**
+     * 查询模型
+     *
+     * @param type 类型
+     * @return 资源对象列表
+     */
+    @GetMapping("/resource_models/{type}")
+    @ResponseBody
+    public List<ResourceLoader.ResourceWrapper> findResourceModels(@PathVariable("type") String type) {
+        return SpringWebApp.getBean("resource_" + type, ResourceLoader.class).load();
     }
 
     /**
@@ -77,7 +104,7 @@ public class RoleController {
         List<String> lAllow = new ArrayList<>();
         List<String> lBan = new ArrayList<>();
 
-        roleService.findRoleResources(roleId, type).parallelStream().forEach(roleResource -> {
+        roleService.findRoleResources(roleId, type).forEach(roleResource -> {
             if (Strings.equals(RoleResource.Type.ALLOW, roleResource.getType())) {
                 lAllow.add(roleResource.getResourceId());
             } else if (Strings.equals(RoleResource.Type.BAN, roleResource.getType())) {
@@ -129,13 +156,16 @@ public class RoleController {
     }
 
     /**
-     * 资源视图
+     * 绑定资源
      *
-     * @param type 类型
-     * @return view for role/resource_${type}
+     * @param roleResourceBindForm 角色资源绑定表单
+     * @return 绑定结果
      */
-    @GetMapping("/resource/{type}")
-    public String resource(@PathVariable("type") String type) {
-        return "role/resource_" + type;
+    @PostMapping("/bind_resources")
+    @ResponseBody
+    public Result<List<RoleResource>> bindResources(@RequestBody RoleResourceBindForm roleResourceBindForm) {
+        List<RoleResource> lRoleResource = roleService.bindResources(roleResourceBindForm.getRoleId(), roleResourceBindForm.getType(), roleResourceBindForm.getAllows(), roleResourceBindForm.getBans());
+        Role role = roleService.findById(roleResourceBindForm.getRoleId());
+        return Result.success(lRoleResource, App.message("role.bind.success", role.getName(), Dicts.name(roleResourceBindForm.getType(), Resource.Type.class)));
     }
 }

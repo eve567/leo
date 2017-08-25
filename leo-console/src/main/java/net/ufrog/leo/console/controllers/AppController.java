@@ -84,13 +84,13 @@ public class AppController {
      */
     @GetMapping("/resource_types/{id}/{type}")
     @ResponseBody
-    public List<AppResource> findResourceTypes(@PathVariable("id") String id, @PathVariable(name = "type", required = false) String type) {
+    public List<AppResource> findResourceTypes(@PathVariable("id") String id, @PathVariable("type") String type) {
         List<AppResource> lAppResource = appService.findResourceTypes(id);
-        if (Strings.empty(type)) {
+        if (Strings.equals("all", type)) {
             List<AppResource> lAR = new ArrayList<>();
             Map<Object, Dicts.Elem> mResourceType = Dicts.elements(Resource.Type.class);
 
-            mResourceType.entrySet().parallelStream().filter(entry -> {
+            mResourceType.entrySet().stream().filter(entry -> {
                 for (AppResource appResource: lAppResource) {
                     if (Strings.equals(appResource.getType(), String.class.cast(entry.getKey()))) return false;
                 }

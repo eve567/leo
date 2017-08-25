@@ -1,14 +1,46 @@
 <div class="panel panel-default" ng-controller="resource00Ctrl">
-    <div class="panel-body"></div>
+    <div class="panel-body">
+        <tree ng-model="tree"></tree>
+    </div>
 </div>
 
+<!--suppress JSUnresolvedFunction, JSUnresolvedVariable, JSUnusedLocalSymbols -->
 <script type="text/javascript">
     'use strict';
-    function resource00Ctrl($scope) {
+    function resource00Ctrl($scope, $tree) {
         angular.extend($scope, {
             // 初始化
             init: function() {
+                $scope.tree = {};
+                $scope.tree.id = '_root';
+                $scope.setup($scope.tree);
+            },
 
+            // 查询导航
+            find: function(nav) {
+                $scope.get('${app}/resource_models/00', {appId: $scope.current.app.id, parentId: nav.id, type: '99'}, function(children) {
+                    $scope.resourceFn.isChecked(children);
+                    $tree.loaded(nav, children);
+                    angular.forEach(children, function(child) {
+                        $scope.setup(child);
+                    });
+                });
+            },
+
+            // 选中功能
+            check: function(nav, checked) {
+                $scope.resourceFn.check(nav, checked);
+            },
+
+            // 设置
+            setup: function(node) {
+                if (node.$setup !== true) {
+                    node.$setup = true;
+                    $tree.setLoadFn($scope.find, node);
+                    $tree.setCheckFn($scope.check, node);
+                    $tree.check(node, node.checked === true);
+                    $tree.load(node);
+                }
             }
         }).init();
     }

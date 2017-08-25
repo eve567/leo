@@ -4,7 +4,6 @@
 (function(ng, undefined) {
     /** 模块定义 */
     ng.module('ugTree', ['ugCommon'])
-
         /** 服务定义 */
         .service('$tree', ['$common', function($common) {
             var $_ = {
@@ -81,10 +80,49 @@
                     parent.$status.loading = false;
                 },
 
+                /** 选择节点 */
+                check: function(node, checked, spreadParent, spreadChildren) {
+                    node.$status = node.$status || {};
+                    if ($common.valid.defined(checked) && node.$status.check === (checked ? 'checked' : 'unchecked')) {
+                        return;
+                    } else if ($common.valid.defined(checked)) {
+                        node.$status.check = checked ? 'checked' : 'unchecked';
+                    } else if ($common.valid.undefined(node.$status.check)) {
+                        node.$status.check = 'checked';
+                    } else if (node.$status.check === 'checked') {
+                        node.$status.check = 'unchecked';
+                    } else if (node.$status.check === 'unchecked' && $common.valid.fn(node.$fn.ban)) {
+                        node.$status.check = 'ban';
+                    } else if (node.$status.check === 'unchecked') {
+                        node.$status.check = 'checked';
+                    } else if (node.$status.check === 'ban') {
+                        node.$status.check = 'checked';
+                    } if (spreadParent && !$common.valid.empty(node.$parent.$parent) && node.$status.check === 'checked') {
+                        $_.check(node.$parent, node.$status.check === 'checked', true, false);
+                    } if (spreadChildren && !$common.valid.empty(node.children)) {
+                        ng.forEach(node.children, function(child) {
+                            $_.check(child, node.$status.check === 'checked', false, true);
+                        });
+                    }
+                    node.$fn.check(node, node.$status.check === 'checked');
+                },
+
                 /** 设置加载方法 */
                 setLoadFn: function(fn, node) {
                     node.$fn = node.$fn || {};
                     node.$fn.load = fn;
+                },
+
+                /** 设置选择方法 */
+                setCheckFn: function(fn, node) {
+                    node.$fn = node.$fn || {};
+                    node.$fn.check = fn;
+                },
+
+                /** 设置禁止方法 */
+                setBanFn: function(fn, node) {
+                    node.$fn = node.$fn || {};
+                    node.$fn.ban = fn;
                 },
 
                 /** 添加操作 */
@@ -119,10 +157,7 @@
         }])
 
         /** 树形指令 */
-        .directive('tree', ['$common', '$tree', '$sce', function($common, $tree, $sce) {
-            var tplUrl = $common.ctrl.scriptPath(['ufrog-angular-tree.min.js', 'ufrog-angular-tree.js']) + 'ufrog-angular-tree.html';
-            $sce.trustAsResourceUrl(tplUrl);
-
+        .directive('tree', ['$common', '$tree', function($common, $tree) {
             return {
                 restrict: 'E',
                 replace: true,
@@ -131,7 +166,7 @@
                     ngModel: '=',
                     autoCollapse: '='
                 },
-                templateUrl: tplUrl,
+                templateUrl: $common.ctrl.scriptPath(['ufrog-angular-tree.min.js', 'ufrog-angular-tree.js']) + '/ufrog-angular-tree.html',
                 link: function($scope, $element) {
                     ng.extend($scope, {
                         // 初始化
@@ -166,12 +201,18 @@
                             if ($common.valid.undefined(node.$status.check) || node.$status.check === 'unchecked') {
                                 return $scope.$service.$config.icon.unchecked;
                             } else if (node.$status.check === 'checked') {
-                                return $scope.$service.$config.icon.unchecked;
+                                return $scope.$service.$config.icon.checked;
                             } else if (node.$status.check === 'ban') {
                                 return $scope.$service.$config.icon.ban;
                             }
                         },
 
+                        // 判断是否有复选框
+                        $hasCheckbox: function(node) {
+                            return ($common.valid.defined(node.$fn) && ($common.valid.fn(node.$fn.check) || $common.valid.fn(node.$fn.ban)));
+                        },
+
+                        //
                         $service: $tree
                     }).$init();
                 }

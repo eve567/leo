@@ -1,5 +1,7 @@
 package net.ufrog.leo.domain.models;
 
+import net.ufrog.common.dict.Dicts;
+
 /**
  * 用户模型
  *
@@ -187,6 +189,15 @@ public class User extends Model {
      */
     public void setForced(java.lang.String forced) {
         this.forced = forced;
+    }
+
+    /**
+     * 读取类型名称
+     *
+     * @return 类型名称
+     */
+    public String getTypeName() {
+        return Dicts.name(type, Type.class);
     }
 
     /**

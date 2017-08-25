@@ -63,6 +63,16 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
+    public Resource findResourceById(String resourceId) {
+        return resourceRepository.findOne(resourceId);
+    }
+
+    @Override
+    public Resource findResourceByTypeAndReferenceId(String type, String referenceId) {
+        return resourceRepository.findByTypeAndReferenceId(type, referenceId);
+    }
+
+    @Override
     public <T extends ID> List<T> filter(List<T> lResource, String userId) {
         User user = userRepository.findOne(userId);
         if (!Strings.equals(User.Type.ROOT, user.getType()) && lResource != null && lResource.size() > 0) {

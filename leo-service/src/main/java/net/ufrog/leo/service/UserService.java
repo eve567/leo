@@ -4,6 +4,7 @@ import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.domain.models.UserSignLog;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
@@ -17,6 +18,16 @@ import java.util.List;
  * @since 0.1
  */
 public interface UserService {
+
+    /**
+     * 查询所有用户
+     *
+     * @param page 当前页码
+     * @param size 分页大小
+     * @param types 类型数组
+     * @return 用户分页信息
+     */
+    Page<User> findAll(Integer page, Integer size, String... types);
 
     /**
      * 通过编号查询用户

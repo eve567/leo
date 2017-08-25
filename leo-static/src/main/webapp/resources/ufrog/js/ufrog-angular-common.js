@@ -6,7 +6,7 @@
     ng.module('ugCommon', [])
 
         /** 服务定义 */
-        .service('$common', ['$window', '$filter', function($window, $filter) {
+        .service('$common', ['$window', '$filter', '$timeout', '$http', '$templateCache', function($window, $filter, $timeout, $http, $templateCache) {
             var $_ = {
                 /** jQuery */
                 $: jq,
@@ -256,7 +256,7 @@
                             $selector[i] = 'script[src*="' + n + '"]';
                         });
                         $tags = $_.$($selector.join(','));
-                        return ($tags.length > 0) ? $tags.get(0).src.substr(0, $tags.get(0).src.lastIndexOf('/') + 1) : undefined;
+                        return ($tags.length > 0) ? $tags.get(0).src.substr(0, $tags.get(0).src.lastIndexOf('/')) : undefined;
                     }
                 }
             };

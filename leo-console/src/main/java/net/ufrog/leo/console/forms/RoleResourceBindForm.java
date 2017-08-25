@@ -13,11 +13,53 @@ public class RoleResourceBindForm implements Serializable {
 
     private static final long serialVersionUID = 2558339664841773296L;
 
+    /** 角色编号 */
+    private String roleId;
+
+    /** 类型 */
+    private String type;
+
     /** 允许资源数组 */
     private String[] allows;
 
     /** 禁用资源数组 */
     private String[] bans;
+
+    /**
+     * 读取角色编号
+     *
+     * @return 角色编号
+     */
+    public String getRoleId() {
+        return roleId;
+    }
+
+    /**
+     * 设置角色编号
+     *
+     * @param roleId 角色编号
+     */
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    /**
+     * 读取类型
+     *
+     * @return 类型
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * 设置类型
+     *
+     * @param type 类型
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 
     /**
      * 读取绑定资源数组

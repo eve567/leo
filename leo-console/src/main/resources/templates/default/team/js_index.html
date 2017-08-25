@@ -1,0 +1,24 @@
+<!--suppress JSUnresolvedVariable, JSUnusedLocalSymbols -->
+<script type="text/javascript">
+    'use strict';
+    function userCtrl($scope, $bootstrap) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.ctrl.status('view', 'grid');
+            },
+
+            // 用户功能集合
+            userFn: {
+                // 查询用户
+                find: function(page, size) {
+                    $scope.ctrl.status('grid', 'loading');
+                    $scope.get('${app}/users', {page: page, size: size, types: ['90']}, function(data) {
+                        $bootstrap.page(data, 'users');
+                        $scope.ctrl.status('grid', 'loaded');
+                    });
+                }
+            }
+        }).init();
+    }
+</script>

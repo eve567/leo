@@ -1,5 +1,6 @@
 package net.ufrog.leo.service.impls;
 
+import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Passwords;
@@ -10,9 +11,14 @@ import net.ufrog.leo.domain.repositories.UserRepository;
 import net.ufrog.leo.domain.repositories.UserSignLogRepository;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Stream;
 
@@ -43,6 +49,12 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserRepository userRepository, UserSignLogRepository userSignLogRepository) {
         this.userRepository = userRepository;
         this.userSignLogRepository = userSignLogRepository;
+    }
+
+    @Override
+    public Page<User> findAll(Integer page, Integer size, String... types) {
+        Pageable pageable = Domains.pageable(page, size, Sort.Direction.ASC, "email", "cellphone");
+        return userRepository.findByTypeIn(Arrays.asList(types), pageable);
     }
 
     @Override

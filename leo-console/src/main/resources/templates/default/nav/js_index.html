@@ -127,7 +127,6 @@
 
                 // 设置相邻编号
                 nextId: function() {
-                    console.log($scope.nav);
                     if ($scope.current.position.type === 'next' && $scope.nav.id !== $scope.nav.neighbour.nextId) {
                         $scope.nav.nextId = $scope.nav.neighbour.nextId;
                     } else if ($scope.current.position.type === 'prev') {

@@ -15,6 +15,23 @@ import java.util.List;
 public interface SecurityService {
 
     /**
+     * 通过资源编号查询资源
+     *
+     * @param resourceId 资源编号
+     * @return 资源对象
+     */
+    Resource findResourceById(String resourceId);
+
+    /**
+     * 通过类型和相关编号查询资源
+     *
+     * @param type 类型
+     * @param referenceId 相关编号
+     * @return 资源对象
+     */
+    Resource findResourceByTypeAndReferenceId(String type, String referenceId);
+
+    /**
      * 资源过滤
      *
      * @param lResource 元素列表

@@ -8,7 +8,7 @@
 </ul>
 <div class="panel-tab ng-fade" ng-include="resourceUrl"></div>
 <div class="table-footer">
-    <button class="btn btn-success">
+    <button class="btn btn-success" ng-click="resourceFn.bind()" ng-disabled="ctrl.status('bindBtn', ['processing'])">
         <span ng-show="ctrl.status('bindBtn', ['standby'])"><fa i="check-square-o">&nbsp;绑定</fa></span>
         <span ng-show="ctrl.status('bindBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
     </button>

@@ -8,9 +8,9 @@ pattern:
   email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
 path:
   resource:
-    common: "//localhost:8060/static/resources"
-    host: "//localhost:8060/static/resources/leo"
-    theme: "//localhost:8060/static/resources/leo/default"
+    common: "//localhost:7086/static/resources"
+    host: "//localhost:7086/static/resources/leo"
+    theme: "//localhost:7086/static/resources/leo/default"
 cache:
   default:
     duration: "4h"

@@ -4,7 +4,6 @@
 (function(ng, undefined) {'use strict';
     /** 定义模块 */
     ng.module('leoApi', ['ugCommon'])
-
         /** 定义服务 */
         .service('$leo', ['$http', '$common', function($http, $common) {
             var $_ = {
@@ -86,16 +85,13 @@
         }])
 
         /** 布局指令 */
-        .directive('layout', ['$leo', '$common', '$sce', function($leo, $common, $sce) {
-            var tplUrl = $common.ctrl.scriptPath(['leo-api.min.js', 'leo-api.js']) + 'leo-api-layout.html';
-            $sce.trustAsResourceUrl(tplUrl);
-
+        .directive('layout', ['$leo', '$common', function($leo, $common) {
             return {
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: true,
-                templateUrl: tplUrl,
+                templateUrl: $common.ctrl.scriptPath(['leo-api.min.js', 'leo-api.js']) + '/leo-api-layout.html',
                 link: function($scope, $element, $attrs) {
                     ng.extend($scope, {
                         // 初始化
@@ -140,6 +136,7 @@
 
                         // 激活
                         $active: function(subnav) {
+                            if ($scope.$subnav === subnav) return;
                             $scope.$subnav = subnav;
                             $leo.refresh();
                         },

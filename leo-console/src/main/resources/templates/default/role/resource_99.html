@@ -6,14 +6,14 @@
         </colgroup>
         <thead>
         <tr>
-            <th><a href="#"><fa i="square-o lg"></fa></a></th>
+            <th><a href="#" ng-click="checkAll()"><i class="fa fa-fw" ng-class="{'fa-check-square-o': checkedAll, 'fa-square-o': !checkedAll}"></i></a></th>
             <th>名称</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="app in apps">
-            <td><a href="#"><fa i="square-o lg"></fa></a></td>
-            <td><span ng-bind="app.name"></span>&nbsp;-&nbsp;<span ng-bind="app.code"></span></td>
+            <td><a href="#" ng-click="resourceFn.check(app)"><i class="fa fa-fw" ng-class="{'fa-check-square-o': app.checked, 'fa-square-o': !app.checked}"></i></a></td>
+            <td ng-bind="app.name"></td>
         </tr>
         <tr ng-if="ctrl.status('appGrid', ['loaded']) && valid.empty(apps)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
         <tr ng-if="ctrl.status('appGrid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
@@ -21,6 +21,7 @@
     </table>
 </div>
 
+<!--suppress JSUnresolvedVariable, JSUnusedLocalSymbols, JSUnresolvedFunction -->
 <script type="text/javascript">
     'use strict';
     function resource99Ctrl($scope) {
@@ -33,9 +34,18 @@
             // 查询所有应用
             findApps: function() {
                 $scope.ctrl.status('appGrid', 'loading');
-                $scope.get('${app}/apps/all', function(data) {
+                $scope.get('${app}/resource_models/99', function(data) {
                     $scope.apps = data;
+                    $scope.resourceFn.isChecked($scope.apps);
                     $scope.ctrl.status('appGrid', 'loaded');
+                });
+            },
+
+            // 选择所有
+            checkAll: function() {
+                $scope.checkedAll = !($scope.checkedAll === true);
+                angular.forEach($scope.apps, function(app) {
+                    $scope.resourceFn.check(app, $scope.checkedAll);
                 });
             }
         }).init();
