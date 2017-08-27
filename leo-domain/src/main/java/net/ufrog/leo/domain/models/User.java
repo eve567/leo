@@ -192,6 +192,15 @@ public class User extends Model {
     }
 
     /**
+     * 读取状态名称
+     *
+     * @return 状态名称
+     */
+    public String getStatusName() {
+        return Dicts.name(status, Status.class);
+    }
+
+    /**
      * 读取类型名称
      *
      * @return 类型名称

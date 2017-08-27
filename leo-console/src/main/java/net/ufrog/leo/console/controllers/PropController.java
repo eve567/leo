@@ -9,10 +9,7 @@ import net.ufrog.leo.domain.models.Prop;
 import net.ufrog.leo.service.PropService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +22,7 @@ import java.util.List;
  * @since 0.1
  */
 @Controller
+@RequestMapping("/prop")
 public class PropController {
 
     private static final String PROP_PREFIX = "_p_";
@@ -47,7 +45,7 @@ public class PropController {
      *
      * @return view for prop/index
      */
-    @GetMapping({"/prop", "/prop/", "/prop/index"})
+    @GetMapping({"", "/", "/index"})
     public String index() {
         return "prop/index";
     }
@@ -58,7 +56,7 @@ public class PropController {
      * @param view 视图名称
      * @return view for prop/prop_${view}
      */
-    @GetMapping("/prop/_{view}")
+    @GetMapping("/_{view}")
     public String propView(@PathVariable("view") String view) {
         return "prop/prop_" + view;
     }
@@ -68,7 +66,7 @@ public class PropController {
      *
      * @return 保存结果
      */
-    @PostMapping("/prop")
+    @PostMapping("/save")
     @ResponseBody
     public Result<List<Prop>> save() {
         List<Prop> lProp = new ArrayList<>();

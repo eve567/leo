@@ -12,7 +12,7 @@
             navFn: {
                 // 查询导航
                 find: function(nav) {
-                    $scope.get(['${app}/navs', $scope.navFn.defaultProperties.type, nav.id, nav.appId].join('/'), function(children) {
+                    $scope.get(['${app}/nav/find_children', $scope.navFn.defaultProperties.type, nav.id, nav.appId].join('/'), function(children) {
                         $tree.loaded(nav, children);
                         angular.forEach(children, function(child) {
                             $scope.navFn.setup(child);
@@ -61,7 +61,7 @@
 
                 // 创建功能
                 create: function(nav) {
-                    $scope.post('${app}/nav', nav, function(data) {
+                    $scope.post('${app}/nav/create', nav, function(data) {
                         $tree.reload($scope.current.parent);
                         $scope.navFn.cancel();
                     }, function(data) {
@@ -71,7 +71,7 @@
 
                 // 更新功能
                 update: function(nav) {
-                    $scope.put('${app}/nav', nav, function(data) {
+                    $scope.put('${app}/nav/update', nav, function(data) {
                         $tree.reload($scope.current.parent);
                         $scope.navFn.cancel();
                     }, function(data) {
@@ -82,7 +82,7 @@
                 // 删除功能
                 delete: function(nav) {
                     $scope.ctrl.status('deleteBtn', 'processing');
-                    $scope.delete('${app}/nav/' + nav.id, function() {
+                    $scope.delete('${app}/nav/delete/' + nav.id, function() {
                         $tree.reload($scope.current.parent);
                     }, function() {
                         $bootstrap.modal.hide('deleteNavModal');

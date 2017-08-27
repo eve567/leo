@@ -1,4 +1,4 @@
-<!--suppress JSUnresolvedVariable, JSUnusedLocalSymbols -->
+<!--suppress JSUnresolvedVariable, JSUnusedLocalSymbols, JSUnresolvedFunction -->
 <script type="text/javascript">
     'use strict';
     function userCtrl($scope, $bootstrap) {
@@ -13,12 +13,92 @@
                 // 查询用户
                 find: function(page, size) {
                     $scope.ctrl.status('grid', 'loading');
-                    $scope.get('${app}/users', {page: page, size: size, types: ['90']}, function(data) {
+                    $scope.get('${app}/user/find_all', {page: page, size: size, types: ['90']}, function(data) {
                         $bootstrap.page(data, 'users');
                         $scope.ctrl.status('grid', 'loaded');
                     });
+                },
+
+                // 显示表单
+                form: function(user) {
+                    $scope.user = angular.extend({}, user);
+                    $scope.object.delete($scope.user, ['creator', 'createTime', 'updater', 'updateTime']);
+                    $scope.ctrl.status('view', 'form');
+                    $scope.ctrl.status('saveBtn', 'standby');
+                },
+
+                // 保存数据
+                save: function($event) {
+                    $scope.ctrl.stop($event);
+                    $scope.ctrl.status('saveBtn', 'processing');
+                    if ($scope.valid.empty($scope.user.id)) {
+                        $scope.userFn.create($scope.user);
+                    } else {
+                        console.warn('miss user id.')
+                    }
+                },
+
+                // 创建用户
+                create: function(user) {
+                    $scope.post('${app}/team/create_user', user, function(data) {
+                        $scope.userFn.cancel();
+                        $scope.array.add($scope.users, data.data);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 重置密码
+                reset: function() {
+                    $scope.ctrl.status('resetBtn', 'processing');
+                    $scope.put('${app}/team/reset/' + $scope.current.user.id, function(data) {
+                        $bootstrap.modal.hide('resetModal');
+                    }, function() {
+                        $scope.ctrl.status('resetBtn', 'standby');
+                    });
+                },
+
+                // 冻结/解冻
+                freeze: function() {
+                    $scope.ctrl.status('freezeBtn', 'processing');
+                    $scope.put('${app}/team/freeze/' + $scope.current.user.id, function(data) {
+                        $bootstrap.modal.hide('freezeModal');
+                        $scope.array.replace($scope.users, data.data);
+                    }, function() {
+                        $scope.ctrl.status('resetBtn', 'standby');
+                    });
+                },
+
+                // 显示重置密码确认弹窗
+                popResetModal: function(user) {
+                    $scope.current.user = user;
+                    $scope.ctrl.status('resetBtn', 'standby');
+                    $bootstrap.modal.show('resetModal');
+                },
+
+                // 显示冻结/解冻确认弹窗
+                popFreezeModal: function(user) {
+                    $scope.current.user = user;
+                    $scope.ctrl.status('freezeBtn', 'standby');
+                    $bootstrap.modal.show('freezeModal');
+                },
+
+                // 取消表单
+                cancel: function() {
+                    $scope.ctrl.resetForm($scope.userForm);
+                    $scope.ctrl.status('view', 'grid');
+                },
+
+                // 判断保存按钮是否有效
+                disabledSaveBtn: function() {
+                    if ($scope.userForm.$invalid) return true;
+                    else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    return false;
                 }
-            }
+            },
+
+            //
+            current: {}
         }).init();
     }
 </script>

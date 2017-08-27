@@ -28,6 +28,7 @@ import java.util.List;
  * @since 0.1
  */
 @Controller
+@RequestMapping("/role")
 public class RoleController {
 
     /** 角色业务接口 */
@@ -48,7 +49,7 @@ public class RoleController {
      *
      * @return view for role/index
      */
-    @GetMapping({"/role", "/role/", "/role/index"})
+    @GetMapping({"", "/", "/index"})
     public String index() {
         return "role/index";
     }
@@ -59,7 +60,7 @@ public class RoleController {
      * @param type 类型
      * @return view for role/resource_${type}
      */
-    @GetMapping("/resource/{type}")
+    @GetMapping("/resource/_{type}")
     public String resource(@PathVariable("type") String type) {
         return "role/resource_" + type;
     }
@@ -72,7 +73,7 @@ public class RoleController {
      * @param size 分页大小
      * @return 角色分页对象
      */
-    @GetMapping("/roles/{appId}")
+    @GetMapping("/find_all/{appId}")
     @ResponseBody
     public Page<Role> findAll(@PathVariable("appId") String appId, Integer page, Integer size) {
         return roleService.findByAppId(appId, page, size);
@@ -122,7 +123,7 @@ public class RoleController {
      * @param role 角色对象
      * @return 创建结果
      */
-    @PostMapping("/role")
+    @PostMapping("/create")
     @ResponseBody
     public Result<Role> create(@RequestBody Role role) {
         Objects.trimStringFields(role, "id", "creator", "updater");
@@ -135,7 +136,7 @@ public class RoleController {
      * @param role 角色对象
      * @return 更新结果
      */
-    @PutMapping("/role")
+    @PutMapping("/update")
     @ResponseBody
     public Result<Role> update(@RequestBody Role role) {
         Objects.trimStringFields(role, "id", "creator", "updater");
@@ -148,7 +149,7 @@ public class RoleController {
      * @param id 角色编号
      * @return 删除角色
      */
-    @DeleteMapping("/role/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseBody
     public Result<Role> delete(@PathVariable("id") String id) {
         Role role = roleService.delete(id);

@@ -19,6 +19,7 @@ import java.util.List;
  * @since 0.1
  */
 @Controller
+@RequestMapping("/nav")
 public class NavController {
 
     /** 导航业务接口 */
@@ -39,7 +40,7 @@ public class NavController {
      *
      * @return view for nav.index.html
      */
-    @GetMapping({"/nav", "/nav/", "/nav/index"})
+    @GetMapping({"", "/", "/index"})
     public String index() {
         return "nav/index";
     }
@@ -52,9 +53,9 @@ public class NavController {
      * @param appId 应用编号
      * @return 导航列表
      */
-    @GetMapping("/navs/{type}/{parentId}/{appId}")
+    @GetMapping("/find_children/{type}/{parentId}/{appId}")
     @ResponseBody
-    public List<Nav> find(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("appId") String appId) {
+    public List<Nav> findChildren(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("appId") String appId) {
         return navService.findChildren(type, appId, parentId);
     }
 
@@ -64,7 +65,7 @@ public class NavController {
      * @param nav 导航
      * @return 创建结果
      */
-    @PostMapping("/nav")
+    @PostMapping("/create")
     @ResponseBody
     public Result<Nav> create(@RequestBody Nav nav) {
         Objects.trimStringFields(nav, "id", "creator", "updater");
@@ -77,7 +78,7 @@ public class NavController {
      * @param nav 导航
      * @return 更新结果
      */
-    @PutMapping("/nav")
+    @PutMapping("/update")
     @ResponseBody
     public Result<Nav> update(@RequestBody Nav nav) {
         Objects.trimStringFields(nav, "id", "creator", "updater");
@@ -90,7 +91,7 @@ public class NavController {
      * @param id 编号
      * @return 删除结果
      */
-    @DeleteMapping("/nav/{id}")
+    @DeleteMapping("/delete/{id}")
     @ResponseBody
     public Result<Nav> delete(@PathVariable("id") String id) {
         Nav nav = navService.delete(id);

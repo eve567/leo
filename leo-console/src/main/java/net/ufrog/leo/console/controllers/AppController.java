@@ -26,6 +26,7 @@ import java.util.Map;
  * @since 0.1
  */
 @Controller
+@RequestMapping("/app")
 public class AppController {
 
     /** 应用业务接口 */
@@ -46,7 +47,7 @@ public class AppController {
      *
      * @return view for app/index.html
      */
-    @GetMapping({"/app", "/app/", "/app/index"})
+    @GetMapping({"", "/", "/index"})
     public String index() {
         return "app/index";
     }
@@ -58,7 +59,7 @@ public class AppController {
      * @param size 分页大小
      * @return 应用分页对象
      */
-    @GetMapping("/apps")
+    @GetMapping("/find_all_page")
     @ResponseBody
     public Page<App> findAll(Integer page, Integer size) {
         return appService.findAll(page, size);
@@ -69,7 +70,7 @@ public class AppController {
      *
      * @return
      */
-    @GetMapping("/apps/all")
+    @GetMapping("/find_all")
     @ResponseBody
     public List<App> findAll() {
         return appService.findAll();
@@ -111,7 +112,7 @@ public class AppController {
      * @param app 应用对象
      * @return 创建结果
      */
-    @PostMapping("/app")
+    @PostMapping("/create")
     @ResponseBody
     public Result<App> create(@RequestBody App app) {
         Objects.trimStringFields(app, "id", "creator", "updater");
@@ -124,7 +125,7 @@ public class AppController {
      * @param app 应用对象
      * @return 更新结果
      */
-    @PutMapping("/app")
+    @PutMapping("/update")
     @ResponseBody
     public Result<App> update(@RequestBody App app) {
         Objects.trimStringFields(app, "id", "creator", "updater");
@@ -138,7 +139,7 @@ public class AppController {
      * @param appResourceTypeBindForm 应用资源类型绑定表单
      * @return 绑定结果
      */
-    @PostMapping("/app/bind_resource_types/{appId}")
+    @PostMapping("/bind_resource_types/{appId}")
     @ResponseBody
     public Result<List<AppResource>> bind(@PathVariable("appId") String appId, @RequestBody AppResourceTypeBindForm appResourceTypeBindForm) {
         return Result.success(appService.bindResourceTypes(appId, appResourceTypeBindForm.getResourceTypes()), net.ufrog.common.app.App.message("app.bind.success"));

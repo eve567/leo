@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @since 0.1
  */
 @Controller
+@RequestMapping("/user")
 public class UserController {
 
     /** 用户业务接口 */
@@ -39,7 +41,7 @@ public class UserController {
      * @param types 类型数组
      * @return 用户分页信息
      */
-    @GetMapping("/users")
+    @GetMapping("/find_all")
     @ResponseBody
     public Page<User> findAll(Integer page, Integer size, String[] types) {
         return userService.findAll(page, size, types);

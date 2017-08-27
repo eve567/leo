@@ -57,12 +57,12 @@ public interface UserService {
     User authenticate(String account, String password, UserType... userTypes) throws ServiceException;
 
     /**
-     * 添加用户
+     * 创建用户
      *
      * @param user 用户对象
      * @return 持久化的用户对象
      */
-    User add(User user);
+    User create(User user);
 
     /**
      * 更新用户

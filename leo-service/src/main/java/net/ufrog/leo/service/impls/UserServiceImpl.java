@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User add(User user) {
+    public User create(User user) {
         return userRepository.save(user);
     }
 

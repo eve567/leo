@@ -13,7 +13,7 @@
                 // 查询应用数据
                 find: function(page, size) {
                     $scope.ctrl.status('grid', 'loading');
-                    $scope.get('${app}/apps', {page: page, size: size}, function(data) {
+                    $scope.get('${app}/app/find_all_page', {page: page, size: size}, function(data) {
                         $bootstrap.page(data, 'apps');
                     }, function() {
                         $scope.ctrl.status('grid', 'loaded');
@@ -42,7 +42,7 @@
 
                 // 创建应用
                 create: function(app) {
-                    $scope.post('${app}/app', app, function(data) {
+                    $scope.post('${app}/app/create', app, function(data) {
                         $scope.ctrl.status('view', 'grid');
                         $scope.array.add($scope.apps, data.data);
                     }, function() {
@@ -52,7 +52,7 @@
 
                 // 更新应用
                 update: function(app) {
-                    $scope.put('${app}/app', app, function(data) {
+                    $scope.put('${app}/app/update', app, function(data) {
                         $scope.ctrl.status('view', 'grid');
                         $scope.array.replace($scope.apps, data.data);
                     }, function() {
@@ -92,7 +92,7 @@
                     $scope.current.app = app;
                     $scope.ctrl.status('bindBtn', 'standby');
                     $bootstrap.modal.show('resourceTypeModal');
-                    $scope.get('${app}/resource_types/' + app.id + '/all', function(data) {
+                    $scope.get('${app}/app/resource_types/' + app.id + '/all', function(data) {
                         $scope.resourceTypes = data;
                     });
                 },

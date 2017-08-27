@@ -56,7 +56,7 @@
         angular.extend($scope, {
             // 初始化
             init: function() {
-                $scope.get('${app}/check_forced/${app.user.id}', function() {
+                $scope.get('${app}/check_forced', function() {
                     $scope.bodyUrl = '${app}/view/index_apps';
                 }, null, null, function() {
                     $scope.resetPassword();

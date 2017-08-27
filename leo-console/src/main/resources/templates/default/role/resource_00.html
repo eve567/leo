@@ -18,7 +18,7 @@
 
             // 查询导航
             find: function(nav) {
-                $scope.get('${app}/resource_models/00', {appId: $scope.current.app.id, parentId: nav.id, type: '99'}, function(children) {
+                $scope.get('${app}/role/resource_models/00', {appId: $scope.current.app.id, parentId: nav.id, type: '99'}, function(children) {
                     $scope.resourceFn.isChecked(children);
                     $tree.loaded(nav, children);
                     angular.forEach(children, function(child) {

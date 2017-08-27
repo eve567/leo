@@ -3,14 +3,17 @@ package net.ufrog.leo.service.impls;
 import net.ufrog.common.Logger;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.dict.Dicts;
+import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
-import net.ufrog.leo.domain.models.*;
+import net.ufrog.leo.domain.models.ID;
+import net.ufrog.leo.domain.models.Resource;
+import net.ufrog.leo.domain.models.RoleResource;
+import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.domain.repositories.ResourceRepository;
 import net.ufrog.leo.domain.repositories.RoleResourceRepository;
 import net.ufrog.leo.domain.repositories.UserRepository;
 import net.ufrog.leo.service.SecurityService;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,7 +131,7 @@ public class SecurityServiceImpl implements SecurityService {
     private Map<String, String> getTypeMapping() {
         if (typeMapping == null) {
             typeMapping = new HashMap<>();
-            Dicts.elements(Resource.class).forEach((key, val) -> typeMapping.put(val.getCode(), String.valueOf(key)));
+            Dicts.elements(Resource.Type.class).forEach((key, val) -> typeMapping.put(val.getCode(), String.valueOf(key)));
         }
         return typeMapping;
     }

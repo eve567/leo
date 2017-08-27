@@ -6,6 +6,7 @@ import net.ufrog.common.ThreadPools;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.exception.ServiceException;
+import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
 import net.ufrog.leo.client.LeoInterception;
@@ -178,16 +179,40 @@ public class IndexController {
     /**
      * 检查是否需要强制修改密码
      *
-     * @param id 用户编号
      * @return 检查结果
      */
-    @GetMapping("/check_forced/{id}")
+    @GetMapping("/check_forced")
     @ResponseBody
-    public Result<User> checkForced(@PathVariable("id") String id) {
-        User user = userService.findById(id);
+    public Result<User> checkForced() {
+        User user = userService.findById(App.user().getId());
         if (Strings.equals(User.Forced.TRUE, user.getForced())) {
             return Result.warning(user, App.message("reset.password.forced"));
         }
         return Result.success(user);
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param prev 原密码
+     * @param next 新密码
+     * @param confirm 确认密码
+     * @return 重置结果
+     */
+    @PostMapping("/reset_password")
+    @ResponseBody
+    public Result<User> resetPassword(String prev, String next, String confirm) {
+        if (Strings.equals(next, confirm)) {
+            User user = userService.findById(App.user().getId());
+            if (Passwords.match(prev, user.getPassword())) {
+                user.setPassword(Passwords.encode(next));
+                user.setForced(User.Forced.FALSE);
+                userService.update(user);
+                signOut();
+                return Result.success(user, App.message("reset.password.success"));
+            }
+            return Result.failure(App.message("reset.password.failure.prev"));
+        }
+        return Result.failure(App.message("reset.password.failure.confirm"));
     }
 }

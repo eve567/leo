@@ -13,7 +13,7 @@
                 // 查询
                 find: function(page, size) {
                     $scope.ctrl.status('grid', 'loading');
-                    $scope.get('${app}/roles/' + $scope.current.app.id, {page: page, size: size}, function(data) {
+                    $scope.get('${app}/role/find_all/' + $scope.current.app.id, {page: page, size: size}, function(data) {
                         $bootstrap.page(data, 'roles');
                     }, function() {
                         $scope.ctrl.status('grid', 'loaded');
@@ -42,7 +42,7 @@
 
                 // 创建角色
                 create: function(role) {
-                    $scope.post('${app}/role', role, function(data) {
+                    $scope.post('${app}/role/create', role, function(data) {
                         $scope.roleFn.cancel();
                         $scope.array.add($scope.roles, data.data);
                     }, function() {
@@ -52,7 +52,7 @@
 
                 // 更新角色
                 update: function(role) {
-                    $scope.put('${app}/role', role, function(data) {
+                    $scope.put('${app}/role/update', role, function(data) {
                         $scope.roleFn.cancel();
                         $scope.array.replace($scope.roles, data.data);
                     }, function() {
@@ -63,7 +63,7 @@
                 // 删除角色
                 delete: function(role) {
                     $scope.ctrl.status('deleteBtn', 'processing');
-                    $scope.delete('${app}/role/' + role.id, function() {
+                    $scope.delete('${app}/role/delete/' + role.id, function() {
                         $bootstrap.modal.hide('roleDeleteModal');
                         $scope.array.remove($scope.roles, role);
                     }, function() {
@@ -109,7 +109,7 @@
             resourceFn: {
                 // 查询资源类型
                 findResourceTypes: function() {
-                    $scope.get('${app}/resource_types/' + $scope.current.app.id + '/selected', function(data) {
+                    $scope.get('${app}/app/resource_types/' + $scope.current.app.id + '/selected', function(data) {
                         $scope.resourceTypes = data;
                         $scope.resourceFn.active(data[0]);
                     });
@@ -119,9 +119,9 @@
                 active: function(resourceType) {
                     $scope.current.resourceType = resourceType;
                     $scope.ctrl.status('tab_' + resourceType.type, 'loading');
-                    $scope.get('${app}/resources/' + $scope.current.role.id + '/' + resourceType.type, function(data) {
+                    $scope.get('${app}/role/resources/' + $scope.current.role.id + '/' + resourceType.type, function(data) {
                         $scope.resource = data;
-                        $scope.resourceUrl = '${app}/resource/' + resourceType.type + '?' + $scope.date.timestamp();
+                        $scope.resourceUrl = '${app}/role/resource/_' + resourceType.type + '?' + $scope.date.timestamp();
                         $scope.ctrl.status('bindBtn', 'standby');
                         $scope.ctrl.status('tab_' + resourceType.type, 'loaded');
                     });
@@ -149,7 +149,7 @@
                     $scope.ctrl.status('bindBtn', 'processing');
                     $scope.resource.roleId = $scope.current.role.id;
                     $scope.resource.type = $scope.current.resourceType.type;
-                    $scope.post('${app}/bind_resources', $scope.resource, function(data) {
+                    $scope.post('${app}/role/bind_resources', $scope.resource, function(data) {
                         console.log(data);
                     }, function() {
                         $scope.ctrl.status('bindBtn', 'standby');

@@ -20,7 +20,7 @@
             save: function($event) {
                 $scope.ctrl.stop($event);
                 $scope.ctrl.status('saveBtn', 'processing');
-                $scope.postUrlencoded('${app}/prop', $scope.prop, function(data) {
+                $scope.postUrlencoded('${app}/prop/save', $scope.prop, function(data) {
                     console.log(data);
                 }, function() {
                     $scope.ctrl.status('saveBtn', 'standby');

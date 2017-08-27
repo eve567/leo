@@ -34,7 +34,7 @@
             // 查询所有应用
             findApps: function() {
                 $scope.ctrl.status('appGrid', 'loading');
-                $scope.get('${app}/resource_models/99', function(data) {
+                $scope.get('${app}/role/resource_models/99', function(data) {
                     $scope.apps = data;
                     $scope.resourceFn.isChecked($scope.apps);
                     $scope.ctrl.status('appGrid', 'loaded');
