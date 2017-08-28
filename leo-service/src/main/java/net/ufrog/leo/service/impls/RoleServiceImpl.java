@@ -68,6 +68,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public List<Role> findByAppId(String appId) {
+        return roleRepository.findByAppIdAndType(appId, Role.Type.PUBLIC);
+    }
+
+    @Override
     public Page<Role> findByAppId(String appId, Integer page, Integer size) {
         Pageable pageable = Domains.pageable(page, size, Domains.sort(Sort.Direction.ASC, "name"));
         return roleRepository.findByAppIdAndType(appId, Role.Type.PUBLIC, pageable);

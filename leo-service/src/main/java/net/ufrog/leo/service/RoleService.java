@@ -1,6 +1,5 @@
 package net.ufrog.leo.service;
 
-import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.models.Role;
 import net.ufrog.leo.domain.models.RoleResource;
 import org.springframework.data.domain.Page;
@@ -23,6 +22,14 @@ public interface RoleService {
      * @return 角色
      */
     Role findById(String id);
+
+    /**
+     * 通过应用编号查询角色
+     *
+     * @param appId 应用编号
+     * @return 角色列表
+     */
+    List<Role> findByAppId(String appId);
 
     /**
      * 通过应用编号查询角色

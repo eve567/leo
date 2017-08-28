@@ -29,7 +29,7 @@
             <td ng-bind="user.cellphone|empty:'-'"></td>
             <td ng-bind="user.statusName"></td>
             <td class="link-group" ng-if="user.status !== '99'">
-                <a href="#" class="link-group-item">绑定角色</a>
+                <a href="#" class="link-group-item" ng-click="userFn.showRole(user)">绑定角色</a>
                 <!-- a href="#" class="link-group-item">绑定资源</a -->
                 <a href="#" class="link-group-item" ng-click="userFn.popResetModal(user)">重置密码</a>
                 <a href="#" class="link-group-item" ng-click="userFn.popFreezeModal(user)"><span ng-if="user.status === '90'">解冻</span><span ng-if="user.status === '10'">冻结</span></a>

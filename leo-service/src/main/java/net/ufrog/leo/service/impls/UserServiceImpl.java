@@ -1,13 +1,18 @@
 package net.ufrog.leo.service.impls;
 
+import net.ufrog.common.Logger;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.domain.Models;
+import net.ufrog.leo.domain.models.Role;
 import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserRole;
 import net.ufrog.leo.domain.models.UserSignLog;
 import net.ufrog.leo.domain.repositories.UserRepository;
+import net.ufrog.leo.domain.repositories.UserRoleRepository;
 import net.ufrog.leo.domain.repositories.UserSignLogRepository;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +22,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -36,6 +42,9 @@ public class UserServiceImpl implements UserService {
     /** 用户仓库 */
     private final UserRepository userRepository;
 
+    /** 用户角色仓库 */
+    private final UserRoleRepository userRoleRepository;
+
     /** 用户登录日志仓库 */
     private final UserSignLogRepository userSignLogRepository;
 
@@ -43,11 +52,13 @@ public class UserServiceImpl implements UserService {
      * 构造函数
      *
      * @param userRepository 用户仓库
+     * @param userRoleRepository 用户角色仓库
      * @param userSignLogRepository 用户登录日志仓库
      */
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserSignLogRepository userSignLogRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, UserSignLogRepository userSignLogRepository) {
         this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
         this.userSignLogRepository = userSignLogRepository;
     }
 
@@ -55,6 +66,11 @@ public class UserServiceImpl implements UserService {
     public Page<User> findAll(Integer page, Integer size, String... types) {
         Pageable pageable = Domains.pageable(page, size, Sort.Direction.ASC, "email", "cellphone");
         return userRepository.findByTypeIn(Arrays.asList(types), pageable);
+    }
+
+    @Override
+    public List<UserRole> findUserRoles(String appId, String userId) {
+        return userRoleRepository.findByUserIdAndAppIdAndType(userId, appId, Role.Type.PUBLIC);
     }
 
     @Override
@@ -104,41 +120,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User reset(String id, String prev, String next) {
-        User user = userRepository.findOne(id);
-        if (user != null && Passwords.match(prev, user.getPassword())) {
-            user.setPassword(Passwords.encode(next));
-            user.setForced(User.Forced.FALSE);
-            return userRepository.save(user);
-        }
-        throw new ServiceException("cannot find user or password is not match.", "service.user.reset.failure.match");
-    }
-
-    @Override
-    @Transactional
-    public User reset(String id, String next) {
-        User user = userRepository.findOne(id);
-        if (user != null) {
-            user.setPassword(Passwords.encode(next));
-            user.setForced(User.Forced.TRUE);
-            return userRepository.save(user);
-        }
-        throw new ServiceException("cannot find user or password is not match.", "service.user.reset.failure.match");
-    }
-
-    @Override
-    @Transactional
-    public User freezeOrUnfreeze(String id) {
-        User user = userRepository.findOne(id);
-        if (user != null && Strings.in(user.getStatus(), User.Status.FROZEN, User.Status.ENABLED)) {
-            user.setStatus(Strings.equals(User.Status.FROZEN, user.getStatus()) ? User.Status.ENABLED : User.Status.FROZEN);
-            return userRepository.save(user);
-        }
-        throw new ServiceException("cannot find user or user status invalid.", "service.user.toggle.failure.status");
-    }
-
-    @Override
-    @Transactional
     public UserSignLog createSignLog(String type, String mode, String appId, String userId, String platformCode, String remark) {
         UserSignLog userSignLog = new UserSignLog();
 
@@ -150,5 +131,18 @@ public class UserServiceImpl implements UserService {
         userSignLog.setPlatformCode(platformCode);
         userSignLog.setRemark(remark);
         return userSignLogRepository.save(userSignLog);
+    }
+
+    @Override
+    @Transactional
+    public List<UserRole> bindRoles(String userId, String appId, String[] roleIds) {
+        List<UserRole> lUserRole = userRoleRepository.findByUserIdAndAppIdAndType(userId, appId, Role.Type.PUBLIC);
+        userRoleRepository.delete(lUserRole);
+        Logger.info("delete %s original user role reference(s).", lUserRole.size());
+
+        List<UserRole> lUR = new ArrayList<>(roleIds.length);
+        Stream.of(roleIds).forEach(roleId -> lUR.add(Models.newUserRole(userId, roleId)));
+        userRoleRepository.save(lUR);
+        return lUR;
     }
 }

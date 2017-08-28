@@ -69,6 +69,18 @@
                     });
                 },
 
+                // 绑定角色
+                bind: function() {
+                    $scope.ctrl.status('bindBtn', 'processing');
+                    $scope.bind.appId = $scope.current.app.id;
+                    $scope.bind.userId = $scope.current.user.id;
+                    $scope.post('${app}/team/bind_roles', $scope.bind, function() {
+                        //$scope.userFn.cancel();
+                    }, function() {
+                        $scope.ctrl.status('bindBtn', 'standby');
+                    });
+                },
+
                 // 显示重置密码确认弹窗
                 popResetModal: function(user) {
                     $scope.current.user = user;
@@ -81,6 +93,41 @@
                     $scope.current.user = user;
                     $scope.ctrl.status('freezeBtn', 'standby');
                     $bootstrap.modal.show('freezeModal');
+                },
+
+                // 显示角色绑定
+                showRole: function(user) {
+                    $scope.current.user = user;
+                    $scope.userFn.activeApp($scope.$apps[0]);
+                    $scope.ctrl.status('view', 'role');
+                    $scope.ctrl.status('bindBtn', 'standby');
+                },
+
+                // 激活应用
+                activeApp: function(app) {
+                    $scope.current.app = app;
+                    $scope.ctrl.status('roleGrid', 'loading');
+                    $scope.get('${app}/team/roles/' + $scope.current.app.id, function(data) {
+                        $scope.roles = data;
+                        $scope.get('${app}/team/user_roles/' + $scope.current.app.id + '/' + $scope.current.user.id, function(data) {
+                            $scope.bind = {};
+                            $scope.bind.roles = data;
+                            angular.forEach($scope.roles, function(role) {
+                                role.checked = ($scope.array.in($scope.bind.roles, role.id) >= 0);
+                            });
+                            $scope.ctrl.status('roleGrid', 'loaded');
+                        });
+                    });
+                },
+
+                // 选择角色
+                checkRole: function(role) {
+                    role.checked = !(role.checked === true);
+                    if (role.checked === true && $scope.array.in($scope.bind.roles, role.id) < 0) {
+                        $scope.array.add($scope.bind.roles, role.id);
+                    } else if (role.checked === false && $scope.array.in($scope.bind.roles, role.id) >= 0) {
+                        $scope.array.remove($scope.bind.roles, role.id);
+                    }
                 },
 
                 // 取消表单

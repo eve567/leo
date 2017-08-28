@@ -6,11 +6,18 @@ import net.ufrog.common.app.App;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.console.forms.UserRoleBindForm;
+import net.ufrog.leo.domain.models.Role;
 import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserRole;
+import net.ufrog.leo.service.RoleService;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 团队控制器
@@ -23,16 +30,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/team")
 public class TeamController {
 
+    /** 角色业务接口 */
+    private final RoleService roleService;
+
     /** 用户业务接口 */
     private final UserService userService;
 
     /**
      * 构造函数
      *
+     * @param roleService 角色业务接口
      * @param userService 用户业务接口
      */
     @Autowired
-    public TeamController(UserService userService) {
+    public TeamController(RoleService roleService, UserService userService) {
+        this.roleService = roleService;
         this.userService = userService;
     }
 
@@ -111,5 +123,48 @@ public class TeamController {
 
         userService.update(user);
         return Result.success(user, App.message(key, user.getName()));
+    }
+
+    /**
+     * 查询所有角色
+     *
+     * @param appId 应用编号
+     * @return 角色列表
+     */
+    @GetMapping("/roles/{appId}")
+    @ResponseBody
+    public List<Role> findRoles(@PathVariable("appId") String appId) {
+        return roleService.findByAppId(appId);
+    }
+
+    /**
+     * 查询已绑定角色
+     *
+     * @param appId 应用编号
+     * @param userId 用户编号
+     * @return 已绑定角色编号列表
+     */
+    @GetMapping("/user_roles/{appId}/{userId}")
+    @ResponseBody
+    public List<String> findBindRoles(@PathVariable("appId") String appId, @PathVariable("userId") String userId) {
+        List<UserRole> lUserRole = userService.findUserRoles(appId, userId);
+        List<String> lRoleId = new ArrayList<>(lUserRole.size());
+
+        lUserRole.forEach(userRole -> lRoleId.add(userRole.getRoleId()));
+        return lRoleId;
+    }
+
+    /**
+     * 绑定角色
+     *
+     * @param userRoleBindForm 用户角色绑定表单
+     * @return 绑定结果
+     */
+    @PostMapping("/bind_roles")
+    @ResponseBody
+    public Result<List<UserRole>> bindRoles(@RequestBody UserRoleBindForm userRoleBindForm) {
+        List<UserRole> lUserRole = userService.bindRoles(userRoleBindForm.getUserId(), userRoleBindForm.getAppId(), userRoleBindForm.getRoles());
+        User user = userService.findById(userRoleBindForm.getUserId());
+        return Result.success(lUserRole, App.message("team.user.bind.success", user.getName()));
     }
 }

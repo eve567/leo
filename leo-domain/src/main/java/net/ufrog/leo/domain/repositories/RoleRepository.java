@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 角色仓库
  *
@@ -15,6 +17,15 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RoleRepository extends JpaRepository<Role, String> {
+
+    /**
+     * 通过编号查询角色
+     *
+     * @param appId 应用编号
+     * @param type 类型
+     * @return 角色列表
+     */
+    List<Role> findByAppIdAndType(String appId, String type);
 
     /**
      * 通过应用编号查询角色

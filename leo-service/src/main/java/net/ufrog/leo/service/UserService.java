@@ -3,6 +3,7 @@ package net.ufrog.leo.service;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserRole;
 import net.ufrog.leo.domain.models.UserSignLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -28,6 +29,15 @@ public interface UserService {
      * @return 用户分页信息
      */
     Page<User> findAll(Integer page, Integer size, String... types);
+
+    /**
+     * 查询用户角色关系
+     *
+     * @param appId 应用编号
+     * @param userId 用户编号
+     * @return 用户角色关系列表
+     */
+    List<UserRole> findUserRoles(String appId, String userId);
 
     /**
      * 通过编号查询用户
@@ -73,34 +83,6 @@ public interface UserService {
     User update(User user);
 
     /**
-     * 重置密码
-     *
-     * @param id 用户编号
-     * @param prev 原密码
-     * @param next 新密码
-     * @return 用回对象
-     */
-    User reset(String id, String prev, String next);
-
-    /**
-     * 重置密码
-     *
-     * @param id 用户编号
-     * @param next 新密码
-     * @return 用回对象
-     */
-    User reset(String id, String next);
-
-    /**
-     * 冻结或解冻<br>
-     * 根据不同状态进行处理
-     *
-     * @param id 用户编号
-     * @return 用户对象
-     */
-    User freezeOrUnfreeze(String id);
-
-    /**
      * 创建登录日志
      *
      * @param type 类型
@@ -112,6 +94,16 @@ public interface UserService {
      * @return 用户登录日志
      */
     UserSignLog createSignLog(String type, String mode, String appId, String userId, String platformCode, String remark);
+
+    /**
+     * 绑定角色
+     *
+     * @param userId
+     * @param appId
+     * @param roleIds
+     * @return
+     */
+    List<UserRole> bindRoles(String userId, String appId, String[] roleIds);
 
     /**
      * 用户类型
