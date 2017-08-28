@@ -3,7 +3,6 @@ package net.ufrog.leo.console.controllers;
 import net.ufrog.common.Mailer;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
-import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.console.forms.UserRoleBindForm;

@@ -77,7 +77,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public List<App> findAll() {
-        return appRepository.findAll(Domains.sort(Sort.Direction.ASC, "code"));
+        return appRepository.findByStatus(App.Status.ONLINE, Domains.sort(Sort.Direction.ASC, "code"));
     }
 
     @Override
@@ -92,7 +92,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public Page<App> findAll(Integer page, Integer size) {
-        Pageable pageable = Domains.pageable(page, size, Domains.sort(Sort.Direction.ASC, "status", "code"));
+        Pageable pageable = Domains.pageable(page, size, Domains.sort(Domains.order(Sort.Direction.DESC, "status"), Domains.order(Sort.Direction.ASC, "code")));
         return appRepository.findAll(pageable);
     }
 

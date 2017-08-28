@@ -50,17 +50,23 @@
 <script type="text/javascript" src="${app.resourceCommon}/ufrog/js/ufrog-angular-bootstrap.min.js?ver=${app.version}"></script>
 <script type="text/javascript" src="${app.resourceCommon}/ufrog/js/ufrog-angular-request.min.js?ver=${app.version}"></script>
 <script type="text/javascript" src="${app.resourceHost}/js/leo-server.min.js?ver=${app.version}"></script>
+<!--suppress JSUnresolvedVariable, JSUnusedLocalSymbols -->
 <script type="text/javascript">
     'use strict';
     function indexCtrl($scope) {
         angular.extend($scope, {
             // 初始化
             init: function() {
-                $scope.get('${app}/check_forced', function() {
-                    $scope.bodyUrl = '${app}/view/index_apps';
-                }, null, null, function() {
+                $scope.mode = '${mode}';
+                if ($scope.mode === '_reset_password') {
                     $scope.resetPassword();
-                });
+                } else {
+                    $scope.get('${app}/check_forced', function() {
+                        $scope.bodyUrl = '${app}/view/index_apps';
+                    }, null, null, function() {
+                        $scope.resetPassword();
+                    });
+                }
             },
 
             // 修改密码视图
@@ -68,6 +74,7 @@
                 $scope.bodyUrl = '${app}/view/index_reset_password';
             },
 
+            //
             alert: {}
         }).init();
     }

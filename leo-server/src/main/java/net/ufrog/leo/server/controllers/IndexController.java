@@ -75,6 +75,19 @@ public class IndexController {
     }
 
     /**
+     * 索引
+     *
+     * @param mode 模式
+     * @param model 模型
+     * @return view for index
+     */
+    @GetMapping({"/{mode}", "/index/{mode}"})
+    public String index(@PathVariable("mode") String mode, org.springframework.ui.Model model) {
+        model.addAttribute("mode", mode);
+        return index();
+    }
+
+    /**
      * 视图
      *
      * @return view for {view}
