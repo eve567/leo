@@ -1,6 +1,8 @@
 package net.ufrog.leo.service.impls;
 
 import net.ufrog.common.Logger;
+import net.ufrog.common.exception.ServiceException;
+import net.ufrog.leo.domain.jpqls.TestJpql;
 import net.ufrog.leo.domain.models.Test;
 import net.ufrog.leo.domain.repositories.TestRepository;
 import net.ufrog.leo.service.TestService;
@@ -21,9 +23,12 @@ public class TestServiceImpl implements TestService {
 
     private TestRepository testRepository;
 
+    private TestJpql testJpql;
+
     @Autowired
-    public TestServiceImpl(TestRepository testRepository) {
+    public TestServiceImpl(TestRepository testRepository, TestJpql testJpql) {
         this.testRepository = testRepository;
+        this.testJpql = testJpql;
     }
 
     @Override
@@ -51,5 +56,12 @@ public class TestServiceImpl implements TestService {
         test = new Test();
         test.setName("一二三四五六七八九零一二三四五六七八九零一二三四五六七八九零一二三四五六七八九零一二三四五六七八九零一二三四五六七八九零一二三四五");
         testRepository.save(test);
+    }
+
+    @Override
+    @Transactional
+    public void testUpdateByQl() {
+        Logger.info("update %s record(s).", testJpql.updateById("cb273179-ea63-4b0b-805a-f22a9e4b9ab7", 100));
+        throw new ServiceException("aaaaaa");
     }
 }

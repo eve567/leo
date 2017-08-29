@@ -12,4 +12,7 @@ public interface TestService {
 
     /**  */
     void testUtf8Len();
+
+    /**  */
+    void testUpdateByQl();
 }

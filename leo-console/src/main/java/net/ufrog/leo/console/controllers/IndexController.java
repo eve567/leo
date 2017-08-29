@@ -60,6 +60,6 @@ public class IndexController {
 
     @GetMapping("/test")
     public void test() {
-        testService.testUtf8Len();
+        testService.testUpdateByQl();
     }
 }
