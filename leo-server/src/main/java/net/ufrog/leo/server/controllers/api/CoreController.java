@@ -1,24 +1,32 @@
 package net.ufrog.leo.server.controllers.api;
 
+import net.ufrog.common.Logger;
+import net.ufrog.common.ThreadPools;
+import net.ufrog.common.utils.Strings;
+import net.ufrog.common.web.app.WebApp;
+import net.ufrog.leo.client.LeoApp;
 import net.ufrog.leo.client.LeoAppUser;
-import net.ufrog.leo.client.api.beans.AppResp;
-import net.ufrog.leo.client.api.beans.AppUserResp;
-import net.ufrog.leo.client.api.beans.ListResp;
-import net.ufrog.leo.client.api.beans.NavResp;
+import net.ufrog.leo.client.api.APIs;
+import net.ufrog.leo.client.api.beans.*;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.Nav;
+import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserSignLog;
 import net.ufrog.leo.server.AccessToken;
 import net.ufrog.leo.server.AccessTokenManager;
+import net.ufrog.leo.server.LeoException;
 import net.ufrog.leo.service.AppService;
 import net.ufrog.leo.service.NavService;
 import net.ufrog.leo.service.SecurityService;
+import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 核心控制器
@@ -34,13 +42,16 @@ public class CoreController {
     private static final String NAV_PREFIX  = "@";
 
     /** 应用业务接口 */
-    private AppService appService;
+    private final AppService appService;
 
     /** 导航业务接口 */
-    private NavService navService;
+    private final NavService navService;
 
     /** 权限业务接口 */
-    private SecurityService securityService;
+    private final SecurityService securityService;
+
+    /** 用户业务接口 */
+    private final UserService userService;
 
     /**
      * 构造函数
@@ -48,12 +59,14 @@ public class CoreController {
      * @param appService 应用业务接口
      * @param navService 导航业务接口
      * @param securityService 权限业务接口
+     * @param userService 用户业务接口
      */
     @Autowired
-    public CoreController(AppService appService, NavService navService, SecurityService securityService) {
+    public CoreController(AppService appService, NavService navService, SecurityService securityService, UserService userService) {
         this.appService = appService;
         this.navService = navService;
         this.securityService = securityService;
+        this.userService = userService;
     }
 
     /**
@@ -67,6 +80,32 @@ public class CoreController {
     public AppUserResp getUser(@PathVariable("token") String token, @PathVariable("appId") String appId) {
         LeoAppUser leoAppUser = AccessTokenManager.get().get(token, appId).getAppUser();
         return new AppUserResp(leoAppUser.getId(), leoAppUser.getAccount(), leoAppUser.getName(), leoAppUser.getToken());
+    }
+
+    /**
+     * 通过开放平台代码读取用户
+     *
+     * @param request 请求
+     * @return 用户信息
+     */
+    @PostMapping("/user_open_platform")
+    public AppUserResp getUserByOpenPlatformCode(HttpServletRequest request) {
+        OpenPlatformUserReq openPlatformUserReq = APIs.parseBytes(net.ufrog.common.app.App.current(WebApp.class).getBody(), OpenPlatformUserReq.class);
+        User user = userService.findOrCreateByOpenPlatform(openPlatformUserReq);
+
+        if (user != null) {
+            App app = appService.findById(openPlatformUserReq.getAppId());
+            String account = !Strings.empty(user.getAccount()) ? user.getAccount() : (!Strings.empty(user.getCellphone()) ? user.getCellphone() : user.getEmail());
+            LeoAppUser leoAppUser = new LeoAppUser(user.getId(), account, user.getName());
+            AccessToken accessToken = AccessTokenManager.get().online(leoAppUser, app, request.getRemoteAddr());
+            List<String> lPC = new ArrayList<>();
+
+            openPlatformUserReq.getValues().forEach((k, v) -> lPC.add(k));
+            ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_IN, UserSignLog.Mode.PLATFORM, accessToken.getAppId(), accessToken.getUserId(), Strings.implode(lPC, ","), null));
+            Logger.info("create access token '%s' for app '%s'", accessToken.getToken(), accessToken.getAppId());
+            return new AppUserResp(leoAppUser.getId(), leoAppUser.getAccount(), leoAppUser.getName(), leoAppUser.getToken());
+        }
+        throw new LeoException(Resp.RespCode.DENIED);
     }
 
     /**

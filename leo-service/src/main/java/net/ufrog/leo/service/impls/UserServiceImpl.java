@@ -2,15 +2,15 @@ package net.ufrog.leo.service.impls;
 
 import net.ufrog.common.Logger;
 import net.ufrog.common.data.spring.Domains;
+import net.ufrog.common.dict.Dicts;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.client.api.beans.OpenPlatformUserReq;
 import net.ufrog.leo.domain.Models;
-import net.ufrog.leo.domain.models.Role;
-import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.domain.models.UserRole;
-import net.ufrog.leo.domain.models.UserSignLog;
+import net.ufrog.leo.domain.models.*;
+import net.ufrog.leo.domain.repositories.UserOpenPlatformRepository;
 import net.ufrog.leo.domain.repositories.UserRepository;
 import net.ufrog.leo.domain.repositories.UserRoleRepository;
 import net.ufrog.leo.domain.repositories.UserSignLogRepository;
@@ -22,10 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -39,6 +36,9 @@ import java.util.stream.Stream;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
+    /** 用户开放平台仓库 */
+    private final UserOpenPlatformRepository userOpenPlatformRepository;
+
     /** 用户仓库 */
     private final UserRepository userRepository;
 
@@ -51,12 +51,18 @@ public class UserServiceImpl implements UserService {
     /**
      * 构造函数
      *
+     * @param userOpenPlatformRepository 用户开放平台仓库
      * @param userRepository 用户仓库
      * @param userRoleRepository 用户角色仓库
      * @param userSignLogRepository 用户登录日志仓库
      */
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, UserSignLogRepository userSignLogRepository) {
+    public UserServiceImpl(
+            UserOpenPlatformRepository userOpenPlatformRepository,
+            UserRepository userRepository,
+            UserRoleRepository userRoleRepository,
+            UserSignLogRepository userSignLogRepository) {
+        this.userOpenPlatformRepository = userOpenPlatformRepository;
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
         this.userSignLogRepository = userSignLogRepository;
@@ -144,5 +150,42 @@ public class UserServiceImpl implements UserService {
         Stream.of(roleIds).forEach(roleId -> lUR.add(Models.newUserRole(userId, roleId)));
         userRoleRepository.save(lUR);
         return lUR;
+    }
+
+    @Override
+    @Transactional
+    public User findOrCreateByOpenPlatform(OpenPlatformUserReq openPlatformUserReq) {
+        //
+        String userId = null;
+
+        // 判断开放平台标识是否有效
+        for (Map.Entry<String, String> entry: openPlatformUserReq.getValues().entrySet()) {
+            UserOpenPlatform uop = userOpenPlatformRepository.findByCodeAndValue(entry.getKey(), entry.getValue());
+            if (uop == null && openPlatformUserReq.getIsMatchAll()) {
+                userId = null;
+                break;
+            } else if (uop != null) {
+                if (!openPlatformUserReq.getIsMatchAll()) {
+                    userId = uop.getUserId();
+                    break;
+                } else if (!Strings.empty(userId) && !Strings.equals(userId, uop.getUserId())) {
+                    userId = null;
+                    break;
+                } else {
+                    userId = uop.getUserId();
+                }
+            }
+        }
+
+        // 校验是否查询到用户
+        if (Strings.empty(userId) && !openPlatformUserReq.getIsAutoCreate()) {
+            return null;
+        } else if (Strings.empty(userId) && openPlatformUserReq.getIsAutoCreate()) {
+            User user = Models.newUser(null, openPlatformUserReq.getCellphone(), openPlatformUserReq.getEmail(), Strings.fromUnicode(openPlatformUserReq.getName()), null, null, null, null);
+            userRepository.save(user);
+            openPlatformUserReq.getValues().forEach((k, v) -> userOpenPlatformRepository.save(Models.newUserOpenPlatform(k, v, user.getId())));
+            userId = user.getId();
+        }
+        return userRepository.findOne(userId);
     }
 }

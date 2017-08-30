@@ -1,8 +1,14 @@
 package net.ufrog.leo.console.controllers;
 
+import com.alibaba.fastjson.JSON;
+import net.ufrog.common.Logger;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.cache.Caches;
+import net.ufrog.leo.client.LeoApp;
+import net.ufrog.leo.client.LeoConfig;
+import net.ufrog.leo.client.api.APIs;
+import net.ufrog.leo.client.api.beans.AppUserResp;
 import net.ufrog.leo.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,6 +66,7 @@ public class IndexController {
 
     @GetMapping("/test")
     public void test() {
-        testService.testUpdateByQl();
+        AppUserResp aur = APIs.getUserByOpenPlatform(LeoConfig.getLeoAppId(), "22609837@qq.com", "13564923886", "钱嘎嘎", false, true, "test_id", "12345678");
+        Logger.info(JSON.toJSONString(aur));
     }
 }

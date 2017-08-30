@@ -92,6 +92,9 @@ public class Resp implements Serializable {
         @Element("尚未登录或登录已失效")
         public final static String NOT_SIGN = "0001";
 
+        @Element("授权拒绝")
+        public final static String DENIED = "0002";
+
         @Element("未知异常")
         public final static String UNKNOWN = "9999";
     }
