@@ -181,7 +181,8 @@ public class UserServiceImpl implements UserService {
         if (Strings.empty(userId) && !openPlatformUserReq.getIsAutoCreate()) {
             return null;
         } else if (Strings.empty(userId) && openPlatformUserReq.getIsAutoCreate()) {
-            User user = Models.newUser(null, openPlatformUserReq.getCellphone(), openPlatformUserReq.getEmail(), Strings.fromUnicode(openPlatformUserReq.getName()), null, null, null, null);
+            String name = Strings.empty(openPlatformUserReq.getName()) ? null : Strings.fromUnicode(openPlatformUserReq.getName());
+            User user = Models.newUser(null, openPlatformUserReq.getCellphone(), openPlatformUserReq.getEmail(), name, null, null, null, null);
             userRepository.save(user);
             openPlatformUserReq.getValues().forEach((k, v) -> userOpenPlatformRepository.save(Models.newUserOpenPlatform(k, v, user.getId())));
             userId = user.getId();

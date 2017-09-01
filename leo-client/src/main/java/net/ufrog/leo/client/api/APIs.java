@@ -69,7 +69,7 @@ public class APIs {
         openPlatformUserReq.setAppId(appId);
         openPlatformUserReq.setEmail(email);
         openPlatformUserReq.setCellphone(cellphone);
-        openPlatformUserReq.setName(Strings.toUnicode(name));
+        openPlatformUserReq.setName(Strings.empty(name) ? null : Strings.toUnicode(name));
         openPlatformUserReq.setIsMatchAll(isMatchAll);
         openPlatformUserReq.setIsAutoCreate(isAutoCreate);
         openPlatformUserReq.getValues().putAll(Objects.map(String.class, (Object[]) values));
