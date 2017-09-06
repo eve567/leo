@@ -4,7 +4,6 @@ import net.ufrog.common.Logger;
 import net.ufrog.common.ThreadPools;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
-import net.ufrog.leo.client.LeoApp;
 import net.ufrog.leo.client.LeoAppUser;
 import net.ufrog.leo.client.api.APIs;
 import net.ufrog.leo.client.api.beans.*;
@@ -25,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * 核心控制器
@@ -159,5 +156,19 @@ public class CoreController {
             lrNavResp.add(navResp);
         });
         return lrNavResp;
+    }
+
+    /**
+     * 检查应用是否合法
+     *
+     * @param appId 应用编号
+     * @param timestamp 时间戳
+     * @param sign 签名
+     * @return 响应
+     */
+    @GetMapping("/check_app")
+    public Resp checkApp(String appId, String timestamp, String sign) {
+        App app = appService.getById(appId);
+        return (app != null && APIs.validSign(app.getSecret(), sign, "appId", appId, "timestamp", timestamp)) ? new Resp(Resp.RespCode.SUCCESS) : new Resp(Resp.RespCode.DENIED);
     }
 }
