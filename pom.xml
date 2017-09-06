@@ -62,7 +62,6 @@
         <version.ehcache>2.10.4</version.ehcache>
         <version.memcached>2.12.3</version.memcached>
         <version.jodd>3.8.6</version.jodd>
-        <version.jodis>0.4.0</version.jodis>
         <version.mail>1.4.7</version.mail>
         <version.commons.logging>1.2</version.commons.logging>
         <version.commons.fileupload>1.3.3</version.commons.fileupload>

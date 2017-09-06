@@ -1,5 +1,5 @@
 <div class="row" ng-controller="appCtrl">
-    <div class="col-sm-4 app" ng-repeat="app in apps" ng-mouseover="appFn.mouse(app, 'over')" ng-mouseleave="appFn.mouse(app, 'leave')" ng-click="ctrl.redirect('${app}/redirect/' + app.id)">
+    <div class="col-sm-4 app" ng-repeat="app in apps|filter:search:strict" ng-mouseover="appFn.mouse(app, 'over')" ng-mouseleave="appFn.mouse(app, 'leave')" ng-click="ctrl.redirect('${app}/redirect/' + app.id)">
         <h3 ng-style="appFn.style(app, 'code')"><i class="fa" ng-class="{'fa-circle': app.over, 'fa-circle-o': !app.over}"></i>&nbsp;<span ng-bind="app.code|uppercase"></span></h3>
         <div class="app-name" ng-bind="app.name" ng-style="appFn.style(app, 'name')"></div>
     </div>
@@ -11,6 +11,7 @@
         angular.extend($scope, {
             // 初始化
             init: function() {
+                $scope.search = {visible: '01'};
                 $scope.appFn.find();
             },
 
