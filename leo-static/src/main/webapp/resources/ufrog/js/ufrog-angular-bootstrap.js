@@ -322,7 +322,7 @@
                             ng.forEach($scope.ngModel, function(val) {
                                 $scope.$files.push(val.name);
                             });
-                            return $scope.files.join(', ');
+                            return $scope.$files.join(', ');
                         }
                     }).$init();
                 }
