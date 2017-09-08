@@ -232,6 +232,12 @@ body {
         display: block;
       }
     }
+    &.panel-heading-input {
+      > span {
+        display: block;
+        padding: 6px 15px 5px 15px;
+      }
+    }
   }
   .panel-heading-dropdown {
     position: absolute;
