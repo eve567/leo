@@ -459,5 +459,17 @@
                     });
                 }
             };
+        }])
+
+        /** 表格样式处理 */
+        .directive('table', [function() {
+            return {
+                restrict: 'E',
+                link: function($scope, $element) {
+                    if (!$element.hasClass('table')) {
+                        $element.addClass('table table-striped table-hover');
+                    }
+                }
+            };
         }]);
 })(window.angular);

@@ -124,10 +124,10 @@
                         template: function(app) {
                             return [
                                 'leo:',
-                                '  host: ${app.host}',
+                                '  host: "${app.host}"',
                                 '  app:',
-                                '    id: ' + app.id,
-                                '    secret: ' + app.secret
+                                '    id: "' + app.id + '"',
+                                '    secret: "' + app.secret + '"'
                             ].join('<br>');
                         }
                     },
