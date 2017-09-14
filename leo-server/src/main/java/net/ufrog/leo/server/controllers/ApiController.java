@@ -1,4 +1,4 @@
-package net.ufrog.leo.server.controllers.api;
+package net.ufrog.leo.server.controllers;
 
 import net.ufrog.common.Logger;
 import net.ufrog.common.ThreadPools;
@@ -26,15 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 核心控制器
+ * 应用接口控制器
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-04-22
+ * @version 0.1, 2017-09-14
  * @since 0.1
  */
 @RestController
 @RequestMapping("/api")
-public class CoreController {
+@CrossOrigin
+public class ApiController {
 
     private static final String NAV_PREFIX  = "@";
 
@@ -59,7 +60,7 @@ public class CoreController {
      * @param userService 用户业务接口
      */
     @Autowired
-    public CoreController(AppService appService, NavService navService, SecurityService securityService, UserService userService) {
+    public ApiController(AppService appService, NavService navService, SecurityService securityService, UserService userService) {
         this.appService = appService;
         this.navService = navService;
         this.securityService = securityService;
