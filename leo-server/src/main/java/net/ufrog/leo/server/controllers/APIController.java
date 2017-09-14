@@ -35,7 +35,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
-public class ApiController {
+public class APIController {
 
     private static final String NAV_PREFIX  = "@";
 
@@ -60,7 +60,7 @@ public class ApiController {
      * @param userService 用户业务接口
      */
     @Autowired
-    public ApiController(AppService appService, NavService navService, SecurityService securityService, UserService userService) {
+    public APIController(AppService appService, NavService navService, SecurityService securityService, UserService userService) {
         this.appService = appService;
         this.navService = navService;
         this.securityService = securityService;
