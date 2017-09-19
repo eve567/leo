@@ -73,12 +73,40 @@
                 modal: {
                     /** 显示 */
                     show: function(id) {
-                        $common.$('#' + id).modal('show');
+                        $_.elem(id).modal('show');
                     },
 
                     /** 隐藏 */
                     hide: function(id) {
-                        $common.$('#' + id).modal('hide');
+                        $_.elem(id).modal('hide');
+                    }
+                },
+
+                /** 气泡框工具 */
+                popover: {
+                    /** 配置 */
+                    config: function(id, config) {
+                        $_.elem(id).popover(config);
+                    },
+
+                    /** 显示 */
+                    show: function(id) {
+                        $_.elem(id).popover('show');
+                    },
+
+                    /** 隐藏 */
+                    hide: function(id) {
+                        $_.elem(id).popover('hide');
+                    },
+
+                    /** 切换显示 */
+                    toggle: function(id) {
+                        $_.elem(id).popover('toggle');
+                    },
+
+                    /** 销毁 */
+                    destroy: function(id) {
+                        $_.elem(id).popover('destroy');
                     }
                 },
 
@@ -86,6 +114,13 @@
                 page: function(data, dname, pname, scope) {
                     (scope || $_.$config.scope)[dname] = data.content;
                     (scope || $_.$config.scope)[pname || 'pagination'] = {current: data.number, size: data.size, total: data.totalElements, pages: data.totalPages};
+                },
+
+                /** 页面元素 */
+                elem: function(elem) {
+                    if ($common.valid.elem(elem)) return elem;
+                    else if ($common.valid.str(elem)) return $common.$('#' + elem);
+                    throw 'elem "' + elem + '" invalid.';
                 }
             };
             return $_;
@@ -364,7 +399,7 @@
         }])
 
         /** 表单验证提示元素指令 */
-        .directive('alertPopItem', function() {
+        .directive('alertPopItem', [function() {
             return {
                 restrict: 'E',
                 replace: true,
@@ -382,7 +417,7 @@
                     });
                 }
             };
-        })
+        }])
 
         /** 表格合并单元格指令 */
         .directive('colSpan', [function() {
@@ -446,11 +481,11 @@
         }])
 
         /** 气泡框指令 */
-        .directive('popover', [function() {
+        .directive('popover', ['$bootstrap', function($bootstrap) {
             return {
                 restrict: 'A',
                 link: function($scope, $element, $attrs) {
-                    $element.popover({
+                    $bootstrap.popover.config($element, {
                         html: true,
                         placement: $attrs['popoverPlacement'] || 'right',
                         title: $attrs['popoverTitle'] || '',
