@@ -127,7 +127,7 @@
                     if (!$common.valid.empty(str) && $common.valid.str(str)) {
                         var $unicode = '';
                         for (var $i = 0; $i < str.length; $i++) {
-                            $unicode += '\\u' + parseInt(str[i].charCodeAt(0), 10).toString(16);
+                            $unicode = $unicode + '\\u' + ('0000' + str.charCodeAt($i).toString(16)).slice(-4);
                         }
                         return $unicode;
                     }
@@ -139,7 +139,7 @@
                     if (!$common.valid.empty(unicode) && $common.valid.str(unicode)) {
                         var $str = '', $data = unicode.split('\\u');
                         for (var $i = 0; $i < $data.length; $i++) {
-                            $str += String.fromCharCode(parseInt(parseInt($data[i], 16).toString(10)));
+                            $str += String.fromCharCode(parseInt(parseInt($data[$i], 16).toString(10)));
                         }
                         return $str;
                     }
