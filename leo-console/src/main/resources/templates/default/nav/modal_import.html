@@ -1,0 +1,6 @@
+<modal id="importModal" title="导入功能">
+    <p class="text-danger"><fa i="warning">&nbsp;导入功能可能替换、修改、删除现有功能，请在导入之后重新分配权限</fa></p>
+    <file-input ng-model="files"></file-input>
+    <button class="btn btn-success" ng-click="navFn.import()" ng-disabled="valid.empty(files)"><fa i="upload">&nbsp;导入</fa></button>
+    <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+</modal>

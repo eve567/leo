@@ -2,8 +2,8 @@
     <div class="panel-heading clearfix">
         <span class="pull-left">功能管理</span>
         <ul class="panel-heading-group">
-            <li><a href="#"><fa i="upload">&nbsp;导入</fa></a></li>
-            <li><a href="#"><fa i="download">&nbsp;导出</fa></a></li>
+            <li><a ng-href="${app}/nav/export/{{current.app.id}}"><fa i="download">&nbsp;导出</fa></a></li>
+            <li><a href="#" ng-click="navFn.popImportModal()"><fa i="upload">&nbsp;导入</fa></a></li>
             <li panel-heading-dropdown>
                 <a href="#"><span ng-bind="current.app.name"></span>&nbsp;<fa i="caret-down"></fa></a>
                 <ul class="panel-heading-dropdown">
@@ -19,5 +19,6 @@
         </div>
     </div>
     <!-- #include('modal_delete.html') -->
+    <!-- #include('modal_import.html') -->
 </div>
 <!-- #include('js_index.html') -->

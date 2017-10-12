@@ -1,4 +1,4 @@
-package net.ufrog.leo.service.beans;
+package net.ufrog.leo.service.configurations;
 
 import net.ufrog.common.spring.interceptor.PropertiesManager;
 import net.ufrog.leo.domain.models.Prop;

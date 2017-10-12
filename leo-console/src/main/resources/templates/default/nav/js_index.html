@@ -90,6 +90,18 @@
                     });
                 },
 
+                // 导入功能
+                import: function() {
+                    $scope.upload('${app}/nav/import/' + $scope.current.app.id, {
+                        file: $scope.files[0]
+                    }, function() {
+                        $tree.reload($scope.tree);
+                    }, function() {
+                        $bootstrap.modal.hide('importModal');
+                        $scope.files = [];
+                    });
+                },
+
                 // 取消
                 cancel: function() {
                     $scope.nav = {};
@@ -97,6 +109,12 @@
                     $scope.ctrl.status('navForm', 'locked');
                     $scope.ctrl.status('saveBtn', 'standby');
                     $scope.ctrl.resetForm($scope.navForm);
+                },
+
+                // 弹出导入文件框
+                popImportModal: function() {
+                    $scope.files = [];
+                    $bootstrap.modal.show('importModal');
                 },
 
                 // 判断保存按钮是否有效

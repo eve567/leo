@@ -345,6 +345,7 @@
                         // 文件改动后回调
                         $onChange: function(event) {
                             $scope.ngModel = $scope.ngModel || [];
+                            $common.array.empty($scope.ngModel);
                             ng.forEach(event.target.files, function(val) {
                                 $scope.ngModel.push(val);
                             });

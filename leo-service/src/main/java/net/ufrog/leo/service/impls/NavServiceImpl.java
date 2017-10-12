@@ -1,6 +1,7 @@
 package net.ufrog.leo.service.impls;
 
 import net.ufrog.common.Link;
+import net.ufrog.common.Logger;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Objects;
@@ -10,11 +11,13 @@ import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.repositories.NavRepository;
 import net.ufrog.leo.service.NavService;
 import net.ufrog.leo.service.SecurityService;
+import net.ufrog.leo.service.beans.ExportNav;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 导航业务实现
@@ -66,18 +69,14 @@ public class NavServiceImpl implements NavService {
     @Override
     @Transactional
     public Nav create(Nav nav) {
-        // 检查代码是否重复
         checkDuplicate(nav);
-
-        // 对前邻数据进行处理
         Nav prev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId());
         navRepository.save(nav);
+
         if (prev != null) {
             prev.setNextId(nav.getId());
             navRepository.save(prev);
         }
-
-        // 保存数据
         securityService.createResource(Resource.Type.NAV, nav.getId());
         clear(nav.getType(), nav.getAppId(), nav.getParentId());
         return nav;
@@ -86,15 +85,12 @@ public class NavServiceImpl implements NavService {
     @Override
     @Transactional
     public Nav update(Nav nav) {
-        // 检查代码是否重复
         checkDuplicate(nav);
-
-        // 对前后邻数据进行处理
         Nav oNav = navRepository.findOne(nav.getId());
+
         if (!Strings.equals(nav.getNextId(), oNav.getNextId())) {
             Nav nPrev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId());
             Nav oPrev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId());
-
             if (nPrev != null) {
                 nPrev.setNextId(nav.getId());
                 navRepository.save(nPrev);
@@ -103,8 +99,6 @@ public class NavServiceImpl implements NavService {
                 navRepository.save(oPrev);
             }
         }
-
-        // 更新数据
         Objects.copyProperties(oNav, nav, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
         clear(nav.getType(), nav.getAppId(), nav.getParentId());
         return navRepository.save(oNav);
@@ -113,22 +107,71 @@ public class NavServiceImpl implements NavService {
     @Override
     @Transactional
     public Nav delete(String id) {
-        // 检查是否存在下级
         Nav nav = navRepository.findOne(id);
         checkChildren(nav);
-
-        // 处理前邻数据
         Nav prev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId());
+
         if (prev != null) {
             prev.setNextId(nav.getNextId());
             navRepository.save(prev);
         }
-
-        // 删除数据
         navRepository.delete(nav);
         securityService.deleteResource(Resource.Type.NAV, nav.getId());
         clear(nav.getType(), nav.getAppId(), nav.getParentId());
         return nav;
+    }
+
+    @Override
+    public List<ExportNav> export(String appId, String parentId, String type) {
+        List<Nav> lNav = findChildren(type, appId, parentId);
+        if (lNav != null && lNav.size() > 0) {
+            List<ExportNav> lExportNav = new ArrayList<>(lNav.size());
+            lNav.forEach(nav -> {
+                ExportNav exportNav = new ExportNav(nav.getCode(), nav.getName(), nav.getPath(), nav.getSubname(), nav.getTarget());
+                exportNav.getChildren().addAll(export(appId, nav.getId(), type));
+                lExportNav.add(exportNav);
+            });
+            return lExportNav;
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    @Transactional
+    public void imports(List<ExportNav> lExportNav, String appId, String parentId, String type) {
+        List<Nav> lNav = findChildren(type, appId, parentId);
+        List<Nav> lTmp = new ArrayList<>(lExportNav.size());
+        final Nav[] last = new Nav[1];
+
+        lExportNav.stream().sorted((o1, o2) -> -1).forEach(exportNav -> {
+            Logger.info("handle nav with code %s", exportNav.getCode());
+            Optional<Nav> oNav = lNav.stream().filter(nav -> Strings.equals(exportNav.getCode(), nav.getCode())).findFirst();
+            Nav dest = oNav.orElse(new Nav());
+
+            dest.setName(exportNav.getName());
+            dest.setSubname(exportNav.getSubname());
+            dest.setCode(exportNav.getCode());
+            dest.setPath(exportNav.getPath());
+            dest.setTarget(exportNav.getTarget());
+            dest.setNextId((last[0] == null) ? Nav.LAST_KEY : last[0].getId());
+            if (!oNav.isPresent()) {
+                dest.setType(type);
+                dest.setAppId(appId);
+                dest.setParentId(parentId);
+                navRepository.save(dest);
+                securityService.createResource(Resource.Type.NAV, dest.getId());
+                clear(dest.getType(), dest.getAppId(), dest.getParentId());
+                Logger.info("cannot find nav with code %s, create new nav.", exportNav.getCode());
+            } else {
+                navRepository.save(dest);
+            } if (exportNav.getChildren() != null && exportNav.getChildren().size() > 0) {
+                imports(exportNav.getChildren(), appId, dest.getId(), type);
+            }
+            last[0] = dest;
+            lTmp.add(dest);
+        });
+        lNav.removeAll(lTmp);
+        deleteChildren(lNav);
     }
 
     @Override
@@ -170,5 +213,23 @@ public class NavServiceImpl implements NavService {
      */
     private String getCacheKey(String type, String appId, String parentId) {
         return type + "-" + appId + "-" + parentId;
+    }
+
+    /**
+     * 删除下级导航
+     *
+     * @param lNav 导航列表
+     */
+    private void deleteChildren(List<Nav> lNav) {
+        lNav.parallelStream().forEach(nav -> {
+            List<Nav> children = findChildren(nav.getType(), nav.getAppId(), nav.getId());
+            if (children != null && children.size() > 0) {
+                deleteChildren(children);
+            }
+            navRepository.delete(nav);
+            securityService.deleteResource(Resource.Type.NAV, nav.getId());
+            clear(nav.getType(), nav.getAppId(), nav.getParentId());
+            Logger.info("delete nav id: %s, code: %s, name: %s", nav.getId(), nav.getCode(), nav.getName());
+        });
     }
 }

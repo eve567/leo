@@ -2,11 +2,9 @@ package net.ufrog.leo.service.configurations;
 
 import net.ufrog.common.jetbrick.SpringJetxConfigurations;
 import net.ufrog.common.spring.SpringConfigurations;
-import net.ufrog.common.spring.exception.ExceptionLogger;
 import net.ufrog.common.spring.fastjson.FastJsonpHttpMessageConverter;
 import net.ufrog.common.spring.interceptor.TokenInterceptor;
 import net.ufrog.leo.service.PropService;
-import net.ufrog.leo.service.beans.DatabasePropertiesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
