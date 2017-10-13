@@ -15,6 +15,12 @@ cache:
   default:
     duration: "4h"
     prefix: "leo_"
+  redis:
+    duration: "4h"
+    prefix: "leo_"
+    type: "net.ufrog.common.redis.JedisCacheImpl"
+    server: "43.254.106.50:7001,43.254.106.50:7002"
+    serializer: "net.ufrog.common.redis.serializers.ByteArraySerializer"
 datasource:
   primary:
     url: "jdbc:mysql://103.20.249.125:13306/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC"
@@ -46,4 +52,4 @@ log4j:
   logger:
     app: "DEBUG"
 leo:
-  accessTokenManager: "net.ufrog.leo.server.MemAccessTokenManager"
+  accessTokenManager: "net.ufrog.leo.server.RedisAccessTokenManager"

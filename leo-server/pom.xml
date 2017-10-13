@@ -18,6 +18,11 @@
             <artifactId>leo-service</artifactId>
             <version>${version.this}</version>
         </dependency>
+        <dependency>
+            <groupId>net.ufrog</groupId>
+            <artifactId>ufrog-common-redis</artifactId>
+            <version>${version.ufrog.common}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.github.subchen</groupId>
