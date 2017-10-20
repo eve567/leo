@@ -273,6 +273,21 @@ body {
       }
     }
   }
+  &.panel-heading-group-left {
+    float: left !important;
+    margin: -10px 0 -10px -15px;
+    border-left-width: 0;
+    border-right: 1px solid #dddddd;
+    > li {
+      &:first-child {
+        border-left-width: 0;
+      }
+    }
+    .panel-heading-dropdown {
+      right: auto;
+      left: -1px;
+    }
+  }
 }
 
 /* alert style for angular bootstrap */

@@ -2,7 +2,7 @@ package net.ufrog.leo.server;
 
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.exception.ServiceException;
-import net.ufrog.common.redis.JedisCacheImpl;
+import net.ufrog.common.redis.JedisClusterCacheImpl;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.service.beans.Props;
@@ -15,18 +15,18 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 缓存服务令牌管理实现
+ * 缓存服务令牌管理实现<br>jedis cluster impl
  *
  * @author ultrafrog, ufrog.net@gmail.com
  * @version 0.1, 2017-10-13
  * @since 0.1
  */
-public class RedisAccessTokenManager extends AccessTokenManager {
+public class JedisClusterAccessTokenManager extends AccessTokenManager {
 
     private static final String CACHE       = "access_token";
     private static final String CACHE_USER  = "access_token_";
 
-    private static JedisCacheImpl cacheImpl = (JedisCacheImpl) Caches.getImpl(Props.CACHE_REDIS).getCache();
+    private static JedisClusterCacheImpl cacheImpl = (JedisClusterCacheImpl) Caches.getImpl(Props.CACHE_REDIS).getCache();
 
     @Override
     public void online(AccessToken accessToken) {
@@ -41,6 +41,7 @@ public class RedisAccessTokenManager extends AccessTokenManager {
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public void offline(String userId, String appId, String token) {
         try (JedisCluster jedisCluster = cacheImpl.getJedisCluster()) {
             Set<byte[]> sBytes = jedisCluster.hkeys((CACHE_USER + userId).getBytes());

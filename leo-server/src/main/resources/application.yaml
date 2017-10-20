@@ -52,4 +52,4 @@ log4j:
   logger:
     app: "DEBUG"
 leo:
-  accessTokenManager: "net.ufrog.leo.server.RedisAccessTokenManager"
+  accessTokenManager: "net.ufrog.leo.server.JedisClusterAccessTokenManager"
