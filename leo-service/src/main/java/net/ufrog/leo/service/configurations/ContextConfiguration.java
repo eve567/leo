@@ -4,6 +4,9 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import net.ufrog.common.spring.SpringConfigurations;
 import net.ufrog.common.spring.fastjson.FastJsonpHttpMessageConverter;
+import net.ufrog.leo.domain.repositories.BlobRepository;
+import net.ufrog.leo.service.storages.DBStorage;
+import net.ufrog.leo.service.storages.Storage;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -44,5 +47,10 @@ public class ContextConfiguration {
         fastJsonpHttpMessageConverter.setFastJsonConfig(fastJsonConfig);
         fastJsonpHttpMessageConverter.setJsonp("callback");
         return fastJsonpHttpMessageConverter;
+    }
+
+    @Bean
+    public Storage storage(BlobRepository blobRepository) {
+        return new DBStorage(blobRepository);
     }
 }

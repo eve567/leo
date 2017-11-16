@@ -1,12 +1,15 @@
 package net.ufrog.leo.service.beans;
 
 import com.alibaba.fastjson.JSON;
+import net.ufrog.common.app.App;
 import net.ufrog.common.cache.CacheKey;
+import net.ufrog.common.cache.Caches;
 import net.ufrog.common.cache.SimpleCacheKey;
 import net.ufrog.common.dict.Dicts;
 import net.ufrog.common.utils.Strings;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -22,6 +25,25 @@ public class Props {
 
     public static final CacheKey CACHE_DEFAULT  = new SimpleCacheKey("default");
     public static final CacheKey CACHE_REDIS    = new SimpleCacheKey("redis");
+
+    /** 应用字符集 */ public static final String APP_CHARSET   = "app.charset";
+
+    //
+    static {
+        Caches.getImpl(CACHE_DEFAULT);
+    }
+
+    /** 构造函数 */
+    private Props() {}
+
+    /**
+     * 读取应用字符集
+     *
+     * @return 应用字符集
+     */
+    public static Charset getAppCharset() {
+        return Charset.forName(App.config(APP_CHARSET, "utf-8"));
+    }
 
     /**
      * 转换成十进制小数

@@ -3,10 +3,7 @@ package net.ufrog.leo.domain;
 import net.ufrog.common.dict.Dicts;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
-import net.ufrog.leo.domain.models.RoleResource;
-import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.domain.models.UserOpenPlatform;
-import net.ufrog.leo.domain.models.UserRole;
+import net.ufrog.leo.domain.models.*;
 
 /**
  * 模型工具
@@ -19,6 +16,18 @@ public class Models {
 
     /** 构造函数 */
     private Models() {}
+
+    /**
+     * 新建数据实例
+     *
+     * @param data 数据内容
+     * @return 数据实例
+     */
+    public static Blob newBlob(byte[] data) {
+        Blob blob = new Blob();
+        blob.setValue(data);
+        return blob;
+    }
 
     /**
      * 新建用户角色

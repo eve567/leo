@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    'use strict';
+    function mailTplCtrl($scope) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.tpl = {};
+                $scope.setup();
+            },
+
+            // 保存
+            save: function($event) {
+                $scope.ctrl.stop($event);
+                $scope.ctrl.status('saveBtn', 'processing');
+                $scope.tpl.code = $scope.current.tab.code;
+                $scope.put('${app}/prop/mail_template', $scope.tpl, function(data) {
+                    //console.log(data);
+                }, function() {
+                    $scope.ctrl.status('saveBtn', 'standby');
+                });
+            },
+
+            // 设置标签
+            setup: function() {
+                $scope.tabs = [];
+                $scope.tabs[0] = {name: '开户邮件', code: 'mail_tpl_user_add'};
+                $scope.tabs[1] = {name: '重置密码邮件', code: 'mail_tpl_user_reset_password'};
+                $scope.active($scope.tabs[0]);
+            },
+
+            // 激活标签
+            active: function(tab, forced) {
+                if ($scope.current.tab !== tab || forced) {
+                    $scope.current.tab = tab;
+                    $scope.tpl.value = '';
+
+                    $scope.ctrl.status('saveBtn', 'standby');
+                    $scope.get('${app}/prop/mail_template_value/' + $scope.current.tab.code + '?' + $scope.date.timestamp(), function(data) {
+                        $scope.tpl.value = data;
+                    });
+                }
+            },
+
+            // 判断保存按钮是否有效
+            disabledSaveBtn: function() {
+                if ($scope.mailTplForm.$invalid) return true;
+                else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                return false;
+            },
+
+            //
+            current: {}
+        }).init();
+    }
+</script>

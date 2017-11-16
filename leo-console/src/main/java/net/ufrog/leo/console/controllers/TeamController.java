@@ -3,6 +3,9 @@ package net.ufrog.leo.console.controllers;
 import net.ufrog.common.Mailer;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
+import net.ufrog.common.jetbrick.Templates;
+import net.ufrog.common.utils.Codecs;
+import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.console.forms.UserRoleBindForm;
@@ -11,12 +14,15 @@ import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.domain.models.UserRole;
 import net.ufrog.leo.service.RoleService;
 import net.ufrog.leo.service.UserService;
+import net.ufrog.leo.service.beans.Props;
+import net.ufrog.leo.service.storages.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 团队控制器
@@ -35,16 +41,21 @@ public class TeamController {
     /** 用户业务接口 */
     private final UserService userService;
 
+    /** 数据仓储 */
+    private final Storage storage;
+
     /**
      * 构造函数
      *
      * @param roleService 角色业务接口
      * @param userService 用户业务接口
+     * @param storage 数据仓储
      */
     @Autowired
-    public TeamController(RoleService roleService, UserService userService) {
+    public TeamController(RoleService roleService, UserService userService, Storage storage) {
         this.roleService = roleService;
         this.userService = userService;
+        this.storage = storage;
     }
 
     /**
@@ -74,7 +85,12 @@ public class TeamController {
         user.setStatus(User.Status.ENABLED);
         userService.create(user);
 
-        Mailer.sendText("leo user password", password, user.getEmail());    //TODO template for mail content
+        Map<String, Object> args = Objects.map("password", password, "account", user.getEmail());
+        String key = App.config("mail_tpl_user_add");
+        String tpl = new String(storage.get(key), Props.getAppCharset());
+        String uuid = Codecs.uuid();
+        Mailer.sendHtml(App.message("mail.subject.create.user"), Templates.render(uuid, tpl, args), user.getEmail());
+        Templates.clear(uuid);
         return Result.success(user, App.message("team.user.create.success", user.getName()));
     }
 
@@ -94,7 +110,12 @@ public class TeamController {
         user.setForced(User.Forced.TRUE);
         userService.update(user);
 
-        Mailer.sendText("leo user password", password, user.getEmail());    //TODO template for mail content
+        Map<String, Object> args = Objects.map("password", password, "account", user.getEmail());
+        String key = App.config("mail_tpl_user_reset_password");
+        String tpl = new String(storage.get(key), Props.getAppCharset());
+        String uuid = Codecs.uuid();
+        Mailer.sendHtml(App.message("mail.subject.reset.password"), Templates.render(uuid, tpl, args), user.getEmail());
+        Templates.clear(uuid);
         return Result.success(user, App.message("team.user.reset.success", user.getName()));
     }
 

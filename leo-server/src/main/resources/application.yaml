@@ -18,7 +18,7 @@ cache:
   redis:
     duration: "4h"
     prefix: "leo_"
-    type: "net.ufrog.common.redis.JedisCacheImpl"
+    type: "net.ufrog.common.redis.JedisClusterCacheImpl"
     server: "43.254.106.50:7001,43.254.106.50:7002"
     serializer: "net.ufrog.common.redis.serializers.ByteArraySerializer"
 datasource:

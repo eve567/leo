@@ -1,0 +1,21 @@
+<div class="panel-tab" ng-controller="mailTplCtrl">
+    <ul class="nav nav-tabs">
+        <li ng-repeat="tab in tabs" ng-class="{active: current.tab === tab}"><a href="#" ng-bind="tab.name" ng-click="active(tab)"></a></li>
+    </ul>
+    <div class="panel panel-default">
+        <form name="mailTplForm" method="post" action="#" class="form-horizontal" ng-submit="save($event)">
+            <div class="panel-body">
+                <div class="form-group">
+                    <textarea name="value" rows="35" class="form-control" ng-model="tpl.value" required></textarea>
+                </div>
+                <div class="form-group margin-bottom-zero">
+                    <button class="btn btn-success" ng-disabled="disabledSaveBtn()">
+                        <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;${app.msg('common.op.save')}</fa></span>
+                        <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- #include('js_mail_template.html') -->
