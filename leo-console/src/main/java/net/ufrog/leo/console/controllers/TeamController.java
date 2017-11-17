@@ -86,7 +86,7 @@ public class TeamController {
         userService.create(user);
 
         Map<String, Object> args = Objects.map("password", password, "account", user.getEmail());
-        String key = App.config("mail_tpl_user_add");
+        String key = Props.getMailTplUserAdd();
         String tpl = new String(storage.get(key), Props.getAppCharset());
         String uuid = Codecs.uuid();
         Mailer.sendHtml(App.message("mail.subject.create.user"), Templates.render(uuid, tpl, args), user.getEmail());
@@ -111,7 +111,7 @@ public class TeamController {
         userService.update(user);
 
         Map<String, Object> args = Objects.map("password", password, "account", user.getEmail());
-        String key = App.config("mail_tpl_user_reset_password");
+        String key = Props.getMailTplUserResetPassword();
         String tpl = new String(storage.get(key), Props.getAppCharset());
         String uuid = Codecs.uuid();
         Mailer.sendHtml(App.message("mail.subject.reset.password"), Templates.render(uuid, tpl, args), user.getEmail());
