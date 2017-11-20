@@ -26,7 +26,7 @@
                 <label class="col-sm-1 control-label"><rq>名称</rq></label>
                 <div class="col-sm-2">
                     <input name="name" class="form-control" placeholder="请填写成员名称" ng-model="user.name" required maxlength="20">
-                    <alert-pop field="userForm.name">
+                    <alert-pop field="userForm.name" test="userForm.cellphone,userForm.name">
                         <alert-pop-item type="required">必须填写成员名称</alert-pop-item>
                         <alert-pop-item type="maxlength">成员名称最多可填20个字符</alert-pop-item>
                     </alert-pop>

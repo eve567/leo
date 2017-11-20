@@ -6,7 +6,7 @@
     ng.module('ugCommon', [])
 
         /** 服务定义 */
-        .service('$common', ['$window', '$filter', '$timeout', '$http', '$templateCache', function($window, $filter, $timeout, $http, $templateCache) {
+        .service('$common', ['$window', '$filter', function($window, $filter) {
             var $_ = {
                 /** jQuery */
                 $: jq,

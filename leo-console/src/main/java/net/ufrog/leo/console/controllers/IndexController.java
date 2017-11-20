@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class IndexController {
 
-    private TestService testService;
+    private final TestService testService;
 
     @Autowired
     public IndexController(TestService testService) {

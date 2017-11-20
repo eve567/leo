@@ -22,7 +22,7 @@ import java.util.List;
 public class PropServiceImpl implements PropService {
 
     /** 系统属性仓库 */
-    private PropRepository propRepository;
+    private final PropRepository propRepository;
 
     /**
      * 构造函数

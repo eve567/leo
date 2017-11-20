@@ -366,13 +366,13 @@
         }])
 
         /** 表单验证提示指令 */
-        .directive('alertPop', [function() {
+        .directive('alertPop', ['$parse', function($parse) {
             return {
                 restrict: 'E',
                 replace: true,
                 transclude: true,
                 scope: {
-                    field: '='
+                    field: '@'
                 },
                 template: '<ul class="alert alert-danger alert-pop ng-fade-flow" ng-show="$isInvalid()" ng-transclude></ul>',
                 link: function($scope, $element) {
@@ -380,16 +380,31 @@
                         // 初始化
                         $init: function() {
                             $element.append('<p class="alert-pop-triangle"></p>');
+                            $scope.$setup();
+                        },
+
+                        // 处理多属性
+                        $setup: function() {
+                            $scope.fields = [];
+                            if (angular.isString($scope.field)) {
+                                angular.forEach($scope.field.split(','), function(v) {
+                                    $scope.fields.push($parse(v)($scope.$parent));
+                                });
+                            }
                         },
 
                         // 判断是否无效
                         $isInvalid: function() {
-                            if (ng.isUndefined($scope.field)) return false;
-                            if ($scope.field.$invalid && $scope.field.$dirty) {
-                                $element.css('left', $element.prev().outerWidth() + 20);
-                                $element.parent().parent().addClass('has-error');
-                                return true;
+                            if (ng.isUndefined($scope.fields) || !ng.isArray($scope.fields)) {
+                                return false;
                             } else {
+                                for (var $i = 0; $i < $scope.fields.length; $i++) {
+                                    if ($scope.fields[$i].$invalid && $scope.fields[$i].$dirty) {
+                                        $element.css('left', $element.prev().outerWidth() + 20);
+                                        $element.parent().parent().addClass('has-error');
+                                        return true;
+                                    }
+                                }
                                 $element.parent().parent().removeClass('has-error');
                                 return false;
                             }
@@ -406,14 +421,23 @@
                 replace: true,
                 transclude: true,
                 scope: {
+                    field: '@',
                     type: '@'
                 },
                 template: '<li ng-show="$isInvalid()" ng-transclude></li>',
                 link: function($scope) {
                     ng.extend($scope, {
                         $isInvalid: function() {
-                            if (ng.isUndefined($scope.$parent.$parent.field)) return false;
-                            return ($scope.$parent.$parent.field.$error[$scope.type]);
+                            if (ng.isUndefined($scope.$parent.$parent.fields) || !ng.isArray($scope.$parent.$parent.fields)) {
+                                return false;
+                            } else {
+                                for (var $i = 0; $i < $scope.$parent.$parent.fields.length; $i++) {
+                                    if ((ng.isString($scope.field) && $scope.$parent.$parent.fields[$i].$name === $scope.field) || (!ng.isString($scope.field) && ng.isDefined($scope.$parent.$parent.fields[$i].$error[$scope.type]))) {
+                                        return ($scope.$parent.$parent.fields[$i].$error[$scope.type]);
+                                    }
+                                }
+                                return false;
+                            }
                         }
                     });
                 }

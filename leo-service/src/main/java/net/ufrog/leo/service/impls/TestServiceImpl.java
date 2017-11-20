@@ -21,9 +21,9 @@ import java.util.stream.IntStream;
 @Transactional(readOnly = true)
 public class TestServiceImpl implements TestService {
 
-    private TestRepository testRepository;
+    private final TestRepository testRepository;
 
-    private TestJpql testJpql;
+    private final TestJpql testJpql;
 
     @Autowired
     public TestServiceImpl(TestRepository testRepository, TestJpql testJpql) {

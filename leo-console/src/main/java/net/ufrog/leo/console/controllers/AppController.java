@@ -30,7 +30,7 @@ import java.util.Map;
 public class AppController {
 
     /** 应用业务接口 */
-    private AppService appService;
+    private final AppService appService;
 
     /**
      * 构造函数

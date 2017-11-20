@@ -38,16 +38,16 @@ public class SecurityServiceImpl implements SecurityService {
     private static Map<String, String> typeMapping;
 
     /** 资源仓库 */
-    private ResourceRepository resourceRepository;
+    private final ResourceRepository resourceRepository;
 
     /** 角色资源仓库 */
-    private RoleResourceRepository roleResourceRepository;
+    private final RoleResourceRepository roleResourceRepository;
 
     /** 用户仓库 */
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /** 权限脚本 */
-    private SecurityJpql securityJpql;
+    private final SecurityJpql securityJpql;
 
     /**
      * 构造函数

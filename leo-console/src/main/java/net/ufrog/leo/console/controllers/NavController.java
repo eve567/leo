@@ -35,10 +35,10 @@ import java.util.List;
 public class NavController {
 
     /** 应用业务接口 */
-    private AppService appService;
+    private final AppService appService;
 
     /** 导航业务接口 */
-    private NavService navService;
+    private final NavService navService;
 
     /**
      * 构造函数

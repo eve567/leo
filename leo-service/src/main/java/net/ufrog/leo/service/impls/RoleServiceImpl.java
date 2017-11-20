@@ -36,16 +36,16 @@ import java.util.stream.Stream;
 public class RoleServiceImpl implements RoleService {
 
     /** 资源仓库 */
-    private ResourceRepository resourceRepository;
+    private final ResourceRepository resourceRepository;
 
     /** 角色仓库 */
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
     /** 角色资源仓库 */
-    private RoleResourceRepository roleResourceRepository;
+    private final RoleResourceRepository roleResourceRepository;
 
     /** 权限脚本 */
-    private SecurityJpql securityJpql;
+    private final SecurityJpql securityJpql;
 
     /**
      * 构造函数
