@@ -1,0 +1,97 @@
+<script type="text/javascript">
+    'use strict';
+    function teamGroupCtrl($scope, $tree) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.setupTree();
+                $scope.ctrl.status('mode', 'locked');
+                $scope.ctrl.status('saveBtn', 'standby');
+            },
+
+            // 设置树
+            setupTree: function() {
+                $scope.tree = {};
+                $scope.tree.id = '_root';
+                $scope.groupFn.setup($scope.tree);
+                $tree.load($scope.tree);
+                $tree.addNodeFn('<i class="fa fa-fw fa-plus-circle"></i><span>添加组织/部门</span>', $scope.groupFn.rootForm, $scope.tree);
+            },
+
+            // 组织功能集合
+            groupFn: {
+                find: function(group) {
+                    $scope.get('${app}/group/find/' + group.id, function(data) {
+                        $tree.loaded(group, data);
+                        angular.forEach(data, function(v) {
+                            $scope.groupFn.setup(v);
+                        });
+                    });
+                },
+
+                // 表单
+                form: function(parent, group) {
+                    console.log(parent, group);
+                    $scope.current.parent = parent;
+                    $scope.group = angular.extend({}, group);
+                    if ($scope.valid.empty(group)) {
+                        $scope.group.parentId = parent.id;
+                    }
+                    $scope.object.delete($scope.group, ['creator', 'createTime', 'updater', 'updateTime', 'children', '$fn', '$operations', '$parent', '$setup', '$status']);
+                    $scope.ctrl.status('mode', 'editable');
+                    $scope.ctrl.status('saveBtn', 'standby');
+                },
+
+                // 根级表单
+                rootForm: function() {
+                    $scope.groupFn.form($scope.tree);
+                },
+
+                // 编辑表单
+                editForm: function(group) {
+                    $scope.groupFn.form(group.$parent, group);
+                },
+
+                // 保存
+                save: function($event) {
+                    $scope.ctrl.stop($event);
+                    $scope.ctrl.status('saveBtn', 'processing');
+                    if ($scope.valid.empty($scope.group.id)) {
+                        $scope.groupFn.create($scope.group);
+                    }
+                },
+
+                // 创建组织
+                create: function(group) {
+                    $scope.post('${app}/group/create', group, function() {
+                        $tree.reload($scope.current.parent);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 判断保存按钮是否有效
+                disabledSaveBtn: function() {
+                    if ($scope.groupForm.$invalid) return true;
+                    else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    else if ($scope.ctrl.status('mode', ['locked']));
+                    return false;
+                },
+
+                // 设置节点
+                setup: function(node) {
+                    if (!node.$setup) {
+                        node.$setup = true;
+                        $tree.setLoadFn($scope.groupFn.find, node);
+                        $tree.addOperation('fa-users', 'text-primary', '成员列表', $scope.groupFn.find, node);
+                        $tree.addOperation('fa-minus-square', 'text-danger', '删除', $scope.groupFn.find, node);
+                        $tree.addOperation('fa-pencil-square', 'text-primary', '编辑', $scope.groupFn.editForm, node);
+                    }
+                }
+            },
+
+            //
+            current: {}
+        }).init();
+    }
+</script>

@@ -1,0 +1,9 @@
+<ul class="list-group" style="overflow: auto; max-height: 300px;">
+    <li class="list-group-item text-danger" ng-show="ctrl.status('mode', ['locked'])"><fa i="times-circle">&nbsp;尚未选择组织/部门</fa></li>
+    <li class="list-group-item text-danger" ng-show="ctrl.status('mode', ['editable']) && valid.empty(group.id)"><fa i="times-circle">&nbsp;请先添加组织/部门</fa></li>
+    <li class="list-group-item" ng-show="ctrl.status('mode', ['editable']) && !valid.empty(group.id) && valid.empty(members)"><a href="#"><fa i="refresh">&nbsp;加载成员列表</fa></a></li>
+    <li class="list-group-item clearfix" ng-repeat="member in members">
+        <span class="pull-left" ng-bind="member.name"></span>
+        <a href="#" class="text-danger" title="移除该成员"><fa i="times"></fa></a>
+    </li>
+</ul>
