@@ -68,6 +68,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> findAll(String... types) {
+        return userRepository.findByTypeIn(Arrays.asList(types), Domains.sort(Sort.Direction.ASC, "name"));
+    }
+
+    @Override
     public Page<User> findAll(Integer page, Integer size, String... types) {
         Pageable pageable = Domains.pageable(page, size, Sort.Direction.ASC, "email", "cellphone");
         return userRepository.findByTypeIn(Arrays.asList(types), pageable);

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 /**
  * 用户控制器
  *
@@ -31,6 +33,18 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    /**
+     * 查询用户
+     *
+     * @param types 类型数组
+     * @return 用户列表
+     */
+    @GetMapping("/list_all")
+    @ResponseBody
+    public List<User> findAll(String[] types) {
+        return userService.findAll(types);
     }
 
     /**

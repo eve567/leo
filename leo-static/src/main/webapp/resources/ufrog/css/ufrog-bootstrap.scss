@@ -53,6 +53,15 @@ body {
 .margin-bottom {
   margin-bottom: $spacing;
 }
+.margin-right-zero {
+  margin-right: 0;
+}
+.margin-right-half {
+  margin-right: $spacing/2;
+}
+.margin-right {
+  margin-right: $spacing;
+}
 .table-footer {
   margin-top: -$spacing/2;
   margin-bottom: $spacing;
@@ -69,6 +78,15 @@ body {
 }
 .font-lg {
   font-size: $font-size-lg;
+}
+.max-height {
+  overflow: auto;
+  @for $i from 1 through 12 {
+    $height: $i * 50;
+    &.max-height-#{$height} {
+      max-height: #{$height}px;
+    }
+  }
 }
 
 /* angular styles */
@@ -161,6 +179,19 @@ body {
       .col-md-#{$i},
       .col-lg-#{$i} {
         padding: 0;
+      }
+    }
+  }
+  &.row-lt {
+    margin-right: -$spacing/4;
+    margin-left: -$spacing/4;
+    @for $i from 1 through 12 {
+      .col-xs-#{$i},
+      .col-sm-#{$i},
+      .col-md-#{$i},
+      .col-lg-#{$i} {
+        padding-right: $spacing/4;
+        padding-left: $spacing/4;
       }
     }
   }

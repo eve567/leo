@@ -1,11 +1,10 @@
 <script type="text/javascript">
     'use strict';
-    function teamGroupCtrl($scope, $tree) {
+    function teamGroupCtrl($scope, $tree, $bootstrap) {
         angular.extend($scope, {
             // 初始化
             init: function() {
                 $scope.setupTree();
-                $scope.ctrl.status('mode', 'locked');
                 $scope.ctrl.status('saveBtn', 'standby');
             },
 
@@ -15,7 +14,7 @@
                 $scope.tree.id = '_root';
                 $scope.groupFn.setup($scope.tree);
                 $tree.load($scope.tree);
-                $tree.addNodeFn('<i class="fa fa-fw fa-plus-circle"></i><span>添加组织/部门</span>', $scope.groupFn.rootForm, $scope.tree);
+                $tree.addNodeFn('<i class="fa fa-fw fa-plus-circle"></i><span>添加部门/职位</span>', $scope.groupFn.rootForm, $scope.tree);
             },
 
             // 组织功能集合
@@ -38,7 +37,7 @@
                         $scope.group.parentId = parent.id;
                     }
                     $scope.object.delete($scope.group, ['creator', 'createTime', 'updater', 'updateTime', 'children', '$fn', '$operations', '$parent', '$setup', '$status']);
-                    $scope.ctrl.status('mode', 'editable');
+                    $scope.ctrl.status('mode', 'form');
                     $scope.ctrl.status('saveBtn', 'standby');
                 },
 
@@ -70,11 +69,16 @@
                     });
                 },
 
+                // 取消
+                cancel: function() {
+                    $scope.ctrl.resetForm($scope.groupForm);
+                    $scope.group = undefined;
+                },
+
                 // 判断保存按钮是否有效
                 disabledSaveBtn: function() {
                     if ($scope.groupForm.$invalid) return true;
                     else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
-                    else if ($scope.ctrl.status('mode', ['locked']));
                     return false;
                 },
 
@@ -83,10 +87,35 @@
                     if (!node.$setup) {
                         node.$setup = true;
                         $tree.setLoadFn($scope.groupFn.find, node);
-                        $tree.addOperation('fa-users', 'text-primary', '成员列表', $scope.groupFn.find, node);
                         $tree.addOperation('fa-minus-square', 'text-danger', '删除', $scope.groupFn.find, node);
                         $tree.addOperation('fa-pencil-square', 'text-primary', '编辑', $scope.groupFn.editForm, node);
                     }
+                }
+            },
+
+            // 成员功能集合
+            memberFn: {
+                // 成员列表
+                index: function() {
+                    $scope.ctrl.status('mode', 'user');
+                    $scope.get('${app}/group/users/' + $scope.group.id, function(data) {
+                        $scope.members = data;
+                        $scope.get('${app}/user/list_all', {types: ['90']}, function(data) {
+                            console.log(data);
+                            $scope.users = data;
+                        });
+                    });
+                },
+
+                //
+                selectMember: function(user) {
+                    $scope.selecteds.push(user);
+                },
+
+                //
+                popUserList: function() {
+                    $bootstrap.modal.show('userSelectModal');
+                    $scope.selecteds = [];
                 }
             },
 

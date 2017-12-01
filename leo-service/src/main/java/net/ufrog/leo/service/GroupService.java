@@ -1,6 +1,7 @@
 package net.ufrog.leo.service;
 
 import net.ufrog.leo.domain.models.Group;
+import net.ufrog.leo.service.beans.GroupUsers;
 
 import java.util.List;
 
@@ -20,6 +21,14 @@ public interface GroupService {
      * @return 组织列表
      */
     List<Group> findByParentId(String parentId);
+
+    /**
+     * 通过组织编号查询组织用户关系
+     *
+     * @param groupId 组织编号
+     * @return 组织用户关系列表
+     */
+    List<GroupUsers> findGroupUsersByGroupId(String groupId);
 
     /**
      * 创建组织

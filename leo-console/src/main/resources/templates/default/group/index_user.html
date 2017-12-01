@@ -1,9 +1,10 @@
-<ul class="list-group" style="overflow: auto; max-height: 300px;">
-    <li class="list-group-item text-danger" ng-show="ctrl.status('mode', ['locked'])"><fa i="times-circle">&nbsp;尚未选择组织/部门</fa></li>
-    <li class="list-group-item text-danger" ng-show="ctrl.status('mode', ['editable']) && valid.empty(group.id)"><fa i="times-circle">&nbsp;请先添加组织/部门</fa></li>
-    <li class="list-group-item" ng-show="ctrl.status('mode', ['editable']) && !valid.empty(group.id) && valid.empty(members)"><a href="#"><fa i="refresh">&nbsp;加载成员列表</fa></a></li>
+<ul class="list-group margin-bottom-half" style="overflow: auto; max-height: 300px;">
     <li class="list-group-item clearfix" ng-repeat="member in members">
         <span class="pull-left" ng-bind="member.name"></span>
         <a href="#" class="text-danger" title="移除该成员"><fa i="times"></fa></a>
     </li>
+    <li class="list-group-item"><a href="#" ng-click="memberFn.popUserList()"><fa i="plus">&nbsp;添加成员</fa></a></li>
 </ul>
+<button class="btn btn-default" ng-click="ctrl.status('mode', 'form')"><fa i="reply">&nbsp;返回</fa></button>
+<button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+<!-- #include('modal_user.html') -->

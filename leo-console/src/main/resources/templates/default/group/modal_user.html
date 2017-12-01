@@ -1,0 +1,33 @@
+<modal id="userSelectModal" title="选择成员">
+    <div class="margin-bottom-half"><input class="form-control" placeholder="筛选待选成员..." ng-model="filter" autofocus></div>
+    <div class="max-height max-height-250">
+        <table class="margin-bottom-zero">
+            <colgroup>
+                <col width="20%">
+                <col width="60%">
+                <col width="20%">
+            </colgroup>
+            <tbody>
+            <tr ng-repeat="user in users|filter:filter">
+                <td ng-bind="user.name"></td>
+                <td ng-bind="user.email"></td>
+                <td class="text-right"><a href="#" ng-click="memberFn.selectMember(user)">选择</a></td>
+            </tr>
+            <tr ng-if="valid.empty(users)"><td col-span><fa i="">&nbsp;没有可以添加的成员</fa></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row row-lt margin-bottom-zero" style="margin-bottom: -10px;" ng-if="!valid.empty(selecteds)">
+        <hr class="margin-top-half margin-bottom-half">
+        <div class="col-sm-6" ng-repeat="selected in selecteds">
+            <div class="input-group margin-bottom-half">
+                <input class="form-control" ng-value="selected.name + ' - ' + selected.email" readonly>
+                    <span class="input-group-btn">
+                    <button class="btn btn-danger btn-fixed"><fa i="times"></fa></button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+    <button class="btn btn-success"><fa i="plus-circle">&nbsp;${app.msg('common.op.add')}</fa></button>
+</modal>

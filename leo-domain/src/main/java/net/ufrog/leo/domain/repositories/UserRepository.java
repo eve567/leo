@@ -3,10 +3,12 @@ package net.ufrog.leo.domain.repositories;
 import net.ufrog.leo.domain.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 用户仓库
@@ -41,6 +43,15 @@ public interface UserRepository extends JpaRepository<User, String> {
      * @return 单个用户对象
      */
     User findByCellphone(String cellphone);
+
+    /**
+     * 通过类型集合查询用户
+     *
+     * @param types 类型集合
+     * @param sort 排序
+     * @return 用户列表
+     */
+    List<User> findByTypeIn(Collection<String> types, Sort sort);
 
     /**
      * 通过类型集合查询用户

@@ -5,6 +5,7 @@ import net.ufrog.common.app.App;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.leo.domain.models.Group;
 import net.ufrog.leo.service.GroupService;
+import net.ufrog.leo.service.beans.GroupUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,20 @@ public class GroupController {
     @ResponseBody
     public List<Group> find(@PathVariable("parentId") String parentId) {
         return groupService.findByParentId(parentId);
+    }
+
+    /**
+     * 查询组织用户关系
+     *
+     * @param groupId 组织编号
+     * @return 组织用户列表
+     */
+    @GetMapping("/users/{groupId}")
+    @ResponseBody
+    public List<GroupUsers> findGroupUsers(@PathVariable("groupId") String groupId) {
+        List<GroupUsers> lGroupUsers = groupService.findGroupUsersByGroupId(groupId);
+        lGroupUsers.forEach(groupUsers -> groupUsers.getUser().setPassword(null));
+        return lGroupUsers;
     }
 
     /**

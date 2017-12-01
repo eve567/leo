@@ -24,6 +24,14 @@ public interface UserService {
     /**
      * 查询所有用户
      *
+     * @param types 类型数组
+     * @return 用户列表
+     */
+    List<User> findAll(String... types);
+
+    /**
+     * 查询所有用户
+     *
      * @param page 当前页码
      * @param size 分页大小
      * @param types 类型数组
