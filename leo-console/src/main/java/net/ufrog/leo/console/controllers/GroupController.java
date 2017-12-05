@@ -3,6 +3,9 @@ package net.ufrog.leo.console.controllers;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.utils.Objects;
+import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.console.forms.GroupUserForm;
+import net.ufrog.leo.console.forms.RemarkForm;
 import net.ufrog.leo.domain.models.Group;
 import net.ufrog.leo.service.GroupService;
 import net.ufrog.leo.service.beans.GroupUsers;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 组织架构控制器
@@ -83,5 +87,74 @@ public class GroupController {
     public Result<Group> create(@RequestBody Group group) {
         Objects.trimStringFields(group);
         return Result.success(groupService.create(group), App.message("team.group.create.success", group.getName()));
+    }
+
+    /**
+     * 更新组织
+     *
+     * @param groupId 组织编号
+     * @param group 组织对象
+     * @return 更新结果
+     */
+    @PutMapping("/update/{groupId}")
+    @ResponseBody
+    public Result<Group> update(@PathVariable("groupId") String groupId, @RequestBody Group group) {
+        Objects.trimStringFields(group);
+        return Result.success(groupService.update(groupId, group), App.message("team.group.update.success", group.getName()));
+    }
+
+    /**
+     * 删除组织
+     *
+     * @param groupId 组织编号
+     * @return 删除结果
+     */
+    @DeleteMapping("/delete/{groupId}")
+    @ResponseBody
+    public Result<Group> delete(@PathVariable("groupId") String groupId) {
+        Group group = groupService.delete(groupId);
+        return Result.success(group, App.message("team.group.delete.success", group.getName()));
+    }
+
+    /**
+     * 创建组织用户关系
+     *
+     * @param groupId 组织编号
+     * @param groupUserForm 组织用户表单
+     * @return 创建关系结果
+     */
+    @PostMapping("/member/add/{groupId}")
+    @ResponseBody
+    public Result<List<GroupUsers>> createGroupUser(@PathVariable("groupId") String groupId, @RequestBody GroupUserForm groupUserForm) {
+        List<GroupUsers> lGroupUsers = groupService.createGroupUsers(groupId, groupUserForm.getIds());
+        String userNames = lGroupUsers.stream().map(GroupUsers::getName).collect(Collectors.joining(", "));
+        return Result.success(lGroupUsers, App.message("team.group.member.add.success", userNames));
+    }
+
+    /**
+     * 删除组织用户关系
+     *
+     * @param groupUserId 组织用户编号
+     * @return 删除关系结果
+     */
+    @DeleteMapping("/member/delete/{groupUserId}")
+    @ResponseBody
+    public Result<GroupUsers> deleteGroupUser(@PathVariable("groupUserId") String groupUserId) {
+        GroupUsers groupUsers = groupService.deleteGroupUser(groupUserId);
+        return Result.success(groupUsers, App.message("team.group.member.remove.success", groupUsers.getName()));
+    }
+
+    /**
+     * 备注组织用户关系
+     *
+     * @param groupUserId 组织用户编号
+     * @param remarkForm 备注表单
+     * @return 备注结果
+     */
+    @PutMapping("/member/remark/{groupUserId}")
+    @ResponseBody
+    public Result<GroupUsers> remarkGroupUser(@PathVariable("groupUserId") String groupUserId, @RequestBody RemarkForm remarkForm) {
+        GroupUsers groupUsers = groupService.remarkGroupUser(groupUserId, Strings.fromUnicode(remarkForm.getRemark()));
+        return Result.success(groupUsers, App.message("team.group.member.remark.success", groupUsers.getName(), groupUsers.getGroupUser().getRemark()));
     }
 }

@@ -20,7 +20,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label">上级部门/职位</label>
+        <label class="col-sm-2 control-label">上级</label>
         <div class="col-sm-4">
             <input class="form-control" ng-value="current.parent.name" readonly>
         </div>
@@ -31,8 +31,8 @@
                 <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;${app.msg('common.op.save')}</fa></span>
                 <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
             </button>
-            <button type="button" class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
             <button type="button" class="btn btn-primary" ng-click="memberFn.index()" ng-if="!valid.empty(group.id)"><fa i="users">&nbsp;成员</fa></button>
+            <button type="button" class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
         </div>
     </div>
 </form>

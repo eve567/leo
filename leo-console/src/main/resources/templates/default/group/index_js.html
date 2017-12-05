@@ -19,6 +19,7 @@
 
             // 组织功能集合
             groupFn: {
+                // 查询组织
                 find: function(group) {
                     $scope.get('${app}/group/find/' + group.id, function(data) {
                         $tree.loaded(group, data);
@@ -30,7 +31,6 @@
 
                 // 表单
                 form: function(parent, group) {
-                    console.log(parent, group);
                     $scope.current.parent = parent;
                     $scope.group = angular.extend({}, group);
                     if ($scope.valid.empty(group)) {
@@ -57,6 +57,8 @@
                     $scope.ctrl.status('saveBtn', 'processing');
                     if ($scope.valid.empty($scope.group.id)) {
                         $scope.groupFn.create($scope.group);
+                    } else {
+                        $scope.groupFn.update($scope.group);
                     }
                 },
 
@@ -69,10 +71,38 @@
                     });
                 },
 
+                // 更新组织
+                update: function(group) {
+                    $scope.put('${app}/group/update/' + group.id, group, function() {
+                        $tree.reload($scope.current.parent);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 删除组织
+                delete: function() {
+                    $scope.ctrl.status('deleteBtn', 'processing');
+                    $scope.delete('${app}/group/delete/' + $scope.current.group.id, function() {
+                        $tree.reload($scope.current.group.$parent);
+                    }, function() {
+                        $scope.ctrl.status('deleteBtn', 'standby');
+                        $bootstrap.modal.hide('deleteGroupModal');
+                    });
+                },
+
                 // 取消
                 cancel: function() {
                     $scope.ctrl.resetForm($scope.groupForm);
                     $scope.group = undefined;
+                },
+
+                // 弹出删除确认框
+                popDeleteModal: function(group) {
+                    $scope.current.group = group;
+                    $scope.groupFn.cancel();
+                    $scope.ctrl.status('deleteBtn', 'standby');
+                    $bootstrap.modal.show('deleteGroupModal');
                 },
 
                 // 判断保存按钮是否有效
@@ -87,8 +117,9 @@
                     if (!node.$setup) {
                         node.$setup = true;
                         $tree.setLoadFn($scope.groupFn.find, node);
-                        $tree.addOperation('fa-minus-square', 'text-danger', '删除', $scope.groupFn.find, node);
+                        $tree.addOperation('fa-minus-square', 'text-danger', '删除', $scope.groupFn.popDeleteModal, node);
                         $tree.addOperation('fa-pencil-square', 'text-primary', '编辑', $scope.groupFn.editForm, node);
+                        $tree.addOperation('fa-plus-square', 'text-success', '添加', $scope.groupFn.form, node);
                     }
                 }
             },
@@ -100,22 +131,115 @@
                     $scope.ctrl.status('mode', 'user');
                     $scope.get('${app}/group/users/' + $scope.group.id, function(data) {
                         $scope.members = data;
-                        $scope.get('${app}/user/list_all', {types: ['90']}, function(data) {
-                            console.log(data);
-                            $scope.users = data;
+                        $scope.mMember = {};
+                        angular.forEach($scope.members, function(v) {
+                            $scope.mMember[v.id] = v;
                         });
                     });
                 },
 
-                //
-                selectMember: function(user) {
-                    $scope.selecteds.push(user);
+                // 添加成员
+                add: function() {
+                    $scope.ctrl.status('addBtn', 'processing');
+                    $scope.post('${app}/group/member/add/' + $scope.group.id, (function() {
+                        var params = {ids: []};
+                        angular.forEach($scope.selecteds, function(v) {
+                            params.ids.push(v.id);
+                        });
+                        return params;
+                    })(), function(data) {
+                        angular.forEach(data.data, function(v) {
+                            $scope.array.add($scope.members, v);
+                            $scope.mMember[v.id] = v;
+                        });
+                    }, function() {
+                        $bootstrap.modal.hide('userSelectModal');
+                        $scope.ctrl.status('addBtn', 'standby');
+                    });
                 },
 
-                //
+                // 删除成员
+                delete: function() {
+                    $scope.ctrl.status('removeBtn', 'processing');
+                    $scope.delete('${app}/group/member/delete/' + $scope.current.member.groupUser.id, function() {
+                        $scope.array.remove($scope.members, $scope.current.member);
+                        $scope.object.delete($scope.mMember, $scope.current.member.id);
+                    }, function() {
+                        $scope.ctrl.status('removeBtn', 'standby');
+                        $bootstrap.modal.hide('removeUserModal');
+                    });
+                },
+
+                // 备注成员
+                remark: function() {
+                    $scope.ctrl.status('remarkBtn', 'processing');
+                    $scope.guser.remark = $scope.toUnicode($scope.guser.oremark);
+                    $scope.put('${app}/group/member/remark/' + $scope.guser.id, $scope.guser, function(data) {
+                        $scope.array.replace($scope.members, data.data);
+                    }, function() {
+                        $bootstrap.modal.hide('remarkModal');
+                        $scope.ctrl.status('remarkBtn', 'standby');
+                    });
+                },
+
+                // 选择成员
+                select: function(user) {
+                    $scope.array.add($scope.selecteds, user);
+                    $scope.array.remove($scope.users, user);
+                },
+
+                // 移除已选择成员
+                remove: function(user) {
+                    $scope.array.remove($scope.selecteds, user);
+                    $scope.array.add($scope.users, user);
+                },
+
+                // 弹出待选成员列表
                 popUserList: function() {
                     $bootstrap.modal.show('userSelectModal');
+                    $scope.ctrl.status('addBtn', 'standby');
                     $scope.selecteds = [];
+                    $scope.users = [];
+                    $scope.get('${app}/user/list_all', {types: ['90']}, function(data) {
+                        angular.forEach(data, function(v) {
+                            if ($scope.valid.empty($scope.mMember[v.id])) {
+                                $scope.users.push(v);
+                            }
+                        });
+                    });
+                },
+
+                // 弹出成员移除确认框
+                popUserRemove: function(user) {
+                    $scope.current.member = user;
+                    $scope.ctrl.status('removeBtn', 'standby');
+                    $bootstrap.modal.show('removeUserModal');
+                },
+
+                // 弹出备注框
+                popRemark: function(user) {
+                    $scope.current.member = user;
+                    $scope.guser = {};
+                    $scope.guser.id = user.groupUser.id;
+                    $scope.guser.oremark = user.groupUser.remark;
+
+                    $bootstrap.modal.show('remarkModal');
+                    $scope.ctrl.status('remarkBtn', 'standby');
+                },
+
+                // 判断添加按钮是否有效
+                disabledAddBtn: function() {
+                    if ($scope.ctrl.status('addBtn', ['processing'])) return true;
+                    else if ($scope.valid.empty($scope.selecteds)) return true;
+                    return false;
+                },
+
+                // 判断备注按钮是否有效
+                disabledRemarkBtn: function() {
+                    if ($scope.valid.undefined($scope.guser)) return false;
+                    else if ($scope.ctrl.status('remarkBtn', ['processing'])) return true;
+                    else if ($scope.guser.oremark === $scope.current.member.groupUser.remark) return true;
+                    return false;
                 }
             },
 

@@ -30,6 +30,38 @@ public class Models {
     }
 
     /**
+     * 新建组织用户实例
+     *
+     * @param groupId 组织编号
+     * @param userId 用户编号
+     * @param remark 备注
+     * @return 组织用户实例
+     */
+    public static GroupUser newGroupUser(String groupId, String userId, String remark) {
+        GroupUser groupUser = new GroupUser();
+        groupUser.setGroupId(groupId);
+        groupUser.setUserId(userId);
+        groupUser.setRemark(remark);
+        return groupUser;
+    }
+
+    /**
+     * 新建角色资源实例
+     *
+     * @param type 类型
+     * @param roleId 角色编号
+     * @param resourceId 资源编号
+     * @return 角色资源实例
+     */
+    public static RoleResource newRoleResource(String type, String roleId, String resourceId) {
+        RoleResource roleResource = new RoleResource();
+        roleResource.setType(type);
+        roleResource.setRoleId(roleId);
+        roleResource.setResourceId(resourceId);
+        return roleResource;
+    }
+
+    /**
      * 新建用户角色
      *
      * @param account 账号
@@ -69,22 +101,6 @@ public class Models {
         userOpenPlatform.setValue(value);
         userOpenPlatform.setUserId(userId);
         return userOpenPlatform;
-    }
-
-    /**
-     * 新建角色资源实例
-     *
-     * @param type 类型
-     * @param roleId 角色编号
-     * @param resourceId 资源编号
-     * @return 角色资源实例
-     */
-    public static RoleResource newRoleResource(String type, String roleId, String resourceId) {
-        RoleResource roleResource = new RoleResource();
-        roleResource.setType(type);
-        roleResource.setRoleId(roleId);
-        roleResource.setResourceId(resourceId);
-        return roleResource;
     }
 
     /**

@@ -25,4 +25,12 @@ public interface GroupRepository extends JpaRepository<Group, String> {
      * @return 组织列表
      */
     List<Group> findByParentId(String parentId, Sort sort);
+
+    /**
+     * 通过上级编号判断组织是否存在
+     *
+     * @param parentId 上级编号
+     * @return 判断结果
+     */
+    Boolean existsByParentId(String parentId);
 }

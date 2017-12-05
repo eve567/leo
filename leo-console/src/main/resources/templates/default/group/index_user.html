@@ -1,10 +1,18 @@
-<ul class="list-group margin-bottom-half" style="overflow: auto; max-height: 300px;">
+<ul class="list-group list-group-hover margin-bottom-half max-height max-height-300">
     <li class="list-group-item clearfix" ng-repeat="member in members">
-        <span class="pull-left" ng-bind="member.name"></span>
-        <a href="#" class="text-danger" title="移除该成员"><fa i="times"></fa></a>
+        <span class="pull-left">
+            <span ng-bind="member.name"></span>
+            <span>-</span>
+            <span ng-bind="member.email"></span>
+            <span ng-if="!valid.empty(member.groupUser.remark)">({{member.groupUser.remark}})</span>
+        </span>
+        <a href="#" class="text-danger pull-right" title="移除成员" ng-click="memberFn.popUserRemove(member)"><fa i="minus-square"></fa></a>
+        <a href="#" class="text-primary pull-right" title="备注" style="margin-right: 5px;" ng-click="memberFn.popRemark(member)"><fa i="pencil-square"></fa></a>
     </li>
     <li class="list-group-item"><a href="#" ng-click="memberFn.popUserList()"><fa i="plus">&nbsp;添加成员</fa></a></li>
 </ul>
 <button class="btn btn-default" ng-click="ctrl.status('mode', 'form')"><fa i="reply">&nbsp;返回</fa></button>
 <button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
 <!-- #include('modal_user.html') -->
+<!-- #include('modal_user_remove.html') -->
+<!-- #include('modal_remark.html') -->

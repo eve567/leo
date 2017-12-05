@@ -37,4 +37,47 @@ public interface GroupService {
      * @return 持久化组织对象
      */
     Group create(Group group);
+
+    /**
+     * 更新组织
+     *
+     * @param groupId 组织编号
+     * @param group 组织对象
+     * @return 持久化组织对象
+     */
+    Group update(String groupId, Group group);
+
+    /**
+     * 删除组织
+     *
+     * @param groupId 组织编号
+     * @return 被删除组织对象
+     */
+    Group delete(String groupId);
+
+    /**
+     * 创建组织用户关系
+     *
+     * @param groupId 组织编号
+     * @param userIds 用户编号数组
+     * @return 组织用户关系列表
+     */
+    List<GroupUsers> createGroupUsers(String groupId, String[] userIds);
+
+    /**
+     * 删除组织用户关系
+     *
+     * @param groupUserId 组织用户编号
+     * @return 被删除组织用户关系
+     */
+    GroupUsers deleteGroupUser(String groupUserId);
+
+    /**
+     * 备注组织用户关系
+     *
+     * @param groupUserId 组织用户编号
+     * @param remark 备注
+     * @return 备注后的组织用户关系
+     */
+    GroupUsers remarkGroupUser(String groupUserId, String remark);
 }
