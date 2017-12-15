@@ -35,32 +35,41 @@ body {
 }
 
 /* common style */
-.margin-top-zero {
-  margin-top: 0;
+.margin-top {
+  margin-top: $spacing;
 }
 .margin-top-half {
   margin-top: $spacing/2;
 }
-.margin-top {
-  margin-top: $spacing;
+.margin-top-quarter {
+  margin-top: $spacing/4;
 }
-.margin-bottom-zero {
-  margin-bottom: 0;
-}
-.margin-bottom-half {
-  margin-bottom: $spacing/2;
+.margin-top-zero {
+  margin-top: 0;
 }
 .margin-bottom {
   margin-bottom: $spacing;
 }
-.margin-right-zero {
-  margin-right: 0;
+.margin-bottom-half {
+  margin-bottom: $spacing/2;
+}
+.margin-bottom-quarter {
+  margin-bottom: $spacing/4;
+}
+.margin-bottom-zero {
+  margin-bottom: 0;
+}
+.margin-right {
+  margin-right: $spacing;
 }
 .margin-right-half {
   margin-right: $spacing/2;
 }
-.margin-right {
-  margin-right: $spacing;
+.margin-right-quarter {
+  margin-right: $spacing/4;
+}
+.margin-right-zero {
+  margin-right: 0;
 }
 .table-footer {
   margin-top: -$spacing/2;
@@ -87,6 +96,11 @@ body {
       max-height: #{$height}px;
     }
   }
+}
+ul.normal {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* angular styles */

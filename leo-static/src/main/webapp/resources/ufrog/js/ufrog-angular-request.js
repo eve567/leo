@@ -112,7 +112,7 @@
                         data: $common.ctrl.formData(ng.extend({}, $_.$config.$defaultParams, args.data)),
                         headers: {'Content-Type': undefined},
                         transformRequest: function(data) {
-                            console.log('upload data:', data);
+                            //console.log('upload data:', data);
                             return data;
                         }
                     }).then(function(data) {
