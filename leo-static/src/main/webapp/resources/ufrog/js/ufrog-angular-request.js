@@ -124,26 +124,12 @@
 
                 /** 转换编码 */
                 toUnicode: function(str) {
-                    if (!$common.valid.empty(str) && $common.valid.str(str)) {
-                        var $unicode = '';
-                        for (var $i = 0; $i < str.length; $i++) {
-                            $unicode = $unicode + '\\u' + ('0000' + str.charCodeAt($i).toString(16)).slice(-4);
-                        }
-                        return $unicode;
-                    }
-                    return str;
+                    return $common.codec.toUnicode(str);
                 },
 
                 /** 逆转换编码 */
                 fromUnicode: function(unicode) {
-                    if (!$common.valid.empty(unicode) && $common.valid.str(unicode)) {
-                        var $str = '', $data = unicode.split('\\u');
-                        for (var $i = 0; $i < $data.length; $i++) {
-                            $str += String.fromCharCode(parseInt(parseInt($data[$i], 16).toString(10)));
-                        }
-                        return $str;
-                    }
-                    return unicode;
+                    return $common.codec.fromUnicode(unicode);
                 },
 
                 /** 成功处理 */
