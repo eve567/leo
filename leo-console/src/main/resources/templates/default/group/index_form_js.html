@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    'use strict';
+    function teamGroupFormCtrl($scope, $tree) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.ctrl.status('saveBtn', 'standby');
+            },
+
+            // 保存数据
+            save: function($event) {
+                $scope.ctrl.stop($event);
+                $scope.ctrl.status('saveBtn', 'processing');
+                if ($scope.valid.empty($scope.group.id)) {
+                    $scope.create($scope.group);
+                } else {
+                    $scope.update($scope.group);
+                }
+            },
+
+            // 创建数据
+            create: function(data) {
+                $scope.post('${app}/group/create', data, function() {
+                    $tree.reload($scope.current.parent);
+                    $scope.cancel();
+                }, function() {
+                    $scope.ctrl.status('saveBtn', 'standby');
+                });
+            },
+
+            // 更新数据
+            update: function(data) {
+                $scope.put('${app}/group/update/' + data.id, data, function() {
+                    $tree.reload($scope.current.parent);
+                    $scope.cancel();
+                }, function() {
+                    $scope.ctrl.status('saveBtn', 'standby');
+                });
+            },
+
+            // 取消操作
+            cancel: function() {
+                $scope.ctrl.resetForm($scope.groupForm);
+                $scope.groupFn.cancel();
+            },
+
+            // 判断保存按钮是否有效
+            disabledSaveBtn: function() {
+                if ($scope.groupForm.$invalid) return true;
+                else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                return false;
+            }
+        }).init();
+    }
+</script>

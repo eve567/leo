@@ -1,0 +1,46 @@
+<div ng-controller="teamGroupMemberCtrl">
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            <span class="pull-left">「{{current.group.name}}」成员列表</span>
+            <ul class="panel-heading-group">
+                <li><a href="#" ng-click="popUserSelectModal()"><fa i="plus">&nbsp;添加</fa></a></li>
+            </ul>
+        </div>
+        <table>
+            <colgroup>
+                <col width="20%">
+                <col width="30%">
+                <col width="20%">
+                <col width="30%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>邮件</th>
+                <th>备注</th>
+                <th>&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="member in members|orderBy:'name'">
+                <td ng-bind="member.name"></td>
+                <td ng-bind="member.email"></td>
+                <td ng-bind="member.groupUser.remark|empty:'-'"></td>
+                <td class="text-right">
+                    <a href="#" title="备注" class="text-primary" ng-click="popMemberRemarkModal(member)"><fa i="pencil-square"></fa></a>
+                    <a href="#" title="移除成员" class="text-danger" ng-click="popMemberDeleteModal(member)"><fa i="minus-square"></fa></a>
+                </td>
+            </tr>
+            <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(members)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
+            <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-footer clearfix">
+        <button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+    </div>
+    #include('modal_member_remark.html')
+    #include('modal_member_delete.html')
+    #include('modal_user_select.html')
+</div>
+#include('index_member_js.html')

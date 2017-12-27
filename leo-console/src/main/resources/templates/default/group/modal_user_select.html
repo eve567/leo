@@ -3,34 +3,35 @@
     <div class="max-height max-height-250">
         <table class="margin-bottom-zero">
             <colgroup>
-                <col width="80%">
-                <col width="20%">
+                <col width="100%">
             </colgroup>
             <tbody>
-            <tr ng-repeat="user in users|filter:filter">
+            <tr ng-repeat="user in users|orderBy:'name'|filter:filter">
                 <td>
+                    <a href="#" ng-click="select(user)"><fa class="text-success" i="plus-circle"></fa></a>
                     <span ng-bind="user.name"></span>
                     <span>-</span>
                     <span ng-bind="user.email"></span>
                 </td>
-                <td class="text-right"><a href="#" ng-click="memberFn.select(user)">选择</a></td>
             </tr>
             <tr ng-if="valid.empty(users)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;没有可以添加的成员</fa></td></tr>
             </tbody>
         </table>
     </div>
+
     <div class="row row-lt margin-bottom-zero" style="margin-bottom: -10px;" ng-if="!valid.empty(selecteds)">
         <hr class="margin-top-half margin-bottom-half">
-        <div class="col-sm-6" ng-repeat="selected in selecteds">
+        <div class="col-sm-6 ng-fade" ng-repeat="selected in selecteds">
             <div class="input-group margin-bottom-half">
                 <input class="form-control" ng-value="selected.name + ' - ' + selected.email" readonly>
                     <span class="input-group-btn">
-                    <button class="btn btn-danger btn-fixed" ng-click="memberFn.remove(selected)"><fa i="times"></fa></button>
+                    <button class="btn btn-danger btn-fixed" ng-click="remove(selected)"><fa i="times"></fa></button>
                 </span>
             </div>
         </div>
     </div>
-    <button class="btn btn-success" ng-disabled="memberFn.disabledAddBtn()" ng-click="memberFn.add()">
+
+    <button class="btn btn-success" ng-disabled="disabledAddBtn()" ng-click="add()">
         <span ng-if="ctrl.status('addBtn', ['standby'])"><fa i="plus-circle">&nbsp;${app.msg('common.op.add')}</fa></span>
         <span ng-if="ctrl.status('addBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
     </button>

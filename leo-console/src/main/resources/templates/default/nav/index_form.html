@@ -1,6 +1,6 @@
 <form name="navForm" action="#" method="post" class="form-horizontal" ng-submit="navFn.save($event)">
     <div class="form-group">
-        <label class="col-sm-1 control-label"><rq>名称</rq></label>
+        <label class="col-sm-2 control-label"><rq>名称</rq></label>
         <div class="col-sm-4">
             <input name="name" title="名称" class="form-control" placeholder="请填写功能名称" ng-model="nav.name" required maxlength="50" ng-disabled="ctrl.status('navForm', ['locked'])">
             <alert-pop field="navForm.name">
@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-1 control-label">副称</label>
+        <label class="col-sm-2 control-label">副称</label>
         <div class="col-sm-4">
             <input name="subname" title="副称" class="form-control" placeholder="请填写功能副称" ng-model="nav.subname" maxlength="50" ng-disabled="ctrl.status('navForm', ['locked'])">
             <alert-pop field="navForm.subname">
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-1 control-label"><rq>代码</rq></label>
+        <label class="col-sm-2 control-label"><rq>代码</rq></label>
         <div class="col-sm-4">
             <input name="code" title="代码" class="form-control" placeholder="请填写功能代码" ng-model="nav.code" required maxlength="50" pattern="^\w+$" ng-disabled="ctrl.status('navForm', ['locked'])">
             <alert-pop field="navForm.code">
@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-1 control-label"><rq>地址</rq></label>
+        <label class="col-sm-2 control-label"><rq>地址</rq></label>
         <div class="col-sm-6">
             <input name="path" title="地址" class="form-control" placeholder="@/" ng-model="nav.path" required maxlength="250" ng-disabled="ctrl.status('navForm', ['locked'])">
             <alert-pop field="navForm.path">
@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-1 control-label"><rq>目标</rq></label>
+        <label class="col-sm-2 control-label"><rq>目标</rq></label>
         <div class="col-sm-2">
             <input name="target" title="目标" class="form-control" placeholder="_blank" ng-model="nav.target" required maxlength="50" ng-disabled="ctrl.status('navForm', ['locked'])">
             <alert-pop field="navForm.target">
@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-sm-offset-1 col-sm-6">
+        <div class="col-sm-offset-2 col-sm-6">
             <div class="input-group">
                 <span class="input-group-addon">插入</span>
                 <select title="请选择相邻功能" class="form-control" ng-options="n.name for n in neighbours" ng-model="nav.neighbour" ng-disabled="ctrl.status('navForm', ['locked'])"></select>
@@ -64,7 +64,7 @@
         </div>
     </div>
     <div class="form-group margin-bottom-zero">
-        <div class="col-sm-offset-1 col-sm-11">
+        <div class="col-sm-offset-2 col-sm-10">
             <button class="btn btn-success" ng-disabled="navFn.disabledSaveBtn()">
                 <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;保存</fa></span>
                 <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>

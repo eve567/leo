@@ -1,38 +1,48 @@
-<form name="groupForm" method="post" action="#" class="form-horizontal" ng-submit="groupFn.save($event)">
-    <div class="form-group">
-        <label class="col-sm-2 control-label"><rq>名称</rq></label>
-        <div class="col-sm-4">
-            <input name="name" class="form-control" placeholder="请填写组织名称" ng-model="group.name" required maxlength="50">
-            <alert-pop field="groupForm.name">
-                <alert-pop-item type="required">部门/职位名称必须填写</alert-pop-item>
-                <alert-pop-item type="maxlength">部门/职位名称不能超过50个字符</alert-pop-item>
-            </alert-pop>
+<div ng-controller="teamGroupFormCtrl">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span ng-if="valid.empty(group.id)">添加部门/职位</span>
+            <span ng-if="!valid.empty(group.id)">编辑「{{group.name}}」</span>
+        </div>
+        <div class="panel-body">
+            <form name="groupForm" method="post" action="#" class="form-horizontal" ng-submit="save($event)">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"><rq>名称</rq></label>
+                    <div class="col-sm-4">
+                        <input name="name" class="form-control" placeholder="请填写组织名称" ng-model="group.name" required maxlength="50">
+                        <alert-pop field="groupForm.name">
+                            <alert-pop-item type="required">部门/职位名称必须填写</alert-pop-item>
+                            <alert-pop-item type="maxlength">部门/职位名称不能超过50个字符</alert-pop-item>
+                        </alert-pop>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"><rq>代码</rq></label>
+                    <div class="col-sm-4">
+                        <input name="code" class="form-control" placeholder="请填写组织代码" ng-model="group.code" required maxlength="50">
+                        <alert-pop field="groupForm.code">
+                            <alert-pop-item type="required">部门/职位代码必须填写</alert-pop-item>
+                            <alert-pop-item type="maxlength">部门/职位代码不能超过50个字符</alert-pop-item>
+                        </alert-pop>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">上级</label>
+                    <div class="col-sm-4">
+                        <input class="form-control" ng-value="current.parent.name" readonly>
+                    </div>
+                </div>
+                <div class="form-group margin-bottom-zero">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button class="btn btn-success" ng-disabled="disabledSaveBtn()">
+                            <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;${app.msg('common.op.save')}</fa></span>
+                            <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+                        </button>
+                        <button type="button" class="btn btn-default" ng-click="cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label"><rq>代码</rq></label>
-        <div class="col-sm-4">
-            <input name="code" class="form-control" placeholder="请填写组织代码" ng-model="group.code" required maxlength="50">
-            <alert-pop field="groupForm.code">
-                <alert-pop-item type="required">部门/职位代码必须填写</alert-pop-item>
-                <alert-pop-item type="maxlength">部门/职位代码不能超过50个字符</alert-pop-item>
-            </alert-pop>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">上级</label>
-        <div class="col-sm-4">
-            <input class="form-control" ng-value="current.parent.name" readonly>
-        </div>
-    </div>
-    <div class="form-group margin-bottom-zero">
-        <div class="col-sm-offset-2 col-sm-10">
-            <button class="btn btn-success" ng-disabled="groupFn.disabledSaveBtn()">
-                <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;${app.msg('common.op.save')}</fa></span>
-                <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
-            </button>
-            <button type="button" class="btn btn-primary" ng-click="memberFn.index()" ng-if="!valid.empty(group.id)"><fa i="users">&nbsp;成员</fa></button>
-            <button type="button" class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
-        </div>
-    </div>
-</form>
+</div>
+#include('index_form_js.html')

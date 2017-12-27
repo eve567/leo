@@ -1,8 +1,8 @@
-<modal id="remarkModal" title="成员备注">
+<modal id="memberRemarkModal" title="成员备注">
     <div class="form-group margin-bottom-zero">
         <textarea rows="3" class="form-control" placeholder="请填写成员备注..." ng-model="guser.oremark"></textarea>
     </div>
-    <button class="btn btn-success" ng-click="memberFn.remark()" ng-disabled="memberFn.disabledRemarkBtn()">
+    <button class="btn btn-success" ng-click="remark()" ng-disabled="disabledRemarkBtn()">
         <span ng-show="ctrl.status('remarkBtn', ['standby'])"><fa i="floppy-o">&nbsp;备注</fa></span>
         <span ng-show="ctrl.status('remarkBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
     </button>

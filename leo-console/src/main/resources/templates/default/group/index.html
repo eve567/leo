@@ -1,16 +1,8 @@
 <div ng-controller="teamGroupCtrl">
-    <div class="panel panel-default">
-        <div class="panel-heading">组织架构</div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="ng-fade" ng-class="{'col-sm-6': !valid.empty(group), 'col-sm-12': valid.empty(group)}"><tree ng-model="tree"></tree></div>
-                <div class="col-sm-6 ng-fade" ng-show="!valid.empty(group)">
-                    <div class="ng-fade" ng-show="ctrl.status('mode', ['form'])"><!-- #include('index_form.html') --></div>
-                    <div class="ng-fade" ng-show="ctrl.status('mode', ['user'])"><!-- #include('index_user.html') --></div>
-                </div>
-            </div>
-        </div>
+    <div class="row">
+        <div class="col-sm-6"><tree ng-model="tree"></tree></div>
+        <div class="col-sm-6 ng-fade" ng-include="groupUrl"></div>
     </div>
-    <!-- #include('modal_group_delete.html') -->
+    #include('modal_group_delete.html')
 </div>
-<!-- #include('index_js.html') -->
+#include('index_js.html')

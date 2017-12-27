@@ -11,6 +11,7 @@ import net.ufrog.leo.client.api.beans.AppUserResp;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 索引控制器
@@ -52,6 +53,17 @@ public class IndexController {
         Caches.clear();
         model.addAttribute("result", Result.success(App.message("cache.clear.success")));
         return "result";
+    }
+
+    /**
+     * 简单视图渲染
+     *
+     * @param view 视图位置
+     * @return view for view.html
+     */
+    @GetMapping("/_v/{view}")
+    public String view(@PathVariable("view") String view) {
+        return view.replaceAll("@", "/");
     }
 
     @GetMapping("/test")
