@@ -1,0 +1,42 @@
+<div ng-controller="teamGroupRoleCtrl">
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            <span class="pull-left">「{{current.group.name}}」角色设置</span>
+            <ul class="panel-heading-group">
+                <li panel-heading-dropdown>
+                    <a href="#"><span ng-bind="current.app.name"></span>&nbsp;<fa i="caret-down"></fa></a>
+                    <ul class="panel-heading-dropdown">
+                        <li ng-repeat="app in $apps|exclude:current.app"><a href="#" ng-click="active(app)"><fa i="caret-right">&nbsp;<span ng-bind="app.name"></span></fa></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <table>
+            <colgroup>
+                <col width="0%">
+                <col width="100%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th><a href="#"><i class="fa fa-check-square-o"></i></a></th>
+                <th>名称</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="role in roles">
+                <td><a href="#"><i class="fa fa-check-square-o"></i></a></td>
+                <td ng-bind="role.name"></td>
+            </tr>
+            <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(roles)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
+            <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-footer clearfix">
+        <div class="pull-left">
+            <button class="btn btn-success"><fa i="floppy-o">&nbsp;${app.msg('common.op.save')}</fa></button>
+            <button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+        </div>
+    </div>
+</div>
+#include('index_role_js.html')

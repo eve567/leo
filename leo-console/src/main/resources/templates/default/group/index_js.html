@@ -56,6 +56,12 @@
                     $scope.groupUrl = '${app}/_v/group@index_member?' + $scope.date.timestamp();
                 },
 
+                // 角色列表
+                role: function(group) {
+                    $scope.current.group = group;
+                    $scope.groupUrl = '${app}/_v/group@index_role?' + $scope.date.timestamp();
+                },
+
                 // 删除组织
                 delete: function() {
                     $scope.ctrl.status('deleteBtn', 'processing');
@@ -88,43 +94,9 @@
                         $tree.addOperation('fa-minus-square', 'text-danger', '删除', $scope.groupFn.popDeleteModal, node);
                         $tree.addOperation('fa-pencil-square', 'text-primary', '编辑', $scope.groupFn.editForm, node);
                         $tree.addOperation('fa-plus-square', 'text-success', '添加', $scope.groupFn.form, node);
-                        $tree.addOperation('fa-user-circle', 'text-info', '绑定角色', $scope.groupFn.form, node);
-                        $tree.addOperation('fa-users', 'text-info', '成员管理', $scope.groupFn.member, node);
+                        $tree.addOperation('fa-cogs', 'text-info', '绑定角色', $scope.groupFn.role, node);
+                        $tree.addOperation('fa-user-circle', 'text-info', '成员管理', $scope.groupFn.member, node);
                     }
-                }
-            },
-
-            // 成员功能集合
-            memberFn: {
-                // 备注成员
-                remark: function() {
-                    $scope.ctrl.status('remarkBtn', 'processing');
-                    $scope.guser.remark = $scope.toUnicode($scope.guser.oremark);
-                    $scope.put('${app}/group/member/remark/' + $scope.guser.id, $scope.guser, function(data) {
-                        $scope.array.replace($scope.members, data.data);
-                    }, function() {
-                        $bootstrap.modal.hide('remarkModal');
-                        $scope.ctrl.status('remarkBtn', 'standby');
-                    });
-                },
-
-                // 弹出备注框
-                popRemark: function(user) {
-                    $scope.current.member = user;
-                    $scope.guser = {};
-                    $scope.guser.id = user.groupUser.id;
-                    $scope.guser.oremark = user.groupUser.remark;
-
-                    $bootstrap.modal.show('remarkModal');
-                    $scope.ctrl.status('remarkBtn', 'standby');
-                },
-
-                // 判断备注按钮是否有效
-                disabledRemarkBtn: function() {
-                    if ($scope.valid.undefined($scope.guser)) return false;
-                    else if ($scope.ctrl.status('remarkBtn', ['processing'])) return true;
-                    else if ($scope.guser.oremark === $scope.current.member.groupUser.remark) return true;
-                    return false;
                 }
             },
 

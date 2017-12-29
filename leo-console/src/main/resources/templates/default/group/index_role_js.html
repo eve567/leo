@@ -1,0 +1,25 @@
+<script type="text/javascript">
+    'use strict';
+    function teamGroupRoleCtrl($scope) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.active($scope.$apps[0], true);
+            },
+
+            // 激活应用
+            active: function(app, forced) {
+                if ($scope.current.app !== app || forced === true) {
+                    $scope.current.app = app;
+                    $scope.ctrl.status('grid', 'loading');
+                    $scope.get('${app}/team/roles/' + app.id + '?' + $scope.date.timestamp(), function(data) {
+                        console.log(data);
+                        $scope.roles = data;
+                    }, function() {
+                        $scope.ctrl.status('grid', 'loaded');
+                    });
+                }
+            }
+        }).init();
+    }
+</script>
