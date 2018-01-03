@@ -4,9 +4,11 @@ import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.console.forms.GroupRoleBindForm;
 import net.ufrog.leo.console.forms.GroupUserForm;
 import net.ufrog.leo.console.forms.RemarkForm;
 import net.ufrog.leo.domain.models.Group;
+import net.ufrog.leo.domain.models.GroupRole;
 import net.ufrog.leo.service.GroupService;
 import net.ufrog.leo.service.beans.GroupUsers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +76,19 @@ public class GroupController {
         List<GroupUsers> lGroupUsers = groupService.findGroupUsersByGroupId(groupId);
         lGroupUsers.forEach(groupUsers -> groupUsers.getUser().setPassword(null));
         return lGroupUsers;
+    }
+
+    /**
+     * 查询组织角色关系
+     *
+     * @param groupId 组织编号
+     * @param appId 应用编号
+     * @return 组织角色关系列表
+     */
+    @GetMapping("/roles/{groupId}/{appId}")
+    @ResponseBody
+    public List<String> findGroupRoles(@PathVariable("groupId") String groupId, @PathVariable("appId") String appId) {
+        return groupService.findGroupRoleByGroupId(groupId, appId).stream().map(GroupRole::getRoleId).collect(Collectors.toList());
     }
 
     /**
@@ -156,5 +171,18 @@ public class GroupController {
     public Result<GroupUsers> remarkGroupUser(@PathVariable("groupUserId") String groupUserId, @RequestBody RemarkForm remarkForm) {
         GroupUsers groupUsers = groupService.remarkGroupUser(groupUserId, Strings.fromUnicode(remarkForm.getRemark()));
         return Result.success(groupUsers, App.message("team.group.member.remark.success", groupUsers.getName(), groupUsers.getGroupUser().getRemark()));
+    }
+
+    /**
+     * 绑定角色
+     *
+     * @param groupRoleBindForm 组织角色绑定表单
+     * @return 绑定结果
+     */
+    @PostMapping("/bind_roles")
+    @ResponseBody
+    public Result<List<GroupRole>> bindRoles(@RequestBody GroupRoleBindForm groupRoleBindForm) {
+        List<GroupRole> lGroupRole = groupService.bindRoles(groupRoleBindForm.getGroupId(), groupRoleBindForm.getAppId(), groupRoleBindForm.getRoleIds());
+        return Result.success(lGroupRole, App.message("team.group.bind-role.success"));
     }
 }

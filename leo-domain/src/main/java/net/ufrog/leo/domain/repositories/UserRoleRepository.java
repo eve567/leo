@@ -19,6 +19,14 @@ import java.util.List;
 public interface UserRoleRepository extends JpaRepository<UserRole, String> {
 
     /**
+     * 通过用户编号查询用户角色关系
+     *
+     * @param userId 用户编号
+     * @return 用户角色关系列表
+     */
+    List<UserRole> findByUserId(String userId);
+
+    /**
      * 通过用户编号/应用编号和类型查询用户角色关系
      *
      * @param userId 用户编号

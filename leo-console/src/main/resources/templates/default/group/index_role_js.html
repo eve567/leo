@@ -4,7 +4,9 @@
         angular.extend($scope, {
             // 初始化
             init: function() {
+                $scope.$dirty = false;
                 $scope.active($scope.$apps[0], true);
+                $scope.ctrl.status('bindBtn', 'standby');
             },
 
             // 激活应用
@@ -13,12 +15,59 @@
                     $scope.current.app = app;
                     $scope.ctrl.status('grid', 'loading');
                     $scope.get('${app}/team/roles/' + app.id + '?' + $scope.date.timestamp(), function(data) {
-                        console.log(data);
                         $scope.roles = data;
+                        $scope.findBindedRoles();
                     }, function() {
                         $scope.ctrl.status('grid', 'loaded');
                     });
                 }
+            },
+
+            // 查询已绑定角色
+            findBindedRoles: function() {
+                $scope.bindedRoles = undefined;
+                $scope.get('${app}/group/roles/' + $scope.current.group.id + '/' + $scope.current.app.id + '?' + $scope.date.timestamp(), function(data) {
+                    $scope.bindedRoles = data;
+                    angular.forEach($scope.roles, function(val) {
+                        val.checked = ($scope.array.in($scope.bindedRoles, val.id) >= 0);
+                    });
+                });
+            },
+
+            // 选择/取消角色
+            check: function(role) {
+                $scope.$dirty = true;
+                if (role.checked !== true) {
+                    role.checked = true;
+                    if ($scope.array.in($scope.bindedRoles, role.id) < 0) {
+                        $scope.bindedRoles.push(role.id);
+                    }
+                } else {
+                    role.checked = false;
+                    $scope.array.remove($scope.bindedRoles, role.id);
+                }
+            },
+
+            // 绑定角色
+            bind: function() {
+                $scope.ctrl.status('bindBtn', 'processing');
+                $scope.post('${app}/group/bind_roles', {
+                    groupId: $scope.current.group.id,
+                    appId: $scope.current.app.id,
+                    roleIds: $scope.bindedRoles
+                }, function(data) {
+                    console.log(data);
+                }, function() {
+                    $scope.$dirty = false;
+                    $scope.ctrl.status('bindBtn', 'standby');
+                });
+            },
+
+            // 判断绑定按钮是否有效
+            disabledBindBtn: function() {
+                if ($scope.$dirty === false) return true;
+                else if ($scope.ctrl.status('bindBtn', ['processing'])) return true;
+                return false;
             }
         }).init();
     }

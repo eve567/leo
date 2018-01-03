@@ -1,6 +1,7 @@
 package net.ufrog.leo.service;
 
 import net.ufrog.leo.domain.models.Group;
+import net.ufrog.leo.domain.models.GroupRole;
 import net.ufrog.leo.service.beans.GroupUsers;
 
 import java.util.List;
@@ -29,6 +30,15 @@ public interface GroupService {
      * @return 组织用户关系列表
      */
     List<GroupUsers> findGroupUsersByGroupId(String groupId);
+
+    /**
+     * 通过组织编号查询组织角色关系
+     *
+     * @param groupId 组织编号
+     * @param appId 应用编号
+     * @return 组织角色关系列表
+     */
+    List<GroupRole> findGroupRoleByGroupId(String groupId, String appId);
 
     /**
      * 创建组织
@@ -80,4 +90,14 @@ public interface GroupService {
      * @return 备注后的组织用户关系
      */
     GroupUsers remarkGroupUser(String groupUserId, String remark);
+
+    /**
+     * 绑定角色
+     *
+     * @param groupId 组织编号
+     * @param appId 应用编号
+     * @param roleIds 角色编号数组
+     * @return 已绑定组织角色关系列表
+     */
+    List<GroupRole> bindRoles(String groupId, String appId, String[] roleIds);
 }

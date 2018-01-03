@@ -5,14 +5,8 @@ import net.ufrog.common.cache.Caches;
 import net.ufrog.common.dict.Dicts;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Strings;
-import net.ufrog.leo.domain.jpqls.SecurityJpql;
-import net.ufrog.leo.domain.models.ID;
-import net.ufrog.leo.domain.models.Resource;
-import net.ufrog.leo.domain.models.RoleResource;
-import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.domain.repositories.ResourceRepository;
-import net.ufrog.leo.domain.repositories.RoleResourceRepository;
-import net.ufrog.leo.domain.repositories.UserRepository;
+import net.ufrog.leo.domain.models.*;
+import net.ufrog.leo.domain.repositories.*;
 import net.ufrog.leo.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +31,12 @@ public class SecurityServiceImpl implements SecurityService {
     /** 类型映射 */
     private static Map<String, String> typeMapping;
 
+    /** 组织角色仓库 */
+    private final GroupRoleRepository groupRoleRepository;
+
+    /** 组织用户仓库 */
+    private final GroupUserRepository groupUserRepository;
+
     /** 资源仓库 */
     private final ResourceRepository resourceRepository;
 
@@ -46,23 +46,33 @@ public class SecurityServiceImpl implements SecurityService {
     /** 用户仓库 */
     private final UserRepository userRepository;
 
-    /** 权限脚本 */
-    private final SecurityJpql securityJpql;
+    /** 用户角色关系仓库 */
+    private final UserRoleRepository userRoleRepository;
 
     /**
      * 构造函数
      *
+     * @param groupRoleRepository 组织角色仓库
+     * @param groupUserRepository 组织用户仓库
      * @param resourceRepository 资源仓库
      * @param roleResourceRepository 角色资源仓库
      * @param userRepository 用户仓库
-     * @param securityJpql 权限脚本
+     * @param userRoleRepository 用户角色关系仓库
      */
     @Autowired
-    public SecurityServiceImpl(ResourceRepository resourceRepository, RoleResourceRepository roleResourceRepository, UserRepository userRepository, SecurityJpql securityJpql) {
+    public SecurityServiceImpl(
+            GroupRoleRepository groupRoleRepository,
+            GroupUserRepository groupUserRepository,
+            ResourceRepository resourceRepository,
+            RoleResourceRepository roleResourceRepository,
+            UserRepository userRepository,
+            UserRoleRepository userRoleRepository) {
+        this.groupRoleRepository = groupRoleRepository;
+        this.groupUserRepository = groupUserRepository;
         this.resourceRepository = resourceRepository;
         this.roleResourceRepository = roleResourceRepository;
         this.userRepository = userRepository;
-        this.securityJpql = securityJpql;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -147,18 +157,29 @@ public class SecurityServiceImpl implements SecurityService {
         @SuppressWarnings("unchecked") Map<String, List<String>> mResource = Caches.get(CACHE_USER_RESOURCES, userId, Map.class);
         if (mResource == null) mResource = new HashMap<>();
         if (!mResource.containsKey(type)) {
-            List<RoleResource> lRoleResource = securityJpql.findRoleResourceByUserIdAndType(userId, type);
-            List<String> lAll = Collections.synchronizedList(new ArrayList<>());
-            List<String> lBan = Collections.synchronizedList(new ArrayList<>());
+            Set<String> lRoleId = new HashSet<>();
+            List<GroupRole> lGroupRole = new ArrayList<>();
+            List<String> lAll = new ArrayList<>();
+            List<String> lBan = new ArrayList<>();
 
-            lRoleResource.forEach(roleResource -> {
-                Resource resource = resourceRepository.findOne(roleResource.getResourceId());
-                if (!lAll.contains(resource.getReferenceId())) {
-                    lAll.add(resource.getReferenceId());
-                } if (Strings.equals(roleResource.getType(), RoleResource.Type.BAN) && !lBan.contains(resource.getReferenceId())) {
-                    lBan.add(resource.getReferenceId());
-                }
-            });
+            userRoleRepository.findByUserId(userId).forEach(userRole -> lRoleId.add(userRole.getRoleId()));
+            groupUserRepository.findByUserId(userId).forEach(groupUser -> lGroupRole.addAll(groupRoleRepository.findByGroupId(groupUser.getGroupId())));
+            lGroupRole.forEach(groupRole -> lRoleId.add(groupRole.getRoleId()));
+
+            lRoleId.forEach(roleId ->
+                roleResourceRepository.findByRoleId(roleId).forEach(roleResource -> {
+                    Resource resource = resourceRepository.findOne(roleResource.getResourceId());
+                    if (Strings.equals(type, resource.getType())) {
+                        if (!lAll.contains(resource.getReferenceId())) {
+                            lAll.add(resource.getReferenceId());
+                            Logger.debug("add resource: %s, type: %s", resource.getReferenceId(), type);
+                        } if (Strings.equals(roleResource.getType(), RoleResource.Type.BAN) && !lBan.contains(resource.getReferenceId())) {
+                            lBan.add(resource.getReferenceId());
+                            Logger.debug("ban resource: %s, type: %s", resource.getReferenceId(), type);
+                        }
+                    }
+                })
+            );
             lAll.removeAll(lBan);
             mResource.put(type, lAll);
             Logger.info("get type '%s' resource for user: %s", type, userId);

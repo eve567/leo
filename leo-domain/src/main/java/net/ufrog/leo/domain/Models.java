@@ -30,6 +30,20 @@ public class Models {
     }
 
     /**
+     * 新建组织角色实例
+     *
+     * @param groupId 组织编号
+     * @param roleId 角色编号
+     * @return 组织角色实例
+     */
+    public static GroupRole newGroupRole(String groupId, String roleId) {
+        GroupRole groupRole = new GroupRole();
+        groupRole.setGroupId(groupId);
+        groupRole.setRoleId(roleId);
+        return groupRole;
+    }
+
+    /**
      * 新建组织用户实例
      *
      * @param groupId 组织编号

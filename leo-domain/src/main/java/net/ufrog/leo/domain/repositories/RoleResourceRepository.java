@@ -23,4 +23,12 @@ public interface RoleResourceRepository extends JpaRepository<RoleResource, Stri
      * @return 角色资源列表
      */
     List<RoleResource> findByResourceId(String resourceId);
+
+    /**
+     * 通过角色编号查询角色资源
+     *
+     * @param roleId 角色编号
+     * @return 角色资源列表
+     */
+    List<RoleResource> findByRoleId(String roleId);
 }

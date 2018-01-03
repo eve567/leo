@@ -1,13 +1,13 @@
 package net.ufrog.leo.service.impls;
 
+import net.ufrog.common.Logger;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.leo.domain.Models;
-import net.ufrog.leo.domain.models.Group;
-import net.ufrog.leo.domain.models.GroupUser;
-import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.*;
 import net.ufrog.leo.domain.repositories.GroupRepository;
+import net.ufrog.leo.domain.repositories.GroupRoleRepository;
 import net.ufrog.leo.domain.repositories.GroupUserRepository;
 import net.ufrog.leo.domain.repositories.UserRepository;
 import net.ufrog.leo.service.GroupService;
@@ -35,6 +35,9 @@ public class GroupServiceImpl implements GroupService {
     /** 组织仓库 */
     private final GroupRepository groupRepository;
 
+    /** 组织角色仓库 */
+    private final GroupRoleRepository groupRoleRepository;
+
     /** 组织用户仓库 */
     private final GroupUserRepository groupUserRepository;
 
@@ -45,12 +48,14 @@ public class GroupServiceImpl implements GroupService {
      * 构造函数
      *
      * @param groupRepository 组织仓库
+     * @param groupRoleRepository 组织角色仓库
      * @param groupUserRepository 组织用户仓库
      * @param userRepository 用户仓库
      */
     @Autowired
-    public GroupServiceImpl(GroupRepository groupRepository, GroupUserRepository groupUserRepository, UserRepository userRepository) {
+    public GroupServiceImpl(GroupRepository groupRepository, GroupRoleRepository groupRoleRepository, GroupUserRepository groupUserRepository, UserRepository userRepository) {
         this.groupRepository = groupRepository;
+        this.groupRoleRepository = groupRoleRepository;
         this.groupUserRepository = groupUserRepository;
         this.userRepository = userRepository;
     }
@@ -68,6 +73,11 @@ public class GroupServiceImpl implements GroupService {
             lGroupUsers.add(new GroupUsers(groupUser, userRepository.findOne(groupUser.getUserId())));
         });
         return lGroupUsers;
+    }
+
+    @Override
+    public List<GroupRole> findGroupRoleByGroupId(String groupId, String appId) {
+        return groupRoleRepository.findByGroupIdAndAppIdAndType(groupId, appId, Role.Type.PUBLIC);
     }
 
     @Override
@@ -126,5 +136,19 @@ public class GroupServiceImpl implements GroupService {
         groupUser.setRemark(remark);
         groupUserRepository.save(groupUser);
         return new GroupUsers(groupUser, user);
+    }
+
+    @Override
+    @Transactional
+    public List<GroupRole> bindRoles(String groupId, String appId, String[] roleIds) {
+        List<GroupRole> lResult = new ArrayList<>(roleIds.length);
+        List<GroupRole> lGroupRole = groupRoleRepository.findByGroupIdAndAppIdAndType(groupId, appId, Role.Type.PUBLIC);
+        Logger.info("delete {} GroupRole(s) by groupId: {}, appId: {}", lGroupRole.size(), groupId, appId);
+        groupRoleRepository.delete(lGroupRole);
+
+        Stream.of(roleIds).forEach(roleId -> {
+            lResult.add(groupRoleRepository.save(Models.newGroupRole(groupId, roleId)));
+        });
+        return lResult;
     }
 }
