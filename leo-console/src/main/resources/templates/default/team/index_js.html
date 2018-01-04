@@ -95,6 +95,13 @@
                     $bootstrap.modal.show('freezeModal');
                 },
 
+                // 弹出权限调整选择应用框
+                popPrivateRoleModal: function(user) {
+                    $scope.current.user = user;
+                    $scope.current.app = $scope.$apps[0];
+                    $bootstrap.modal.show('privateRoleModal');
+                },
+
                 // 显示角色绑定
                 showRole: function(user) {
                     $scope.current.user = user;

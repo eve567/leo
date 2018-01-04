@@ -1,8 +1,9 @@
 <div ng-controller="userCtrl">
-    <div class="ng-fade" ng-show="ctrl.status('view', ['grid'])"><!-- #include('index_grid.html') --></div>
-    <div class="ng-fade" ng-show="ctrl.status('view', ['form'])"><!-- #include('index_form.html') --></div>
-    <div class="ng-fade" ng-show="ctrl.status('view', ['role'])"><!-- #include('index_role.html') --></div>
-    <!-- #include('modal_reset.html') -->
-    <!-- #include('modal_freeze.html') -->
+    <div class="ng-fade" ng-show="ctrl.status('view', ['grid'])">#include('index_grid.html')</div>
+    <div class="ng-fade" ng-show="ctrl.status('view', ['form'])">#include('index_form.html')</div>
+    <div class="ng-fade" ng-show="ctrl.status('view', ['role'])">#include('index_role.html')</div>
+    #include('modal_reset.html')
+    #include('modal_freeze.html')
+    #include('modal_private_role.html')
 </div>
-<!-- #include('index_js.html') -->
+#include('index_js.html')
