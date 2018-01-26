@@ -17,7 +17,7 @@ import javax.servlet.ServletException;
 public class WebApplicationInitializer implements org.springframework.web.WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
         SpringConfigurations.addContextLoaderListener(servletContext, ContextConfiguration.class);
         SpringConfigurations.addDispatcherServlet(servletContext, "/", WebConfiguration.class);
         SpringConfigurations.addCharacterEncodingFilter(servletContext, "/*");
