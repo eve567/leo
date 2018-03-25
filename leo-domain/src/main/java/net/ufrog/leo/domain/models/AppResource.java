@@ -10,6 +10,7 @@ import net.ufrog.common.dict.Dicts;
  * @version 0.1, 2017-08-14
  * @since 0.1
  */
+@java.lang.SuppressWarnings("unused")
 @javax.persistence.Entity
 @javax.persistence.Table(name = "leo_app_resource")
 public class AppResource extends Model {

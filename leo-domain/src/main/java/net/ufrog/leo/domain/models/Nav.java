@@ -10,6 +10,7 @@ import net.ufrog.common.Link;
  * @version 0.1, 2017-03-24
  * @since 0.1
  */
+@java.lang.SuppressWarnings("unused")
 @javax.persistence.Entity
 @javax.persistence.Table(name = "leo_nav")
 public class Nav extends Model implements Link<String> {

@@ -9,6 +9,7 @@ import net.ufrog.aries.common.jpa.Model;
  * @version 0.1, 2017-12-01
  * @since 0.1
  */
+@java.lang.SuppressWarnings("unused")
 @javax.persistence.Entity
 @javax.persistence.Table(name = "leo_group_user")
 public class GroupUser extends Model {

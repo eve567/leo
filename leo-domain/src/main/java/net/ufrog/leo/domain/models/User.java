@@ -10,6 +10,7 @@ import net.ufrog.common.dict.Dicts;
  * @version 0.1, 2017-03-22
  * @since 0.1
  */
+@java.lang.SuppressWarnings("unused")
 @javax.persistence.Entity
 @javax.persistence.Table(name = "leo_user")
 public class User extends Model {
