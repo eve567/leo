@@ -1,5 +1,7 @@
 package net.ufrog.leo.domain.models;
 
+import net.ufrog.aries.common.jpa.Model;
+
 /**
  * 组织角色模型
  *

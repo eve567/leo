@@ -14,6 +14,8 @@ import net.ufrog.leo.domain.models.*;
  */
 public class Models {
 
+    public static final String NULL = "_null";
+
     /** 构造函数 */
     private Models() {}
 

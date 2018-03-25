@@ -1,5 +1,6 @@
 package net.ufrog.leo.domain.models;
 
+import net.ufrog.aries.common.jpa.Model;
 import net.ufrog.common.dict.Dicts;
 
 /**
