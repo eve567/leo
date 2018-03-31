@@ -7,37 +7,31 @@
     <parent>
         <groupId>net.ufrog</groupId>
         <artifactId>leo-parent</artifactId>
-        <version>2.0.0</version>
+        <version>3.0.0</version>
     </parent>
     <artifactId>leo-client</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${version.fastjson}</version>
+            <groupId>net.ufrog</groupId>
+            <artifactId>aries-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jodd</groupId>
-            <artifactId>jodd-http</artifactId>
-            <version>${version.jodd}</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-hystrix</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jsp-api</artifactId>
-            <version>${version.tomcat}</version>
-            <scope>provided</scope>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${version.spring}</version>
-            <scope>compile</scope>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <finalName>leo-client</finalName>
-    </build>
 </project>
