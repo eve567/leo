@@ -6,8 +6,8 @@ import net.ufrog.aries.common.contract.Resp;
  * 应用响应
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2018-03-27
- * @since 0.1
+ * @version 3.0.0, 2018-03-27
+ * @since 3.0.0
  */
 public class AppResp extends Resp {
 
