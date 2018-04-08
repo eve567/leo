@@ -19,7 +19,7 @@ datasource:
   primary:
     url: "jdbc:mysql://103.20.249.125/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC"
     username: "root"
-    password: "h+zZTdYokCV91r57jVO8rKmEgCyCNBCKRZqPf4gNg3c="
+    password: "OvxJV0VrDFb+R7ZD7XrHqw=="
     jpa:
       showSql: true
 thread:
