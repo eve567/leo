@@ -12,6 +12,9 @@ public class ResultCode {
     @net.ufrog.common.dict.Element("成功")
     public static final String SUCCESS = "0000";
 
+    @net.ufrog.common.dict.Element("网络异常")
+    public static final String NETWORK = "9998";
+
     @net.ufrog.common.dict.Element("未知异常")
     public static final String UNKNOW = "9999";
 }

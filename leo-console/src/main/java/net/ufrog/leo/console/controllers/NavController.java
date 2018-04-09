@@ -1,6 +1,7 @@
 package net.ufrog.leo.console.controllers;
 
 import com.alibaba.fastjson.JSON;
+import net.ufrog.aries.common.jpa.ID;
 import net.ufrog.common.Logger;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
@@ -18,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -123,7 +122,7 @@ public class NavController {
     @GetMapping("/export/{appId}")
     public void export(@PathVariable("appId") String appId) {
         net.ufrog.leo.domain.models.App app = appService.getById(appId);
-        List<ExportNav> lExportNav = navService.export(appId, Nav.PARENT_ID_ROOT, Nav.Type.CONSOLE);
+        List<ExportNav> lExportNav = navService.export(appId, ID.NULL, Nav.Type.CONSOLE);
         String filename = String.format("%s_nav_%s.dat", app.getCode().toLowerCase(), Calendars.format("yyyyMMddHHmmss"));
 
         App.current(WebApp.class).download(filename, "utf-8", Base64.getEncoder().encode(JSON.toJSONBytes(lExportNav)));
@@ -145,7 +144,7 @@ public class NavController {
             Logger.debug("file content: %s", json);
             List<ExportNav> lExportNav = JSON.parseArray(json, ExportNav.class);
 
-            navService.imports(lExportNav, appId, Nav.PARENT_ID_ROOT, Nav.Type.CONSOLE);
+            navService.imports(lExportNav, appId, ID.NULL, Nav.Type.CONSOLE);
             return Result.success(App.message("nav.import.success", app.getName()));
         }
         throw new ServiceException("file is empty.");

@@ -11,6 +11,7 @@ import net.ufrog.common.cache.SimpleCacheKey;
  * @version 0.1, 2017-11-17
  * @since 0.1
  */
+@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryLocalVariable"})
 public class Props {
 
     public static final String THREAD_POOL_KEY_SCHEDULED    = "scheduled";

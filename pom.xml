@@ -14,11 +14,11 @@
     <packaging>pom</packaging>
     
     <modules>
+        <module>leo-client</module>
         <module>leo-domain</module>
         <module>leo-service</module>
         <module>leo-console</module>
         <module>leo-server</module>
-        <module>leo-client</module>
         <module>leo-static</module>
     </modules>
 
@@ -34,6 +34,21 @@
                 <groupId>net.ufrog</groupId>
                 <artifactId>aries-common</artifactId>
                 <version>${aries-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.ufrog</groupId>
+                <artifactId>leo-client</artifactId>
+                <version>${leo-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.ufrog</groupId>
+                <artifactId>leo-domain</artifactId>
+                <version>${leo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.ufrog</groupId>
+                <artifactId>leo-service</artifactId>
+                <version>${leo.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

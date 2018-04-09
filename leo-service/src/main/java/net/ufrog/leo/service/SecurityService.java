@@ -1,6 +1,6 @@
 package net.ufrog.leo.service;
 
-import net.ufrog.leo.domain.models.ID;
+import net.ufrog.aries.common.jpa.ID;
 import net.ufrog.leo.domain.models.Resource;
 
 import java.util.List;

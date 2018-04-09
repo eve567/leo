@@ -2,7 +2,6 @@ package net.ufrog.leo.service;
 
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
-import net.ufrog.leo.client.api.beans.OpenPlatformUserReq;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.domain.models.UserRole;
 import net.ufrog.leo.domain.models.UserSignLog;
@@ -113,14 +112,6 @@ public interface UserService {
      * @return
      */
     List<UserRole> bindRoles(String userId, String appId, String[] roleIds);
-
-    /**
-     * 通过开放平台查询用户
-     *
-     * @param openPlatformUserReq 开放平台用户请求对象
-     * @return 用户
-     */
-    User findOrCreateByOpenPlatform(OpenPlatformUserReq openPlatformUserReq);
 
     /**
      * 用户类型

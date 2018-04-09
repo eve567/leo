@@ -19,6 +19,7 @@ import java.util.Set;
  * @version 0.1, 2017-10-18
  * @since 0.1
  */
+@SuppressWarnings("unused")
 public class JedisAccessTokenManager extends AccessTokenManager {
 
     private static final String CACHE       = "access_token";

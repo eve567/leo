@@ -16,7 +16,7 @@ import java.io.IOException;
 public class LeoAppFilter implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         Logger.info("initialize leo application filter.");
         LeoApp.initialize(filterConfig.getServletContext());
         Logger.info("leo application filter is running...");

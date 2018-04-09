@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
  * @version 0.1, 2017-03-14
  * @since 0.1
  */
+@SuppressWarnings("unused")
 public class MemAccessTokenManager extends AccessTokenManager {
 
     private static Map<String, AccessToken> mAccessToken = new ConcurrentHashMap<>();
@@ -43,7 +44,7 @@ public class MemAccessTokenManager extends AccessTokenManager {
                 lRemove.stream().filter(accessToken -> mAccessToken.containsKey(accessToken.getToken())).forEach(accessToken -> mAccessToken.remove(accessToken.getToken()));
                 lAccessToken.removeAll(lRemove);
             } else {
-                if (mAccessToken.containsKey(token)) mAccessToken.remove(token);
+                mAccessToken.remove(token);
                 List<AccessToken> lRemove = lAccessToken.stream().filter(accessToken -> (Strings.equals(accessToken.getToken(), token) && Strings.equals(accessToken.getAppId(), appId))).collect(Collectors.toList());
                 lAccessToken.removeAll(lRemove);
             }

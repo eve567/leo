@@ -1,5 +1,6 @@
 package net.ufrog.leo.client;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import net.ufrog.aries.common.contract.ListResp;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @FeignClient(name = "leo-server")
 @RequestMapping("/app")
-@RestController
+@Api(value = "用户服务")
 public interface AppClient {
 
     /**
