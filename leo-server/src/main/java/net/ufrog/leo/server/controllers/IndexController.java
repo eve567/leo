@@ -9,20 +9,18 @@ import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.common.web.app.WebApp;
-import net.ufrog.leo.client.LeoInterception;
+import net.ufrog.leo.client.app.LeoAppFilter;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.domain.models.UserSignLog;
-import net.ufrog.leo.server.AccessToken;
-import net.ufrog.leo.server.AccessTokenManager;
+import net.ufrog.leo.server.accesstoken.AccessToken;
+import net.ufrog.leo.server.accesstoken.AccessTokenManager;
 import net.ufrog.leo.service.AppService;
 import net.ufrog.leo.service.SecurityService;
 import net.ufrog.leo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -33,8 +31,8 @@ import java.util.Optional;
  * 索引控制器
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-02-26
- * @since 0.1
+ * @version 3.0.0, 2018-04-11
+ * @since 3.0.0
  */
 @Controller
 public class IndexController {
@@ -67,9 +65,9 @@ public class IndexController {
     /**
      * 索引
      *
-     * @return view for index
+     * @return view for index.html
      */
-    @GetMapping({"", "/", "/index"})
+    @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
     public String index() {
         return "index";
     }
@@ -79,28 +77,18 @@ public class IndexController {
      *
      * @param mode 模式
      * @param model 模型
-     * @return view for index
+     * @return view for index.html
      */
     @GetMapping({"/{mode}", "/index/{mode}"})
-    public String index(@PathVariable("mode") String mode, org.springframework.ui.Model model) {
+    public String index(@PathVariable("mode") String mode, Model model) {
         model.addAttribute("mode", mode);
         return index();
     }
 
     /**
-     * 视图
-     *
-     * @return view for {view}
-     */
-    @GetMapping("/view/{view}")
-    public String view(@PathVariable("view") String view) {
-        return view.replaceAll("@", "/");
-    }
-
-    /**
      * 登录表单
      *
-     * @return view for sign_in
+     * @return view for sign_in.html
      */
     @GetMapping("/sign_in")
     public String signIn() {
@@ -110,15 +98,14 @@ public class IndexController {
     /**
      * 注销
      *
-     * @return view for sign_in
+     * @return view for sign_in.html
      */
-    @SuppressWarnings("unchecked")
     @GetMapping("/sign_out")
     public String signOut() {
         AppUser appUser = App.current().getUser();
         if (appUser != null) {
             WebApp app = App.current(WebApp.class);
-            List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
+            @SuppressWarnings("unchecked") List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
             if (lAccessToken != null) {
                 lAccessToken.forEach(accessToken -> {
                     AccessTokenManager.get().offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken());
@@ -143,7 +130,8 @@ public class IndexController {
     public Result<AppUser> authenticate(String account, String password) {
         try {
             User user = userService.authenticate(account, password, UserService.UserType.STAFF, UserService.UserType.ROOT);
-            AppUser appUser = new AppUser(user.getId(), user.getAccount(), user.getName());
+            AppUser appUser = new AppUser(user.getId(), account, user.getName());
+
             App.current().setUser(appUser);
             securityService.clearResourceMapping(appUser.getId());
             return Result.success(appUser, App.message("authenticate.success"));
@@ -153,21 +141,23 @@ public class IndexController {
     }
 
     /**
-     * 跳转应用
+     * 跳转
      *
      * @param appId 应用编号
+     * @param request 请求
+     * @return 跳转地址
      */
-    @SuppressWarnings("unchecked")
     @GetMapping("/redirect/{appId}")
     public String redirect(@PathVariable("appId") String appId, HttpServletRequest request) {
         net.ufrog.leo.domain.models.App app = appService.getById(appId);
-        List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
+        @SuppressWarnings("unchecked") List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
         if (lAccessToken == null) lAccessToken = new ArrayList<>();
 
         AccessToken accessToken;
         Optional<AccessToken> oAccessToken = lAccessToken.stream().filter(at -> Strings.equals(appId, at.getAppId())).findFirst();
         if (!oAccessToken.isPresent()) {
             accessToken = AccessTokenManager.get().online(App.user(), app, request.getRemoteAddr());
+
             lAccessToken.add(accessToken);
             App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, lAccessToken);
             ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_IN, UserSignLog.Mode.GATEWAY, accessToken.getAppId(), accessToken.getUserId(), null, null));
@@ -175,7 +165,7 @@ public class IndexController {
         } else {
             accessToken = oAccessToken.get();
         }
-        return "redirect:" + app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + LeoInterception.DEFAULT_PARAM_KEY + "=" + accessToken.getToken();
+        return "redirect:" + app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + LeoAppFilter.PARAM_KEY + "=" + accessToken.getToken();
     }
 
     /**
@@ -183,7 +173,7 @@ public class IndexController {
      *
      * @return 应用列表
      */
-    @GetMapping("/apps")
+    @GetMapping("/app_list")
     @ResponseBody
     public List<net.ufrog.leo.domain.models.App> findApps() {
         return securityService.filter(appService.findAll(), App.user().getId());
@@ -205,16 +195,16 @@ public class IndexController {
     }
 
     /**
-     * 重置密码
+     * 更新用户密码
      *
      * @param prev 原密码
      * @param next 新密码
      * @param confirm 确认密码
-     * @return 重置结果
+     * @return 更新结果
      */
-    @PostMapping("/reset_password")
+    @RequestMapping(value = {"/update_password", "/reset_password"}, method = {RequestMethod.PATCH, RequestMethod.POST})
     @ResponseBody
-    public Result<User> resetPassword(String prev, String next, String confirm) {
+    public Result<User> updatePassword(String prev, String next, String confirm) {
         if (Strings.equals(next, confirm)) {
             User user = userService.findById(App.user().getId());
             if (Passwords.match(prev, user.getPassword())) {
@@ -227,5 +217,16 @@ public class IndexController {
             return Result.failure(App.message("reset.password.failure.prev"));
         }
         return Result.failure(App.message("reset.password.failure.confirm"));
+    }
+
+    /**
+     * 简单渲染视图
+     *
+     * @param view 视图
+     * @return view for {view}.html
+     */
+    @GetMapping({"/view/{view}", "/render/{view}"})
+    public String renderView(@PathVariable("view") String view) {
+        return view.replaceAll("@", "/");
     }
 }

@@ -1,4 +1,4 @@
-package net.ufrog.leo.client;
+package net.ufrog.leo.client.app;
 
 import net.ufrog.common.Logger;
 import net.ufrog.common.app.App;
@@ -6,19 +6,19 @@ import net.ufrog.common.app.AppUser;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.common.utils.Strings;
-import net.ufrog.leo.client.api.APIs;
-import net.ufrog.leo.client.api.beans.AppUserResp;
+import net.ufrog.leo.client.LeoClient;
+import net.ufrog.leo.client.contract.AppUserResp;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.List;
 
 /**
+ * 用户中心应用
+ *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-03-06
- * @since 0.1
+ * @version 3.0.0, 2018-04-11
+ * @since 3.0.0
  */
 public class LeoApp extends SpringWebApp {
 
@@ -28,10 +28,10 @@ public class LeoApp extends SpringWebApp {
     /**
      * 构造函数
      *
-     * @param request 请求
+     * @param request  请求
      * @param response 响应
      */
-    private LeoApp(HttpServletRequest request, HttpServletResponse response) {
+    public LeoApp(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
     }
 
@@ -43,16 +43,17 @@ public class LeoApp extends SpringWebApp {
             return null;
         } else {
             LeoAppUser leoAppUser = Caches.get(CACHE_TOKEN, token, LeoAppUser.class);
+            LeoClient leoClient = SpringWebApp.getBean(LeoClient.class);
+
             if (leoAppUser == null) {
-                // 请求当前用户
-                AppUserResp appUserResp = APIs.getUser(token);
+                AppUserResp appUserResp = leoClient.getUser(getAppId(), token);
                 if (appUserResp.isSuccess()) {
-                    leoAppUser = new LeoAppUser(IDConverter.convert(appUserResp.getId()), appUserResp.getAccount(), appUserResp.getName());
+                    leoAppUser = new LeoAppUser(LeoUserIdConverter.convert(appUserResp.getId()), appUserResp.getAccount(), appUserResp.getName());
                     leoAppUser.setToken(appUserResp.getToken());
                     Caches.set(CACHE_TOKEN, token, leoAppUser, "5min");
                     Logger.debug("cache app user by token: %s", token);
                 } else {
-                    Logger.warn("cannot find user by token: %s, appId: %s", token, LeoConfig.getLeoAppId());
+                    Logger.warn("cannot find user by token: %s, appId: %s", token, getAppId());
                 }
             } else {
                 Logger.trace("it's from cache.");
@@ -76,30 +77,27 @@ public class LeoApp extends SpringWebApp {
     }
 
     /**
-     * @return leo host
-     */
-    public String getHost() {
-        return LeoConfig.getLeoHost();
-    }
-
-    /**
-     * @return leo app id
+     * 读取应用编号
+     *
+     * @return 应用编号
      */
     public String getAppId() {
-        return LeoConfig.getLeoAppId();
+        return App.config("leo.appId");
     }
 
     /**
-     * @return leo app security
+     * 读取应用密钥
+     *
+     * @return 应用密钥
      */
     public String getAppSecret() {
-        return LeoConfig.getLeoAppSecret();
+        return App.config("leo.appSecret");
     }
 
     /**
      * 设置访问令牌
      *
-     * @param accessToken 访问令牌
+     * @param accessToken 令牌
      */
     void setAccessToken(String accessToken) {
         session(SESSION_TOKEN, accessToken);
@@ -121,8 +119,9 @@ public class LeoApp extends SpringWebApp {
      * @param response 响应
      * @return 当前线程应用
      */
-    public static App create(HttpServletRequest request, HttpServletResponse response) {
-        current(new LeoApp(request, response));
-        return current();
+    public static LeoApp create(HttpServletRequest request, HttpServletResponse response) {
+        LeoApp leoApp = new LeoApp(request, response);
+        current(leoApp);
+        return leoApp;
     }
 }

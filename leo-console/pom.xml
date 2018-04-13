@@ -10,7 +10,6 @@
         <version>3.0.0</version>
     </parent>
     <artifactId>leo-console</artifactId>
-    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
@@ -20,6 +19,10 @@
         <dependency>
             <groupId>net.ufrog</groupId>
             <artifactId>leo-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.ufrog</groupId>
+            <artifactId>leo-client</artifactId>
         </dependency>
 
         <dependency>
@@ -65,5 +68,11 @@
 
     <build>
         <finalName>leo-console</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>

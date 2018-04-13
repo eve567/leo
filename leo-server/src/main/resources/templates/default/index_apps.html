@@ -19,7 +19,7 @@
             appFn: {
                 // 查询
                 find: function() {
-                    $scope.get('${app}/apps', function(data) {
+                    $scope.get('${app}/app_list', function(data) {
                         $scope.apps = data;
                     });
                 },
@@ -36,7 +36,7 @@
                 },
 
                 // 鼠标事件
-                mouse: function (app, type){
+                mouse: function (app, type) {
                     app.over = (type === 'over');
                 }
             }

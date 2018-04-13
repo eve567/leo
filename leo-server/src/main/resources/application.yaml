@@ -1,55 +1,6 @@
-app:
-  name: "leo-server"
-  secret: "zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T"
-  messages: "classpath:messages-domain, classpath:messages-service, classpath:messages"
-pattern:
-  uuid: "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
-  cellphone: "1[3578][0-9]{9}"
-  email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
-path:
-  resource:
-    common: "//localhost:7086/static/resources"
-    host: "//localhost:7086/static/resources/leo"
-    theme: "//localhost:7086/static/resources/leo/default"
-cache:
-  default:
-    duration: "4h"
-    prefix: "leo_"
-  redis:
-    duration: "4h"
-    prefix: "leo_"
-    type: "net.ufrog.common.redis.JedisClusterCacheImpl"
-    server: "43.254.106.50:7001,43.254.106.50:7002"
-    serializer: "net.ufrog.common.redis.serializers.ByteArraySerializer"
-datasource:
-  primary:
-    url: "jdbc:mysql://103.20.249.125/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=UTC"
-    username: "root"
-    password: "OvxJV0VrDFb+R7ZD7XrHqw=="
-    jpa:
-      showSql: true
-thread:
-  default:
-    type: "single"
-jetx:
-  config:
-    jetx.import.classes: "net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.domain.models.*, net.ufrog.leo.service.beans.**"
-    jetx.trim.directive.comments: "true"
-    jetx.template.loaders: "$loader"
-    $loader: "jetbrick.template.loader.ClasspathResourceLoader"
-    $loader.reloadable: "true"
-log4j:
-  rootLogger: "INFO, CONSOLE"
-  appender:
-    CONSOLE: "org.apache.log4j.ConsoleAppender"
-    CONSOLE.layout: "org.apache.log4j.PatternLayout"
-    CONSOLE.layout.ConversionPattern: "%d{HH:mm:ss.SSS} %-5p ~ %m%n"
-    #FILE: "org.apache.log4j.DailyRollingFileAppender"
-    #FILE.File: "/Users/ultrafrog/logs/leo-console.log"
-    #FILE.DatePattern: "'.'yyyy-MM-dd"
-    #FILE.layout: "org.apache.log4j.PatternLayout"
-    #FILE.layout.ConversionPattern: "[%d{HH:mm:ss.SSS}][%-5p]%l:%m%n"
-  logger:
-    app: "DEBUG"
-leo:
-  accessTokenManager: "net.ufrog.leo.server.MemAccessTokenManager"
+spring:
+  cloud:
+    config:
+      uri: http://127.0.0.1:8888
+      name: leo-server
+      profile: ${config.profile:dev}

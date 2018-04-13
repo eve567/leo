@@ -16,5 +16,9 @@
             <groupId>net.ufrog</groupId>
             <artifactId>leo-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.ufrog</groupId>
+            <artifactId>ufrog-common-spring</artifactId>
+        </dependency>
     </dependencies>
 </project>

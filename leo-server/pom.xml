@@ -24,10 +24,6 @@
             <groupId>net.ufrog</groupId>
             <artifactId>ufrog-common-redis</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.ufrog</groupId>
-            <artifactId>ufrog-common-spring</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -76,5 +72,11 @@
 
     <build>
         <finalName>leo-server</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>

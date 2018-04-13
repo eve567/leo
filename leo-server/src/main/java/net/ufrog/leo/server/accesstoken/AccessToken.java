@@ -1,10 +1,10 @@
-package net.ufrog.leo.server;
+package net.ufrog.leo.server.accesstoken;
 
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.utils.Calendars;
 import net.ufrog.common.utils.Codecs;
 import net.ufrog.common.utils.Strings;
-import net.ufrog.leo.client.LeoAppUser;
+import net.ufrog.leo.client.app.LeoAppUser;
 import net.ufrog.leo.domain.models.App;
 
 import java.io.Serializable;
@@ -13,12 +13,12 @@ import java.io.Serializable;
  * 访问令牌抽象
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-02-26
- * @since 0.1
+ * @version 3.0.0, 2018-04-11
+ * @since 3.0.0
  */
 public class AccessToken implements Serializable {
 
-    private static final long serialVersionUID = 1441913437080034965L;
+    private static final long serialVersionUID = -1323086840837916977L;
 
     /** 令牌 */
     private String token;
@@ -26,10 +26,10 @@ public class AccessToken implements Serializable {
     /** 时间戳 */
     private Long timestamp;
 
-    /** 超时时间 */
-    private Long timeout;
+    /** 有效时间<br>单位 - 秒 */
+    private Long expires;
 
-    /** 全程地址 */
+    /** 远程地址 */
     private String remote;
 
     /** 应用用户 */
@@ -40,8 +40,8 @@ public class AccessToken implements Serializable {
 
     /** 构造函数 */
     private AccessToken() {
-        token = Codecs.uuid();
-        timestamp = System.currentTimeMillis();
+        this.token = Codecs.uuid();
+        this.timestamp = System.currentTimeMillis();
     }
 
     /**
@@ -55,8 +55,8 @@ public class AccessToken implements Serializable {
         this();
         this.app = app;
         this.remote = remote;
-        this.leoAppUser = (appUser instanceof LeoAppUser) ? (LeoAppUser) appUser : new LeoAppUser(appUser.getId(), appUser.getAccount(), appUser.getName());
-        this.leoAppUser.setToken(token);
+        this.leoAppUser = getLeoAppUser(appUser);
+        this.leoAppUser.setToken(this.token);
     }
 
     /**
@@ -78,9 +78,21 @@ public class AccessToken implements Serializable {
     }
 
     /**
-     * 读取地址
+     * 读取失效时间
      *
-     * @return 地址
+     * @return 失效时间
+     */
+    public Long getExpires() {
+        if (expires == null) {
+            expires = Strings.empty(app.getExpires()) ? - 1L : Calendars.parseDuration(app.getExpires()) * 1000L;
+        }
+        return expires;
+    }
+
+    /**
+     * 读取远程地址
+     *
+     * @return 远程地址
      */
     public String getRemote() {
         return remote;
@@ -91,7 +103,7 @@ public class AccessToken implements Serializable {
      *
      * @return 应用用户
      */
-    public LeoAppUser getAppUser() {
+    public LeoAppUser getLeoAppUser() {
         return leoAppUser;
     }
 
@@ -123,24 +135,28 @@ public class AccessToken implements Serializable {
     }
 
     /**
-     * 读取超时时间
-     *
-     * @return 超时时间
-     */
-    public Long getTimeout() {
-        if (timeout == null) {
-            timeout = Strings.empty(app.getTimeout()) ? -1L : Calendars.parseDuration(app.getTimeout()) * 1000L;
-        }
-        return timeout;
-    }
-
-    /**
-     * 判断超时
+     * 是否有效期满
      *
      * @return 判断结果
      */
-    public Boolean isTimeout() {
-        if (getTimeout().compareTo(-1L) == 0) return Boolean.FALSE;
-        return (getTimestamp() + getTimeout()) < System.currentTimeMillis();
+    public Boolean isExpiry() {
+        if (getExpires().compareTo(-1L) == 0) {
+            return Boolean.FALSE;
+        }
+        return ((getTimestamp() + getExpires()) < System.currentTimeMillis());
+    }
+
+    /**
+     * 获取用户中心用户
+     *
+     * @param appUser 应用用户
+     * @return 用户中心应用用户
+     */
+    private LeoAppUser getLeoAppUser(AppUser appUser) {
+        if (LeoAppUser.class.isInstance(appUser)) {
+            return LeoAppUser.class.cast(appUser);
+        } else {
+            return new LeoAppUser(appUser.getId(), appUser.getAccount(), appUser.getName());
+        }
     }
 }

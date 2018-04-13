@@ -1,15 +1,17 @@
-package net.ufrog.leo.client;
+package net.ufrog.leo.client.app;
 
 import net.ufrog.common.app.AppUser;
 
 /**
+ * 用户中心应用用户
+ *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-03-13
- * @since 0.1
+ * @version 3.0.0, 2018-04-11
+ * @since 3.0.0
  */
 public class LeoAppUser extends AppUser {
 
-    private static final long serialVersionUID = -8577812680514415491L;
+    private static final long serialVersionUID = -1991890287339861205L;
 
     /** 令牌 */
     private String token;

@@ -1,19 +1,20 @@
-package net.ufrog.leo.server;
+package net.ufrog.leo.server.accesstoken;
 
+import net.ufrog.aries.common.exception.AriesException;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.common.utils.Strings;
-import net.ufrog.leo.client.api.beans.Resp;
+import net.ufrog.leo.client.contract.ResultCode;
 import net.ufrog.leo.domain.models.App;
 
 import java.util.List;
 
 /**
- * 访问令牌管理接口
+ * 访问令牌管理抽象
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-03-14
- * @since 0.1
+ * @version 3.0.0, 2018-04-11
+ * @since 3.0.0
  */
 public abstract class AccessTokenManager {
 
@@ -57,26 +58,26 @@ public abstract class AccessTokenManager {
      * @param remote 远程地址
      * @return 访问令牌
      */
-    public AccessToken online(AppUser appUser, App app, String remote) {
+    public AccessToken online(AppUser appUser, App app,String remote) {
         AccessToken accessToken = new AccessToken(appUser, app, remote);
         online(accessToken);
         return accessToken;
     }
 
     /**
-     * 检查令牌是否合法
+     * 检查访问令牌是否合法
      *
      * @param accessToken 访问令牌
      * @param appId 应用编号
      */
     public void validate(AccessToken accessToken, String appId) {
         if (accessToken == null) {
-            throw new LeoException(Resp.RespCode.NOT_SIGN);
-        } else if (accessToken.isTimeout()) {
+            throw new AriesException(ResultCode.NOT_SIGN);
+        } else if (accessToken.isExpiry()) {
             offline(accessToken.getUserId(), accessToken.getAppId(), accessToken.getToken());
-            throw new LeoException(Resp.RespCode.NOT_SIGN);
+            throw new AriesException(ResultCode.NOT_SIGN);
         } else if (!Strings.equals(accessToken.getAppId(), appId)) {
-            throw new LeoException(Resp.RespCode.NOT_SIGN);
+            throw new AriesException(ResultCode.NOT_SIGN);
         }
     }
 

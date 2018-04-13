@@ -3,23 +3,23 @@ package net.ufrog.leo.client;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import net.ufrog.aries.common.contract.ListResp;
+import net.ufrog.aries.common.contract.PageResp;
 import net.ufrog.leo.client.contract.AppResp;
+import net.ufrog.leo.client.fallbacks.AppClientFallbackFactory;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 应用业务客户端
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2018-03-27
- * @since 0.1
+ * @version 3.0.0, 2018-03-27
+ * @since 3.0.0
  */
-@FeignClient(name = "leo-server")
-@RequestMapping("/app")
+@FeignClient(name = "leo-server", fallbackFactory = AppClientFallbackFactory.class)
+@RequestMapping("/apps")
 @Api(value = "用户服务")
 public interface AppClient {
 
@@ -32,14 +32,14 @@ public interface AppClient {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "按编号查询应用", notes = "查询单个应用")
     @ApiImplicitParam(value = "应用编号", name = "id", required = true, paramType = "path", dataTypeClass = String.class)
-    AppResp findById(@PathVariable("id") String id);
+    AppResp read(@PathVariable("id") String id);
 
     /**
      * 查询所有应用
      *
      * @return 应用列表
      */
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "查询所有应用", notes = "查询单个应用")
-    ListResp<AppResp> findAll();
+    PageResp<AppResp> read();
 }

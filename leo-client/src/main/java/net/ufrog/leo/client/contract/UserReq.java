@@ -22,9 +22,6 @@ public class UserReq extends Req {
     /** 电子邮件 */
     private java.lang.String email;
 
-    /** 编号 */
-    private java.lang.String id;
-
     /** 名称 */
     private java.lang.String name;
 
@@ -89,24 +86,6 @@ public class UserReq extends Req {
     }
 
     /**
-     * 读取编号
-     *
-     * @return 编号
-     */
-    public java.lang.String getId() {
-        return id;
-    }
-
-    /**
-     * 设置编号
-     *
-     * @param id 编号
-     */
-    public void setId(java.lang.String id) {
-        this.id = id;
-    }
-
-    /**
      * 读取名称
      *
      * @return 名称
@@ -158,5 +137,21 @@ public class UserReq extends Req {
      */
     public void setType(java.lang.String type) {
         this.type = type;
+    }
+
+    /**
+     * 类型
+     *
+     * @author ultrafrog
+     * @version 3.0.0, 2018-04-11
+     * @since 3.0.0
+     */
+    public static final class Type {
+
+        @net.ufrog.common.dict.Element("客户")
+        public static final String CLIENT = "00";
+
+        @net.ufrog.common.dict.Element("员工")
+        public static final String STAFF = "90";
     }
 }

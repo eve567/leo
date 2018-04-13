@@ -1,15 +1,15 @@
-package net.ufrog.leo.client.api.beans;
+package net.ufrog.leo.client.contract;
+
+import net.ufrog.aries.common.contract.Resp;
 
 /**
- * 应用用户响应
- *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-07-18
- * @since 0.1
+ * @version 3.0.0, 2018-04-11
+ * @since 3.0.0
  */
 public class AppUserResp extends Resp {
 
-    private static final long serialVersionUID = -5023886725411001477L;
+    private static final long serialVersionUID = 5154888543171961093L;
 
     /** 编号 */
     private String id;
@@ -22,25 +22,6 @@ public class AppUserResp extends Resp {
 
     /** 令牌 */
     private String token;
-
-    /** 构造函数 */
-    public AppUserResp() {}
-
-    /**
-     * 构造函数
-     *
-     * @param id 编号
-     * @param account 账号
-     * @param name 名称
-     * @param token 令牌
-     */
-    public AppUserResp(String id, String account, String name, String token) {
-        this();
-        this.id = id;
-        this.account = account;
-        this.name = name;
-        this.token = token;
-    }
 
     /**
      * 读取编号

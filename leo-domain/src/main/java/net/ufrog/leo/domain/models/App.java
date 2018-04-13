@@ -1,13 +1,12 @@
 package net.ufrog.leo.domain.models;
 
 import net.ufrog.aries.common.jpa.Model;
-import net.ufrog.common.dict.Dicts;
 
 /**
  * 应用模型
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-03-16
+ * @version 0.1, 2018-04-13
  * @since 0.1
  */
 @java.lang.SuppressWarnings("unused")
@@ -15,7 +14,7 @@ import net.ufrog.common.dict.Dicts;
 @javax.persistence.Table(name = "leo_app")
 public class App extends Model {
 
-    private static final long serialVersionUID = -1217960652933154017L;
+    private static final long serialVersionUID = 7977078056592304341L;
 
     /** 名称 */
     @javax.persistence.Column(name = "vc_name")
@@ -30,8 +29,8 @@ public class App extends Model {
     private java.lang.String secret;
 
     /** 超时时间 */
-    @javax.persistence.Column(name = "vc_timeout")
-    private java.lang.String timeout;
+    @javax.persistence.Column(name = "vc_expires")
+    private java.lang.String expires;
 
     /** 访问地址 */
     @javax.persistence.Column(name = "vc_url")
@@ -41,7 +40,7 @@ public class App extends Model {
     @javax.persistence.Column(name = "vc_logo")
     private java.lang.String logo;
 
-    /** 色值 */
+    /** 颜色 */
     @javax.persistence.Column(name = "vc_color")
     private java.lang.String color;
 
@@ -53,7 +52,7 @@ public class App extends Model {
     @javax.persistence.Column(name = "dc_visible")
     private java.lang.String visible;
 
-    /** 多用户 */
+    /** 同时登录 */
     @javax.persistence.Column(name = "dc_mulriple")
     private java.lang.String mulriple;
 
@@ -116,17 +115,17 @@ public class App extends Model {
      *
      * @return 超时时间
      */
-    public java.lang.String getTimeout() {
-        return timeout;
+    public java.lang.String getExpires() {
+        return expires;
     }
 
     /**
      * 设置超时时间
      *
-     * @param timeout 超时时间
+     * @param expires 超时时间
      */
-    public void setTimeout(java.lang.String timeout) {
-        this.timeout = timeout;
+    public void setExpires(java.lang.String expires) {
+        this.expires = expires;
     }
 
     /**
@@ -166,18 +165,18 @@ public class App extends Model {
     }
 
     /**
-     * 读取色值
+     * 读取颜色
      *
-     * @return 色值
+     * @return 颜色
      */
     public java.lang.String getColor() {
         return color;
     }
 
     /**
-     * 设置色值
+     * 设置颜色
      *
-     * @param color 色值
+     * @param color 颜色
      */
     public void setColor(java.lang.String color) {
         this.color = color;
@@ -220,18 +219,18 @@ public class App extends Model {
     }
 
     /**
-     * 读取多用户
+     * 读取同时登录
      *
-     * @return 多用户
+     * @return 同时登录
      */
     public java.lang.String getMulriple() {
         return mulriple;
     }
 
     /**
-     * 设置多用户
+     * 设置同时登录
      *
-     * @param mulriple 多用户
+     * @param mulriple 同时登录
      */
     public void setMulriple(java.lang.String mulriple) {
         this.mulriple = mulriple;
@@ -242,8 +241,8 @@ public class App extends Model {
      *
      * @return 状态名称
      */
-    public String getStatusName() {
-        return Dicts.name(status, Status.class);
+    public java.lang.String getStatusName() {
+        return net.ufrog.common.dict.Dicts.name(this.status, Status.class);
     }
 
     /**
@@ -251,24 +250,24 @@ public class App extends Model {
      *
      * @return 可见名称
      */
-    public String getVisibleName() {
-        return Dicts.name(visible, Visible.class);
+    public java.lang.String getVisibleName() {
+        return net.ufrog.common.dict.Dicts.name(this.visible, Visible.class);
     }
 
     /**
-     * 读取多用户名称
+     * 读取同时登录名称
      *
-     * @return 多用户名称
+     * @return 同时登录名称
      */
-    public String getMulripleName() {
-        return Dicts.name(mulriple, Mulriple.class);
+    public java.lang.String getMulripleName() {
+        return net.ufrog.common.dict.Dicts.name(this.mulriple, Mulriple.class);
     }
 
     /**
      * 状态
      *
      * @author ultrafrog
-     * @version 0.1, 2017-03-16
+     * @version 0.1, 2018-04-13
      * @since 0.1
      */
     public static final class Status {
@@ -284,7 +283,7 @@ public class App extends Model {
      * 可见
      *
      * @author ultrafrog
-     * @version 0.1, 2017-03-16
+     * @version 0.1, 2018-04-13
      * @since 0.1
      */
     public static final class Visible {
@@ -297,10 +296,10 @@ public class App extends Model {
     }
 
     /**
-     * 多用户
+     * 同时登录
      *
      * @author ultrafrog
-     * @version 0.1, 2017-03-16
+     * @version 0.1, 2018-04-13
      * @since 0.1
      */
     public static final class Mulriple {

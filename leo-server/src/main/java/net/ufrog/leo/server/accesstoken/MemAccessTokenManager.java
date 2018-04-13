@@ -1,4 +1,4 @@
-package net.ufrog.leo.server;
+package net.ufrog.leo.server.accesstoken;
 
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.App;
@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
  * 内存访问令牌管理实现
  *
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 0.1, 2017-03-14
- * @since 0.1
+ * @version 3.0.0, 2018-04-12
+ * @since 3.0.0
  */
 @SuppressWarnings("unused")
 public class MemAccessTokenManager extends AccessTokenManager {

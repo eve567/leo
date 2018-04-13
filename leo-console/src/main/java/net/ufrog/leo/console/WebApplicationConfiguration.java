@@ -1,7 +1,6 @@
 package net.ufrog.leo.console;
 
 import net.ufrog.common.spring.interceptor.MultipartRequestInterceptor;
-import net.ufrog.leo.client.LeoInterception;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -16,7 +15,6 @@ public class WebApplicationConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LeoInterception());
         registry.addInterceptor(new MultipartRequestInterceptor());
     }
 }
