@@ -1,4 +1,4 @@
-package net.ufrog.leo.client.fallbacks;
+package net.ufrog.leo.client.fallbackfactory;
 
 import feign.hystrix.FallbackFactory;
 import net.ufrog.aries.common.contract.PageResp;

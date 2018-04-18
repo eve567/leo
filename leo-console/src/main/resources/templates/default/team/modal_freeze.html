@@ -2,7 +2,7 @@
     <p class="margin-bottom-zero">是否确认<strong class="text-danger" ng-if="current.user.status === '10'">冻结</strong><strong class="text-success" ng-if="current.user.status === '90'">解冻</strong>团队成员「<span ng-bind="current.user.name"></span>」的帐号？</p>
     <button class="btn btn-success" ng-click="userFn.freeze()" ng-disabled="ctrl.status('freezeBtn', ['processing'])">
         <span ng-show="ctrl.status('freezeBtn', ['standby'])"><fa i="key">&nbsp;<span ng-if="current.user.status === '10'">冻结</span><span ng-if="current.user.status === '90'">解冻</span></fa></span>
-        <span ng-show="ctrl.status('freezeBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+        <span ng-show="ctrl.status('freezeBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></span>
     </button>
     <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;取消</fa></button>
 </modal>

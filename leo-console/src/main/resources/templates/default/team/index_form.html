@@ -36,7 +36,7 @@
                 <div class="col-sm-offset-1 col-sm-11">
                     <button class="btn btn-success" ng-disabled="userFn.disabledSaveBtn()">
                         <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;保存</fa></span>
-                        <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+                        <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></span>
                     </button>
                     <button type="button" class="btn btn-default" ng-click="userFn.cancel()"><fa i="times-circle">&nbsp;取消</fa></button>
                 </div>

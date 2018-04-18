@@ -124,10 +124,9 @@
                         template: function(app) {
                             return [
                                 'leo:',
-                                '  host: "${app.host}"',
-                                '  app:',
-                                '    id: "' + app.id + '"',
-                                '    secret: "' + app.secret + '"'
+                                '  host: ${App::config("leo.host")}',
+                                '  appId: ' + app.id,
+                                '  appSecret: ' + app.secret
                             ].join('<br>');
                         }
                     },
@@ -135,7 +134,7 @@
                         name: 'Properties',
                         template: function(app) {
                             return [
-                                'leo.host = ${app.host}',
+                                'leo.host = ${App::config("leo.host")}',
                                 'leo.app.id = ' + app.id,
                                 'leo.app.secret = ' + app.secret
                             ].join('<br>');

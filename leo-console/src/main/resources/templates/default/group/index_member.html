@@ -31,13 +31,13 @@
                     <a href="#" title="移除成员" class="text-danger" ng-click="popMemberDeleteModal(member)"><fa i="minus-square"></fa></a>
                 </td>
             </tr>
-            <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(members)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
-            <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+            <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(members)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.getMessage('common.empty')}</fa></td></tr>
+            <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></td></tr>
             </tbody>
         </table>
     </div>
     <div class="table-footer clearfix">
-        <button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+        <button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.getMessage('common.op.cancel')}</fa></button>
     </div>
     #include('modal_member_remark.html')
     #include('modal_member_delete.html')

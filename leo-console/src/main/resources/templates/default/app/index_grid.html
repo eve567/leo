@@ -43,8 +43,8 @@
                 <a href="#" class="link-group-item" ng-click="appFn.popResourceTypeModal(app)">资源类型</a>
             </td>
         </tr>
-        <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(apps)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
-        <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+        <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(apps)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.getMessage('common.empty')}</fa></td></tr>
+        <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></td></tr>
         </tbody>
     </table>
 </div>

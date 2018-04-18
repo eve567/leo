@@ -1,0 +1,30 @@
+{
+  "groups": [{
+    "name": "leo",
+    "type": "net.ufrog.leo.client.configuration.LeoAutoConfiguration",
+    "sourceType": "net.ufrog.leo.client.configuration.LeoAutoConfiguration"
+  }],
+  "properties": [
+    {
+      "name": "ufrog.app.config.leo.host",
+      "type": "java.lang.String",
+      "sourceType": "net.ufrog.leo.client.configuration.LeoProperties"
+    },
+    {
+      "name": "ufrog.app.config.leo.appId",
+      "type": "java.lang.String",
+      "sourceType": "net.ufrog.leo.client.configuration.LeoProperties"
+    },
+    {
+      "name": "ufrog.app.config.leo.appSecret",
+      "type": "java.lang.String",
+      "sourceType": "net.ufrog.leo.client.configuration.LeoProperties"
+    },
+    {
+      "name": "ufrog.app.config.leo.accessTokenManager",
+      "type": "java.lang.String",
+      "sourceType": "net.ufrog.leo.client.configuration.LeoProperties"
+    }
+  ],
+  "hints": []
+}

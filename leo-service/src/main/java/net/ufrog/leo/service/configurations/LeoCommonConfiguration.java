@@ -8,10 +8,12 @@ import net.ufrog.common.spring.fastjson.FastJsonpHttpMessageConverter;
 import net.ufrog.common.spring.interceptor.MultipartRequestInterceptor;
 import net.ufrog.common.spring.interceptor.PropertiesInterceptor;
 import net.ufrog.common.spring.interceptor.TokenInterceptor;
+import net.ufrog.common.spring.springboot.AppAutoConfiguration;
 import net.ufrog.leo.domain.repositories.BlobRepository;
 import net.ufrog.leo.service.PropService;
 import net.ufrog.leo.service.storages.DBStorage;
 import net.ufrog.leo.service.storages.Storage;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +32,11 @@ import java.util.List;
  * @since 0.1
  */
 @Configuration
+@EnableConfigurationProperties(AppAutoConfiguration.AppProperties.class)
 public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
+
+    /**  */
+    private AppAutoConfiguration.AppProperties appProperties;
 
     /** 系统属性业务接口 */
     private PropService propService;
@@ -38,9 +44,11 @@ public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
     /**
      * 构造函数
      *
+     * @param appProperties 应用属性
      * @param propService 系统属性业务接口
      */
-    public LeoCommonConfiguration(PropService propService) {
+    public LeoCommonConfiguration(AppAutoConfiguration.AppProperties appProperties, PropService propService) {
+        this.appProperties = appProperties;
         this.propService = propService;
     }
 
@@ -72,7 +80,7 @@ public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public MessageSource messageSource() {
-        return SpringConfigurations.reloadableResourceBundleMessageSource("classpath:messages-domain,classpath:messages-service,classpath:messages");
+        return SpringConfigurations.reloadableResourceBundleMessageSource(appProperties.getConfig().getProperty("app.messages"));
     }
 
     @Override
@@ -89,7 +97,7 @@ public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
                 "",
                 null,
                 "sign",
-                App.config("leo.host") + "/sign_out",
+                appProperties.getConfig().getProperty("leo.host") + "/sign_out",
                 "_not_sign::"
         ));
     }

@@ -4,7 +4,7 @@
     <p class="text-warning margin-bottom-zero"><fa i="exclamation-triangle">&nbsp;如果此部门/职位存在下级将导致删除失败！</fa></p>
     <button class="btn btn-danger" ng-click="groupFn.delete()">
         <span ng-show="ctrl.status('deleteBtn', ['standby'])"><fa i="minus-circle">&nbsp;确认删除</fa></span>
-        <span ng-show="ctrl.status('deleteBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+        <span ng-show="ctrl.status('deleteBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></span>
     </button>
-    <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+    <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;${app.getMessage('common.op.cancel')}</fa></button>
 </modal>

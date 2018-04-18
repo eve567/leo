@@ -15,8 +15,8 @@
             <td><a href="#" ng-click="resourceFn.check(app)"><i class="fa fa-fw" ng-class="{'fa-check-square-o': app.checked, 'fa-square-o': !app.checked}"></i></a></td>
             <td ng-bind="app.name"></td>
         </tr>
-        <tr ng-if="ctrl.status('appGrid', ['loaded']) && valid.empty(apps)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
-        <tr ng-if="ctrl.status('appGrid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+        <tr ng-if="ctrl.status('appGrid', ['loaded']) && valid.empty(apps)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.getMessage('common.empty')}</fa></td></tr>
+        <tr ng-if="ctrl.status('appGrid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></td></tr>
         </tbody>
     </table>
 </div>

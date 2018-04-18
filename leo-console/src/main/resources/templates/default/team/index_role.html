@@ -20,15 +20,15 @@
             <td><a href="#" ng-click="userFn.checkRole(role)"><i class="fa fa-fw" ng-class="{'fa-check-square-o': role.checked, 'fa-square-o': !role.checked}"></i></a></td>
             <td ng-bind="role.name"></td>
         </tr>
-        <tr ng-if="ctrl.status('roleGrid', ['loaded']) && valid.empty(roles)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
-        <tr ng-if="ctrl.status('roleGrid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+        <tr ng-if="ctrl.status('roleGrid', ['loaded']) && valid.empty(roles)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.getMessage('common.empty')}</fa></td></tr>
+        <tr ng-if="ctrl.status('roleGrid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></td></tr>
         </tbody>
     </table>
 </div>
 <div class="table-footer">
     <button class="btn btn-success" ng-click="userFn.bind()" ng-disabled="ctrl.status('bindBtn', ['processing'])">
         <span ng-show="ctrl.status('bindBtn', ['standby'])"><fa i="check-square-o">&nbsp;绑定</fa></span>
-        <span ng-show="ctrl.status('bindBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+        <span ng-show="ctrl.status('bindBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></span>
     </button>
-    <button class="btn btn-default" ng-click="userFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+    <button class="btn btn-default" ng-click="userFn.cancel()"><fa i="times-circle">&nbsp;${app.getMessage('common.op.cancel')}</fa></button>
 </div>

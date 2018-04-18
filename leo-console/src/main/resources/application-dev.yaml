@@ -1,0 +1,62 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: leo-console
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.111.4.49/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
+    username: dev
+    password: mMZc%j13l
+  jpa:
+    database: mysql
+    show-sql: true
+  jetbrick:
+    template:
+      enabled: true
+      charset: utf-8
+      content-type: text/html
+      prefix: templates/default/
+      suffix: .html
+      config:
+        jetx.import.classes: net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.domains.models.*, net.ufrog.leo.beans.**
+        jetx.trim.directive.comments: "true"
+        jetx.template.loaders: $loader
+        $loader: jetbrick.template.loader.ClasspathResourceLoader
+        $loader.reloadable: "true"
+logging:
+  level:
+    root: info
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      default-zone: http://127.0.0.1:8761/eureka/
+feign:
+  hystrix:
+    enabled: true
+ufrog:
+  app:
+    config:
+      app:
+        secret: zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T
+        messages: classpath:messages-domain,classpath:messages-service,classpath:messages
+      pattern:
+        uuid: "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
+        cellphone: "1[3578][0-9]{9}"
+        email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
+      path:
+        resource:
+          common: //10.111.4.49:800/leo/resources
+          host: //10.111.4.49:800/leo/resources/leo
+      cache:
+        default:
+          duration: 4h
+          prefix: leo_
+      leo:
+        enabled: true
+        host: http://127.0.0.1:8080
+        appId: 19ae06ac-0a29-11e7-8989-9ffd19844ced
+        appSecret: 2ajrIM4Kf6fyn1FbH0bfpZ5XkLEMUji5W0VddFJxNa5nePwrbRJ90PsDiFpbWN6Z
+        accessTokenManager: net.ufrog.leo.server.accesstoken.MemAccessTokenManager

@@ -1,7 +1,7 @@
 <div ng-controller="appCtrl">
-    <div class="ng-fade" ng-show="ctrl.status('view', ['grid'])"><!-- #include('index_grid.html') --></div>
-    <div class="ng-fade" ng-show="ctrl.status('view', ['form'])"><!-- #include('index_form.html') --></div>
-    <!-- #include('modal_secret.html') -->
-    <!-- #include('modal_resource.html') -->
+    <div class="ng-fade" ng-show="ctrl.status('view', ['grid'])">#include('index_grid.html')</div>
+    <div class="ng-fade" ng-show="ctrl.status('view', ['form'])">#include('index_form.html')</div>
+    #include('modal_secret.html')
+    #include('modal_resource.html')
 </div>
 <!-- #include('index_js.html') -->

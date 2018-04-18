@@ -19,7 +19,7 @@ public abstract class LeoUserIdConverter {
      * @param leoAppUserId 用户中心应用用户编号
      * @return 应用用户编号
      */
-    abstract String toAppUserId(String leoAppUserId);
+    public abstract String toAppUserId(String leoAppUserId);
 
     /**
      * 转换编号

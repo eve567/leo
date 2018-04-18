@@ -4,7 +4,7 @@
 
     <button type="button" class="btn btn-danger" ng-click="navFn.delete(current.dnav)" ng-disabled="ctrl.status('deleteBtn', ['processing'])">
         <span ng-show="ctrl.status('deleteBtn', ['standby'])"><fa i="minus-circle">&nbsp;确认删除</fa></span>
-        <span ng-show="ctrl.status('deleteBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+        <span ng-show="ctrl.status('deleteBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></span>
     </button>
     <button type="button" class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;取消</fa></button>
 </modal>

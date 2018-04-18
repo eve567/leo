@@ -1,5 +1,5 @@
 <modal id="privateRoleModal" title="选择所需调整应用" width="400">
     <select class="form-control" ng-model="current.app" ng-options="app.name for app in $apps"></select>
-    <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+    <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;${app.getMessage('common.op.cancel')}</fa></button>
     <button class="btn btn-primary"><fa i="check-circle">&nbsp;选择</fa></button>
 </modal>

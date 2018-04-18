@@ -2,7 +2,7 @@
     <p class="margin-bottom-zero">是否确认重置团队成员「<span ng-bind="current.user.name"></span>」的密码？</p>
     <button class="btn btn-success" ng-click="userFn.reset()" ng-disabled="ctrl.status('resetBtn', ['processing'])">
         <span ng-show="ctrl.status('resetBtn', ['standby'])"><fa i="key">&nbsp;确认重置</fa></span>
-        <span ng-show="ctrl.status('resetBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+        <span ng-show="ctrl.status('resetBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></span>
     </button>
     <button class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;取消</fa></button>
 </modal>

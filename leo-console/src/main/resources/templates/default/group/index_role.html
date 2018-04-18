@@ -21,8 +21,8 @@
                 <td><a href="#" ng-click="check(role)"><i class="fa fa-fw" ng-class="{'fa-spinner fa-spin': valid.undefined(bindedRoles), 'fa-square-o': !role.checked, 'fa-check-square-o': role.checked}"></i></a></td>
                 <td ng-bind="role.name"></td>
             </tr>
-            <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(roles)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.msg('common.empty')}</fa></td></tr>
-            <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></td></tr>
+            <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(roles)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${app.getMessage('common.empty')}</fa></td></tr>
+            <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></td></tr>
             </tbody>
         </table>
     </div>
@@ -30,9 +30,9 @@
         <div class="pull-left">
             <button class="btn btn-success" ng-click="bind()" ng-disabled="disabledBindBtn()">
                 <span ng-if="ctrl.status('bindBtn', ['standby'])"><fa i="floppy-o">&nbsp;绑定</fa></span>
-                <span ng-if="ctrl.status('bindBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.msg('common.processing')}</fa></span>
+                <span ng-if="ctrl.status('bindBtn', ['processing'])"><fa i="spinner spin">&nbsp;${app.getMessage('common.processing')}</fa></span>
             </button>
-            <button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.msg('common.op.cancel')}</fa></button>
+            <button class="btn btn-default" ng-click="groupFn.cancel()"><fa i="times-circle">&nbsp;${app.getMessage('common.op.cancel')}</fa></button>
         </div>
     </div>
 </div>

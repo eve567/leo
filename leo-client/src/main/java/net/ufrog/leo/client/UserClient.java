@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import net.ufrog.aries.common.contract.PageResp;
 import net.ufrog.leo.client.contract.UserReq;
 import net.ufrog.leo.client.contract.UserResp;
-import net.ufrog.leo.client.fallbacks.UserClientFallbackFactory;
+import net.ufrog.leo.client.fallbackfactory.UserClientFallbackFactory;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
