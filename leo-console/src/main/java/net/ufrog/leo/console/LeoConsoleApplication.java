@@ -1,7 +1,7 @@
 package net.ufrog.leo.console;
 
 import net.ufrog.leo.client.LeoClient;
-import net.ufrog.leo.client.fallbackfactory.LeoClientFallbackFactory;
+import net.ufrog.leo.client.fallback.LeoClientFallbackFactory;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.repositories.AppRepository;
@@ -9,9 +9,9 @@ import net.ufrog.leo.service.AppService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
@@ -24,7 +24,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackageClasses = AppRepository.class)
 @EnableFeignClients(basePackageClasses = {LeoClient.class})
 @EnableDiscoveryClient
-@EnableCircuitBreaker
+@EnableHystrix
 public class LeoConsoleApplication {
 
     /**

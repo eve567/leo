@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import net.ufrog.aries.common.contract.PageResp;
 import net.ufrog.leo.client.contract.AppResp;
-import net.ufrog.leo.client.fallbackfactory.AppClientFallbackFactory;
+import net.ufrog.leo.client.fallback.AppClientFallbackFactory;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

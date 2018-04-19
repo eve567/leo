@@ -5,7 +5,7 @@ import net.ufrog.aries.common.contract.ListResp;
 import net.ufrog.leo.client.contract.AppResp;
 import net.ufrog.leo.client.contract.AppUserResp;
 import net.ufrog.leo.client.contract.NavResp;
-import net.ufrog.leo.client.fallbackfactory.LeoClientFallbackFactory;
+import net.ufrog.leo.client.fallback.LeoClientFallbackFactory;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

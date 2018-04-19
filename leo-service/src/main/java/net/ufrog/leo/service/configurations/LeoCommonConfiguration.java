@@ -2,7 +2,6 @@ package net.ufrog.leo.service.configurations;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
-import net.ufrog.common.app.App;
 import net.ufrog.common.spring.SpringConfigurations;
 import net.ufrog.common.spring.fastjson.FastJsonpHttpMessageConverter;
 import net.ufrog.common.spring.interceptor.MultipartRequestInterceptor;

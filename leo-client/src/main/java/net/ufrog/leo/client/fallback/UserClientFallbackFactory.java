@@ -1,4 +1,4 @@
-package net.ufrog.leo.client.fallbackfactory;
+package net.ufrog.leo.client.fallback;
 
 import feign.hystrix.FallbackFactory;
 import net.ufrog.aries.common.contract.PageResp;
@@ -19,10 +19,12 @@ import java.util.Collections;
 @Component
 public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
 
+    private static final UserClientFallback userClientFallback = new UserClientFallback();
+
     @Override
     public UserClient create(Throwable throwable) {
         Logger.warn("fallback, reason was: {}", throwable.getMessage());
-        return new UserClientFallback();
+        return userClientFallback;
     }
 
     /**
@@ -30,7 +32,7 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
      * @version 3.0.0, 2018-04-13
      * @since 3.0.0
      */
-    class UserClientFallback implements UserClient {
+    static class UserClientFallback implements UserClient {
 
         @Override
         public UserResp create(UserReq userReq) {

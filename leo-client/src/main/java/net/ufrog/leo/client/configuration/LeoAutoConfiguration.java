@@ -32,7 +32,7 @@ public class LeoAutoConfiguration {
         LeoApp.setConfigHelper(appProperties.getConfig());
         filterRegistrationBean.setFilter(leoAppFilter);
         filterRegistrationBean.addUrlPatterns("/*");
-        filterRegistrationBean.setName(Codecs.uuid());
+        filterRegistrationBean.setName("leoAppFilter");
         return filterRegistrationBean;
     }
 }
