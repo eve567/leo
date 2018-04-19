@@ -1,6 +1,5 @@
 spring:
   cloud:
     config:
-      uri: ${config.uri}
       name: leo-console
       profile: ${config.profile}
