@@ -1,6 +1,5 @@
 spring:
   cloud:
     config:
-      uri: ${config.uri}
       name: leo-server
       profile: ${config.profile}
