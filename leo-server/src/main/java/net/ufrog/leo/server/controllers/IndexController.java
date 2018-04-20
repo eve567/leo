@@ -165,7 +165,10 @@ public class IndexController {
         } else {
             accessToken = oAccessToken.get();
         }
-        return "redirect:" + app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + LeoAppFilter.PARAM_KEY + "=" + accessToken.getToken();
+
+        String uri = app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + LeoAppFilter.PARAM_KEY + "=" + accessToken.getToken();
+        Logger.debug("redirect to uri: %s", uri);
+        return "redirect:" + uri;
     }
 
     /**
