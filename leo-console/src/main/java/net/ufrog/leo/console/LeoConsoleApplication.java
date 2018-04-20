@@ -1,5 +1,6 @@
 package net.ufrog.leo.console;
 
+import net.ufrog.common.Logger;
 import net.ufrog.leo.client.LeoClient;
 import net.ufrog.leo.client.fallback.LeoClientFallbackFactory;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
@@ -13,6 +14,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import java.util.List;
 
 /**
  * @author ultrafrog, ufrog.net@gmail.com
@@ -25,12 +30,17 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableFeignClients(basePackageClasses = {LeoClient.class})
 @EnableDiscoveryClient
 @EnableHystrix
-public class LeoConsoleApplication {
+public class LeoConsoleApplication extends WebMvcConfigurerAdapter {
 
     /**
      * @param args argument array
      */
     public static void main(String[] args) {
         SpringApplication.run(LeoConsoleApplication.class, args);
+    }
+
+    @Override
+    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+        exceptionResolvers.forEach(exceptionResolver -> Logger.info(exceptionResolver.getClass().getName()));
     }
 }

@@ -42,8 +42,9 @@ public class LeoAppFilter implements Filter {
         if (requestParam.getParams().containsKey(PARAM_KEY)) {
             String paramStr = requestParam.getParamString(PARAM_KEY);
 
-            Logger.info("received user request from leo...");
             leoApp.setAccessToken(requestParam.getValue(PARAM_KEY));
+            Logger.info("received user request from leo...");
+            Logger.debug("received user token: %s", leoApp.getAccessToken());
             httpServletResponse.sendRedirect(httpServletRequest.getRequestURL() + (Strings.empty(paramStr) ? "" : "?") + paramStr);
             return;
         }

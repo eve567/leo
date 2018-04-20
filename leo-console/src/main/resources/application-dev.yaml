@@ -31,6 +31,7 @@ eureka:
   instance:
     preferIpAddress: true
   client:
+    registerWithEureka: false
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
 feign:
@@ -63,7 +64,6 @@ ufrog:
           prefix: leo_
       leo:
         enabled: true
-        host: http://127.0.0.1:8080
+        host: http://127.0.0.1:8081
         appId: 19ae06ac-0a29-11e7-8989-9ffd19844ced
         appSecret: 2ajrIM4Kf6fyn1FbH0bfpZ5XkLEMUji5W0VddFJxNa5nePwrbRJ90PsDiFpbWN6Z
-        accessTokenManager: net.ufrog.leo.server.accesstoken.MemAccessTokenManager

@@ -1,6 +1,7 @@
 package net.ufrog.leo.server.controllers;
 
 import net.ufrog.aries.common.contract.ListResp;
+import net.ufrog.common.Logger;
 import net.ufrog.leo.client.LeoClient;
 import net.ufrog.leo.client.app.LeoAppUser;
 import net.ufrog.leo.client.contract.AppResp;
@@ -56,14 +57,23 @@ public class LeoController implements LeoClient {
 
     @Override
     public AppUserResp getUser(@PathVariable("appId") String appId, @PathVariable("token") String token) {
-        LeoAppUser leoAppUser = AccessTokenManager.get().get(token, appId).getLeoAppUser();
+        Logger.debug("find user by appId: {}, token: {}", appId, token);
+        AccessToken accessToken = AccessTokenManager.get().get(token, appId);
         AppUserResp appUserResp = new AppUserResp();
 
-        appUserResp.setResultCode(ResultCode.SUCCESS);
-        appUserResp.setId(leoAppUser.getId());
-        appUserResp.setAccount(leoAppUser.getAccount());
-        appUserResp.setName(leoAppUser.getName());
-        appUserResp.setToken(leoAppUser.getToken());
+        if (accessToken != null) {
+            LeoAppUser leoAppUser = accessToken.getLeoAppUser();
+
+            Logger.debug("find user: {}", leoAppUser.getId());
+            appUserResp.setResultCode(ResultCode.SUCCESS);
+            appUserResp.setId(leoAppUser.getId());
+            appUserResp.setAccount(leoAppUser.getAccount());
+            appUserResp.setName(leoAppUser.getName());
+            appUserResp.setToken(leoAppUser.getToken());
+        } else {
+            Logger.debug("cannot find user by appId: {}, token: {}", appId, token);
+            appUserResp.setResultCode(ResultCode.NOT_SIGN);
+        }
         return appUserResp;
     }
 
