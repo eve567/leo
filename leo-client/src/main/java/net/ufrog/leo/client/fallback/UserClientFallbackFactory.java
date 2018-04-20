@@ -23,7 +23,7 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
 
     @Override
     public UserClient create(Throwable throwable) {
-        Logger.warn("fallback, reason was: {}", throwable.getMessage());
+        Logger.warn("fallback, reason was: %s", throwable.getMessage());
         return userClientFallback;
     }
 

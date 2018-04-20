@@ -27,6 +27,7 @@ spring:
 logging:
   level:
     root: info
+    app: debug
 #    org.hibernate: info
 #    org.hibernate.type.descriptor.sql.BasicBinder: trace
 #    org.hibernate.type.descriptor.sql.BasicExtractor: trace

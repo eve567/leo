@@ -57,21 +57,21 @@ public class LeoController implements LeoClient {
 
     @Override
     public AppUserResp getUser(@PathVariable("appId") String appId, @PathVariable("token") String token) {
-        Logger.debug("find user by appId: {}, token: {}", appId, token);
+        Logger.debug("find user by appId: %s, token: %s", appId, token);
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
         AppUserResp appUserResp = new AppUserResp();
 
         if (accessToken != null) {
             LeoAppUser leoAppUser = accessToken.getLeoAppUser();
 
-            Logger.debug("find user: {}", leoAppUser.getId());
+            Logger.debug("find user: %s", leoAppUser.getId());
             appUserResp.setResultCode(ResultCode.SUCCESS);
             appUserResp.setId(leoAppUser.getId());
             appUserResp.setAccount(leoAppUser.getAccount());
             appUserResp.setName(leoAppUser.getName());
             appUserResp.setToken(leoAppUser.getToken());
         } else {
-            Logger.debug("cannot find user by appId: {}, token: {}", appId, token);
+            Logger.debug("cannot find user by appId: %s, token: %s", appId, token);
             appUserResp.setResultCode(ResultCode.NOT_SIGN);
         }
         return appUserResp;

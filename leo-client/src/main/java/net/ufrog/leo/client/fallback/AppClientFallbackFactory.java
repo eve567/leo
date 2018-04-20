@@ -19,7 +19,7 @@ public class AppClientFallbackFactory implements FallbackFactory<AppClient> {
 
     @Override
     public AppClient create(Throwable throwable) {
-        Logger.warn("fallback, reason was: {}", throwable.getMessage());
+        Logger.warn("fallback, reason was: %s", throwable.getMessage());
         return appClientFallback;
     }
 

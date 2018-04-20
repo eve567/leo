@@ -27,6 +27,7 @@ spring:
 logging:
   level:
     root: info
+    app: debug
 eureka:
   instance:
     preferIpAddress: true

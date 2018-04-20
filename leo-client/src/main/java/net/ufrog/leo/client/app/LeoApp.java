@@ -46,7 +46,7 @@ public class LeoApp extends SpringWebApp {
             LeoClient leoClient = SpringWebApp.getBean(LeoClient.class);
 
             if (leoAppUser == null) {
-                Logger.debug("find user by appId: {}, token: {}", getAppId(), token);
+                Logger.debug("find user by appId: %s, token: %s", getAppId(), token);
                 AppUserResp appUserResp = leoClient.getUser(getAppId(), token);
                 if (appUserResp.isSuccess()) {
                     leoAppUser = new LeoAppUser(LeoUserIdConverter.convert(appUserResp.getId()), appUserResp.getAccount(), appUserResp.getName());

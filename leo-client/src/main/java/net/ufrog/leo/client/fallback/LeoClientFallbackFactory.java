@@ -22,7 +22,7 @@ public class LeoClientFallbackFactory implements FallbackFactory<LeoClient> {
 
     @Override
     public LeoClient create(Throwable throwable) {
-        Logger.warn("fallback, reason was: {}", throwable.getMessage());
+        Logger.warn("fallback, reason was: %s", throwable.getMessage());
         return leoClientFallback;
     }
 
