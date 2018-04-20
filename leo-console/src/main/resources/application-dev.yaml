@@ -27,7 +27,7 @@ spring:
 logging:
   level:
     root: info
-    app: debug
+    net.ufrog: debug
 eureka:
   instance:
     preferIpAddress: true
