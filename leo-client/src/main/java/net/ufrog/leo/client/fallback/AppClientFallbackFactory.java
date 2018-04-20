@@ -1,8 +1,7 @@
 package net.ufrog.leo.client.fallback;
 
-import feign.hystrix.FallbackFactory;
+import net.ufrog.aries.common.contract.ClientFallbackFactory;
 import net.ufrog.aries.common.contract.PageResp;
-import net.ufrog.common.Logger;
 import net.ufrog.leo.client.AppClient;
 import net.ufrog.leo.client.contract.AppResp;
 import org.springframework.stereotype.Component;
@@ -13,14 +12,11 @@ import org.springframework.stereotype.Component;
  * @since 3.0.0
  */
 @Component
-public class AppClientFallbackFactory implements FallbackFactory<AppClient> {
-
-    private static final AppClientFallback appClientFallback = new AppClientFallback();
+public class AppClientFallbackFactory extends ClientFallbackFactory<AppClient> {
 
     @Override
-    public AppClient create(Throwable throwable) {
-        Logger.warn("fallback, reason was: %s", throwable.getMessage());
-        return appClientFallback;
+    public AppClient getClientFallback() {
+        return new AppClientFallback();
     }
 
     /**

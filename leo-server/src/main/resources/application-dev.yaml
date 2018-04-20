@@ -45,6 +45,8 @@ ufrog:
       app:
         secret: zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T
         messages: classpath:messages-domain,classpath:messages-service,classpath:messages
+        logger:
+          caller: true
       pattern:
         uuid: "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
         cellphone: "1[3578][0-9]{9}"

@@ -1,8 +1,7 @@
 package net.ufrog.leo.client.fallback;
 
-import feign.hystrix.FallbackFactory;
+import net.ufrog.aries.common.contract.ClientFallbackFactory;
 import net.ufrog.aries.common.contract.ListResp;
-import net.ufrog.common.Logger;
 import net.ufrog.leo.client.LeoClient;
 import net.ufrog.leo.client.contract.AppResp;
 import net.ufrog.leo.client.contract.AppUserResp;
@@ -16,14 +15,11 @@ import org.springframework.stereotype.Component;
  * @since 3.0.0
  */
 @Component
-public class LeoClientFallbackFactory implements FallbackFactory<LeoClient> {
-
-    private static final LeoClientFallback leoClientFallback = new LeoClientFallback();
+public class LeoClientFallbackFactory extends ClientFallbackFactory<LeoClient> {
 
     @Override
-    public LeoClient create(Throwable throwable) {
-        Logger.warn("fallback, reason was: %s", throwable.getMessage());
-        return leoClientFallback;
+    public LeoClient getClientFallback() {
+        return new LeoClientFallback();
     }
 
     /**
