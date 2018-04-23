@@ -3,6 +3,7 @@ package net.ufrog.leo.service.configurations;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import net.ufrog.common.spring.SpringConfigurations;
+import net.ufrog.common.spring.exception.*;
 import net.ufrog.common.spring.fastjson.FastJsonpHttpMessageConverter;
 import net.ufrog.common.spring.interceptor.MultipartRequestInterceptor;
 import net.ufrog.common.spring.interceptor.PropertiesInterceptor;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author ultrafrog, ufrog.net@gmail.com
@@ -91,13 +93,26 @@ public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        exceptionResolvers.add(SpringConfigurations.exceptionResolver(
-                "result",
-                "",
-                null,
-                "sign",
-                appProperties.getConfig().getProperty("leo.host") + "/sign_out",
-                "_not_sign::"
-        ));
+        List<ExceptionHandler> lExceptionHandler = new ArrayList<>(3);
+        lExceptionHandler.add(new ServiceExceptionHandler());
+        lExceptionHandler.add(new InvalidArgumentExceptionHandler());
+        lExceptionHandler.add(new NotSignExceptionHandler("sign", appProperties.getConfig().getProperty("leo.host") + "/sign_out", "_not_sign::"));
+        setExceptionHandler(lExceptionHandler, exceptionResolvers);
+    }
+
+    /**
+     * @param lExceptionHandler 异常列表
+     * @param lHandlerExceptionResolver 异常处理列表
+     */
+    public static void setExceptionHandler(List<ExceptionHandler> lExceptionHandler, List<HandlerExceptionResolver> lHandlerExceptionResolver) {
+        Optional<HandlerExceptionResolver> oHandlerExceptionResolver = lHandlerExceptionResolver.stream().filter(handlerExceptionResolver -> handlerExceptionResolver.getClass() == ExceptionResolver.class).findFirst();
+        ExceptionResolver exceptionResolver;
+        if (oHandlerExceptionResolver.isPresent()) {
+            exceptionResolver = (ExceptionResolver) oHandlerExceptionResolver.get();
+        } else {
+            exceptionResolver = SpringConfigurations.exceptionResolver(null, null, "result", "", null, null);
+            lHandlerExceptionResolver.add(exceptionResolver);
+        }
+        lExceptionHandler.forEach(exceptionHandler -> exceptionResolver.getExceptionHandlers().add(exceptionHandler));
     }
 }

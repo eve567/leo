@@ -1,13 +1,16 @@
 package net.ufrog.leo.server;
 
 import net.ufrog.aries.common.exception.AriesExceptionHandler;
+import net.ufrog.common.spring.exception.ExceptionHandler;
 import net.ufrog.common.spring.exception.ExceptionResolver;
+import net.ufrog.leo.client.configuration.LeoInterception;
 import net.ufrog.leo.client.configuration.LeoProperties;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.repositories.AppRepository;
 import net.ufrog.leo.server.accesstoken.AccessTokenManager;
 import net.ufrog.leo.service.AppService;
+import net.ufrog.leo.service.configurations.LeoCommonConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -24,6 +27,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,10 +69,8 @@ public class LeoServerApplication extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        Optional<HandlerExceptionResolver> oHandlerExceptionResolver = exceptionResolvers.stream().filter(exceptionResolver -> exceptionResolver.getClass() == ExceptionResolver.class).findFirst();
-        if (oHandlerExceptionResolver.isPresent()) {
-            ExceptionResolver exceptionResolver = ExceptionResolver.class.cast(oHandlerExceptionResolver.get());
-            exceptionResolver.getExceptionHandlers().add(new AriesExceptionHandler());
-        }
+        List<ExceptionHandler> lExceptionHandler = new ArrayList<>(1);
+        lExceptionHandler.add(new AriesExceptionHandler());
+        LeoCommonConfiguration.setExceptionHandler(lExceptionHandler, exceptionResolvers);
     }
 }

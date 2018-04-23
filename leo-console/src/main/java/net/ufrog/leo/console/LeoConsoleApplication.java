@@ -1,8 +1,6 @@
 package net.ufrog.leo.console;
 
-import net.ufrog.common.Logger;
-import net.ufrog.leo.client.LeoClient;
-import net.ufrog.leo.client.fallback.LeoClientFallbackFactory;
+import net.ufrog.leo.client.configuration.LeoInterception;
 import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.repositories.AppRepository;
@@ -11,23 +9,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import java.util.List;
 
 /**
  * @author ultrafrog, ufrog.net@gmail.com
  * @version 3.0.0, 2018-04-17
  * @since 3.0.0
  */
-@SpringBootApplication(scanBasePackageClasses = {LeoConsoleApplication.class, AppService.class, SecurityJpql.class, LeoClientFallbackFactory.class})
+@SpringBootApplication(scanBasePackageClasses = {LeoConsoleApplication.class, AppService.class, SecurityJpql.class})
 @EntityScan(basePackageClasses = App.class)
 @EnableJpaRepositories(basePackageClasses = AppRepository.class)
-@EnableFeignClients(basePackageClasses = {LeoClient.class})
 @EnableDiscoveryClient
 @EnableHystrix
 public class LeoConsoleApplication extends WebMvcConfigurerAdapter {
@@ -40,7 +34,7 @@ public class LeoConsoleApplication extends WebMvcConfigurerAdapter {
     }
 
     @Override
-    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        exceptionResolvers.forEach(exceptionResolver -> Logger.info(exceptionResolver.getClass().getName()));
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LeoInterception());
     }
 }

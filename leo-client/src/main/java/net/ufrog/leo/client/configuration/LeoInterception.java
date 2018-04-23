@@ -1,4 +1,4 @@
-package net.ufrog.leo.server;
+package net.ufrog.leo.client.configuration;
 
 import net.ufrog.common.app.App;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -9,21 +9,21 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author ultrafrog, ufrog.net@gmail.com
- * @version 3.0.0, 2018-04-12
+ * @version 3.0.0, 2018-04-23
  * @since 3.0.0
  */
 @SuppressWarnings("unused")
 public class LeoInterception implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         App.user();
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) {}
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {}
 
     @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {}
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {}
 }

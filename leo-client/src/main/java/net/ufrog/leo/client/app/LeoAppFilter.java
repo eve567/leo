@@ -31,13 +31,11 @@ public class LeoAppFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        // 创建当前线程实例
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         LeoApp leoApp = LeoApp.create(httpServletRequest, httpServletResponse);
         servletRequest.setAttribute(WebAppFilter.PARAM_KEY, leoApp);
 
-        // 判断是否存在跳转
         RequestParam requestParam = leoApp.getRequestParam();
         if (requestParam.getParams().containsKey(PARAM_KEY)) {
             String paramStr = requestParam.getParamString(PARAM_KEY);
@@ -48,11 +46,6 @@ public class LeoAppFilter implements Filter {
             httpServletResponse.sendRedirect(httpServletRequest.getRequestURL() + (Strings.empty(paramStr) ? "" : "?") + paramStr);
             return;
         }
-
-        // 判断用户是否有效
-        App.user();
-
-        // 继续执行过滤器链
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
