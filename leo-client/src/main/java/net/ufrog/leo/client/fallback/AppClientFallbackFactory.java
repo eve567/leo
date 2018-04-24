@@ -16,24 +16,17 @@ public class AppClientFallbackFactory extends ClientFallbackFactory<AppClient> {
 
     @Override
     public AppClient getClientFallback() {
-        return new AppClientFallback();
-    }
+        return new AppClient() {
 
-    /**
-     * @author ultrafrog, ufrog.net@gmail.com
-     * @version 3.0.0, 2018-04-13
-     * @since 3.0.0
-     */
-    static class AppClientFallback implements AppClient {
+            @Override
+            public AppResp read(String id) {
+                return null;
+            }
 
-        @Override
-        public AppResp read(String id) {
-            return null;
-        }
-
-        @Override
-        public PageResp<AppResp> read() {
-            return null;
-        }
+            @Override
+            public PageResp<AppResp> read() {
+                return null;
+            }
+        };
     }
 }

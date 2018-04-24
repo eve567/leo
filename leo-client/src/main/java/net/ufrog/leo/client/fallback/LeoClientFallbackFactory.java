@@ -19,35 +19,28 @@ public class LeoClientFallbackFactory extends ClientFallbackFactory<LeoClient> {
 
     @Override
     public LeoClient getClientFallback() {
-        return new LeoClientFallback();
-    }
+        return new LeoClient() {
 
-    /**
-     * @author ultrafrog, ufrog.net@gmail.com
-     * @version 3.0.0, 2018-04-13
-     * @since 3.0.0
-     */
-    static class LeoClientFallback implements LeoClient {
+            @Override
+            public AppUserResp getUser(String appId, String token) {
+                AppUserResp appUserResp = new AppUserResp();
+                appUserResp.setResultCode(ResultCode.NETWORK);
+                return appUserResp;
+            }
 
-        @Override
-        public AppUserResp getUser(String appId, String token) {
-            AppUserResp appUserResp = new AppUserResp();
-            appUserResp.setResultCode(ResultCode.NETWORK);
-            return appUserResp;
-        }
+            @Override
+            public ListResp<AppResp> getApps(String appId, String token) {
+                ListResp<AppResp> lrAppResp = new ListResp<>();
+                lrAppResp.setResultCode(ResultCode.NETWORK);
+                return lrAppResp;
+            }
 
-        @Override
-        public ListResp<AppResp> getApps(String appId, String token) {
-            ListResp<AppResp> lrAppResp = new ListResp<>();
-            lrAppResp.setResultCode(ResultCode.NETWORK);
-            return lrAppResp;
-        }
-
-        @Override
-        public ListResp<NavResp> getNavs(String type, String parentId, String appId, String token) {
-            ListResp<NavResp> lrNavResp = new ListResp<>();
-            lrNavResp.setResultCode(ResultCode.NETWORK);
-            return lrNavResp;
-        }
+            @Override
+            public ListResp<NavResp> getNavs(String type, String parentId, String appId, String token) {
+                ListResp<NavResp> lrNavResp = new ListResp<>();
+                lrNavResp.setResultCode(ResultCode.NETWORK);
+                return lrNavResp;
+            }
+        };
     }
 }

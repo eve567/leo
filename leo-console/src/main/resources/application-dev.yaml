@@ -31,10 +31,12 @@ logging:
 eureka:
   instance:
     preferIpAddress: true
+    leaseExpirationDurationInSeconds: 15
+    leaseRenewalIntervalInSeconds: 5
   client:
     registerWithEureka: false
     serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
 feign:
   hystrix:
     enabled: true

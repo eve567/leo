@@ -20,8 +20,6 @@ import org.springframework.context.annotation.ComponentScan;
  * @version 3.0.0, 2018-04-17
  * @since 3.0.0
  */
-@EnableFeignClients(basePackageClasses = AppClient.class)
-@ComponentScan(basePackageClasses = AppClientFallbackFactory.class)
 @ConditionalOnProperty(value = "ufrog.app.config.leo.enabled", havingValue = "true")
 @EnableConfigurationProperties(LeoProperties.class)
 public class LeoAutoConfiguration {
