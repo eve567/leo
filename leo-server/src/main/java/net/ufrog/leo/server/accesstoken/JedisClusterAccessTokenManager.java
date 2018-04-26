@@ -8,11 +8,11 @@ import net.ufrog.common.redis.JedisClusterCacheImpl;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.service.beans.Props;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 缓存服务令牌管理实现
@@ -43,6 +43,7 @@ public class JedisClusterAccessTokenManager extends AccessTokenManager {
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public void offline(String userId, String appId, String token) {
         try (JedisCluster jedisCluster = cacheImpl.getJedisCluster()) {
             Set<byte[]> sBytes = jedisCluster.hkeys((CACHE_USER + userId).getBytes());
@@ -70,11 +71,28 @@ public class JedisClusterAccessTokenManager extends AccessTokenManager {
 
     @Override
     public AccessToken get(String token, String appId) {
-        return null;
+        try (JedisCluster jedisCluster = cacheImpl.getJedisCluster()) {
+            AccessToken accessToken = (AccessToken) cacheImpl.getSerializer().deserialize(jedisCluster.hget(CACHE.getBytes(), token.getBytes()));
+            validate(accessToken, appId);
+            return accessToken;
+        } catch (IOException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     @Override
     public List<AccessToken> getAll() {
-        return null;
+        try (JedisCluster jedisCluster = cacheImpl.getJedisCluster()) {
+            Map<String, String> mAccessToken = jedisCluster.hgetAll(CACHE);
+            List<AccessToken> lAccessToken = Collections.synchronizedList(new ArrayList<>(mAccessToken.size()));
+
+            mAccessToken.values().parallelStream().forEach(val -> {
+                AccessToken accessToken = (AccessToken) cacheImpl.getSerializer().deserialize(val.getBytes());
+                lAccessToken.add(accessToken);
+            });
+            return lAccessToken;
+        } catch (IOException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 }

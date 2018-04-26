@@ -13,7 +13,6 @@ import net.ufrog.leo.domain.repositories.BlobRepository;
 import net.ufrog.leo.service.PropService;
 import net.ufrog.leo.service.storages.DBStorage;
 import net.ufrog.leo.service.storages.Storage;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +32,6 @@ import java.util.Optional;
  * @since 0.1
  */
 @Configuration
-@EnableConfigurationProperties(AppAutoConfiguration.AppProperties.class)
 public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
 
     /**  */
