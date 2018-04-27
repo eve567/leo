@@ -69,7 +69,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> findByAppId(String appId) {
-        return roleRepository.findByAppIdAndType(appId, Role.Type.PUBLIC);
+        return roleRepository.findByAppIdAndTypeAndStatus(appId, Role.Type.PUBLIC, Role.Status.ENABLED);
     }
 
     @Override

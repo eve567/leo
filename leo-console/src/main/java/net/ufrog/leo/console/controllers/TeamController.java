@@ -1,5 +1,6 @@
 package net.ufrog.leo.console.controllers;
 
+import jetbrick.template.web.springmvc.JetTemplateViewResolver;
 import net.ufrog.common.Mailer;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
@@ -44,18 +45,24 @@ public class TeamController {
     /** 数据仓储 */
     private final Storage storage;
 
+    /**  */
+    private final JetTemplateViewResolver jetTemplateViewResolver;
+
     /**
      * 构造函数
      *
      * @param roleService 角色业务接口
      * @param userService 用户业务接口
      * @param storage 数据仓储
+     * @param jetTemplateViewResolver jet template view resolver
      */
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    public TeamController(RoleService roleService, UserService userService, Storage storage) {
+    public TeamController(RoleService roleService, UserService userService, Storage storage, JetTemplateViewResolver jetTemplateViewResolver) {
         this.roleService = roleService;
         this.userService = userService;
         this.storage = storage;
+        this.jetTemplateViewResolver = jetTemplateViewResolver;
     }
 
     /**
@@ -88,9 +95,11 @@ public class TeamController {
         Map<String, Object> args = Objects.map("password", password, "account", user.getEmail());
         String key = Props.getMailTplUserAdd();
         String tpl = new String(storage.get(key), Props.getAppCharset());
-        String uuid = Codecs.uuid();
-        Mailer.sendHtml(App.message("mail.subject.create.user"), Templates.render(uuid, tpl, args), user.getEmail());
-        Templates.clear(uuid);
+        String code = Codecs.uuid();
+
+        Templates.setJetEngine(jetTemplateViewResolver.getJetEngine());
+        Mailer.sendHtml(App.message("mail.subject.create.user"), Templates.render(code, tpl, args), user.getEmail());
+        Templates.clear(code);
         return Result.success(user, App.message("team.user.create.success", user.getName()));
     }
 
@@ -113,9 +122,11 @@ public class TeamController {
         Map<String, Object> args = Objects.map("password", password, "account", user.getEmail());
         String key = Props.getMailTplUserResetPassword();
         String tpl = new String(storage.get(key), Props.getAppCharset());
-        String uuid = Codecs.uuid();
-        Mailer.sendHtml(App.message("mail.subject.reset.password"), Templates.render(uuid, tpl, args), user.getEmail());
-        Templates.clear(uuid);
+        String code = Codecs.uuid();
+
+        Templates.setJetEngine(jetTemplateViewResolver.getJetEngine());
+        Mailer.sendHtml(App.message("mail.subject.reset.password"), Templates.render(code, tpl, args), user.getEmail());
+        Templates.clear(code);
         return Result.success(user, App.message("team.user.reset.success", user.getName()));
     }
 

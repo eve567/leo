@@ -23,9 +23,10 @@ public interface RoleRepository extends JpaRepository<Role, String> {
      *
      * @param appId 应用编号
      * @param type 类型
+     * @param status 状态
      * @return 角色列表
      */
-    List<Role> findByAppIdAndType(String appId, String type);
+    List<Role> findByAppIdAndTypeAndStatus(String appId, String type, String status);
 
     /**
      * 通过应用编号查询角色
