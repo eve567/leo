@@ -58,9 +58,15 @@
             <groupId>io.codis.jodis</groupId>
             <artifactId>jodis</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
         </dependency>
 
         <dependency>
