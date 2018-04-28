@@ -236,7 +236,9 @@
                     ngModel: '=',
                     trueVal: '@true',
                     falseVal: '@false',
-                    defaultVal: '@default'
+                    defaultVal: '@default',
+                    pre: '&pre',
+                    post: '&post'
                 },
                 template: '<i class="fa fa-2x" ng-class="$class()" ng-click="$toggle()"></i>',
                 link: function($scope) {
@@ -262,6 +264,7 @@
 
                         // 切换
                         $toggle: function() {
+                            ($scope.pre || ng.noop)();
                             if ($scope.ngModel === $scope.trueVal) {
                                 $scope.ngModel = $scope.falseVal;
                             } else if ($scope.ngModel === $scope.falseVal) {
@@ -269,6 +272,7 @@
                             } else {
                                 $scope.ngModel = $scope.trueVal;
                             }
+                            ($scope.post || ng.noop)();
                         }
                     }).$init();
                 }
