@@ -11,7 +11,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author ultrafrog, ufrog.net@gmail.com
@@ -23,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableJpaRepositories(basePackageClasses = AppRepository.class)
 @EnableDiscoveryClient
 @EnableHystrix
-public class LeoConsoleApplication extends WebMvcConfigurerAdapter {
+public class LeoConsoleApplication implements WebMvcConfigurer {
 
     /**
      * @param args argument array
