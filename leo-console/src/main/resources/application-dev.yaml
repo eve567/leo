@@ -49,26 +49,24 @@ hystrix:
             timeoutInMilliseconds: 5000
 ufrog:
   app:
-    config:
-      app:
-        secret: zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T
-        messages: classpath:messages-domain,classpath:messages-service,classpath:messages
-        logger:
-          caller: true
-      pattern:
-        uuid: "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
-        cellphone: "1[3578][0-9]{9}"
-        email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
-      path:
-        resource:
-          common: //10.111.4.49:800/leo/resources
-          host: //10.111.4.49:800/leo/resources/leo
-      cache:
-        default:
-          duration: 4h
-          prefix: leo_
-      leo:
-        enabled: true
-        host: http://127.0.0.1:8081
-        appId: 19ae06ac-0a29-11e7-8989-9ffd19844ced
-        appSecret: 2ajrIM4Kf6fyn1FbH0bfpZ5XkLEMUji5W0VddFJxNa5nePwrbRJ90PsDiFpbWN6Z
+    secret: zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T
+    messages: classpath:messages-domain,classpath:messages-service,classpath:messages
+    logger:
+      caller: true
+  pattern:
+    uuid: "[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}"
+    cellphone: "1[3578][0-9]{9}"
+    email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
+  path:
+    resource:
+      common: //10.111.4.49:800/leo/resources
+      host: //10.111.4.49:800/leo/resources/leo
+  cache:
+    default:
+      duration: 4h
+      prefix: leo_
+  leo:
+    enabled: true
+    host: http://127.0.0.1:8081
+    appId: 19ae06ac-0a29-11e7-8989-9ffd19844ced
+    appSecret: 2ajrIM4Kf6fyn1FbH0bfpZ5XkLEMUji5W0VddFJxNa5nePwrbRJ90PsDiFpbWN6Z

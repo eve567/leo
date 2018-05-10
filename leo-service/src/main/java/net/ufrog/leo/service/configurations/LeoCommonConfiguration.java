@@ -13,9 +13,11 @@ import net.ufrog.leo.domain.repositories.BlobRepository;
 import net.ufrog.leo.service.PropService;
 import net.ufrog.leo.service.storages.DBStorage;
 import net.ufrog.leo.service.storages.Storage;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -31,6 +33,7 @@ import java.util.Optional;
  * @version 0.1, 2017-07-17
  * @since 0.1
  */
+@Configuration
 @EnableConfigurationProperties(SpringWebAppConfiguration.AppProperties.class)
 public class LeoCommonConfiguration implements WebMvcConfigurer {
 
@@ -58,7 +61,7 @@ public class LeoCommonConfiguration implements WebMvcConfigurer {
 
     @Bean
     public PropertiesInterceptor propertiesInterceptor() {
-        return SpringConfigurations.propertiesInterceptor(new DBPropertiesManager(propService));
+         return SpringConfigurations.propertiesInterceptor(new DBPropertiesManager(propService));
     }
 
     @Bean

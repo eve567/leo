@@ -106,20 +106,16 @@ public class IndexController {
             WebApp app = App.current(WebApp.class);
 
             //noinspection unchecked
-            app.getSession(SESSION_ACCESS_TOKENS, List.class).map(list -> {
+            app.getSession(SESSION_ACCESS_TOKENS, List.class).ifPresent(list ->
                 //noinspection unchecked
                 list.forEach(data -> {
                     AccessToken accessToken = (AccessToken) data;
                     AccessTokenManager.get().offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken());
                     ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_OUT, UserSignLog.Mode.GATEWAY, accessToken.getAppId(), accessToken.getUserId(), null, null));
-                });
-                return list;
-            }).orElseGet(() -> {
-                List<AccessToken> lAccessToken = new ArrayList<>();
-                app.setUser(null);
-                app.setSession(SESSION_ACCESS_TOKENS, lAccessToken);
-                return lAccessToken;
-            });
+                })
+            );
+            app.setUser(null);
+            app.setSession(SESSION_ACCESS_TOKENS, new ArrayList<>());
         }
         return signIn();
     }
