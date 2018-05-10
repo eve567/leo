@@ -1,9 +1,12 @@
 package net.ufrog.leo.service.storages;
 
+import net.ufrog.common.Logger;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.leo.domain.Models;
 import net.ufrog.leo.domain.models.Blob;
 import net.ufrog.leo.domain.repositories.BlobRepository;
+
+import java.util.Optional;
 
 /**
  * 数据库数据仓储
@@ -37,21 +40,22 @@ public class DBStorage implements Storage {
 
     @Override
     public void update(String key, byte[] bytes) {
-        Blob blob = blobRepository.findOne(getKey(key));
-        blob.setValue(bytes);
-        blobRepository.save(blob);
-        Caches.delete(CACHE, key);
+        blobRepository.findById(getKey(key)).ifPresent(blob -> {
+            blob.setValue(bytes);
+            blobRepository.save(blob);
+            Caches.delete(CACHE, key);
+        });
     }
 
     @Override
     public byte[] get(String key) {
-        byte[] bytes = Caches.get(CACHE, key, byte[].class);
-        if (bytes == null) {
-            Blob blob = blobRepository.findOne(getKey(key));
-            bytes = blob.getValue();
-            Caches.set(CACHE, key, bytes);
-        }
-        return bytes;
+        return Optional.ofNullable(Caches.get(CACHE, key, byte[].class)).orElseGet(() -> blobRepository.findById(getKey(key)).map(blob -> {
+            Caches.set(CACHE, key, blob.getValue());
+            return blob.getValue();
+        }).orElseGet(() -> {
+            Logger.warn("cannot find blob by key: %s", key);
+            return new byte[] {};
+        }));
     }
 
     /**

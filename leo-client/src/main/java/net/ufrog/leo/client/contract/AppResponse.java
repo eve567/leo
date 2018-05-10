@@ -1,6 +1,6 @@
 package net.ufrog.leo.client.contract;
 
-import net.ufrog.aries.common.contract.Resp;
+import net.ufrog.aries.common.contract.Response;
 
 /**
  * 应用响应
@@ -9,7 +9,7 @@ import net.ufrog.aries.common.contract.Resp;
  * @version 3.0.0, 2018-04-18
  * @since 3.0.0
  */
-public class AppResp extends Resp {
+public class AppResponse extends Response {
 
     private static final long serialVersionUID = 6951688888075178549L;
 

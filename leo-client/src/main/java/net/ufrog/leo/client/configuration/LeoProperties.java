@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @version 3.0.0, 2018-04-17
  * @since 3.0.0
  */
-@ConfigurationProperties(prefix = "ufrog.app.config.leo")
+@ConfigurationProperties(prefix = "ufrog.leo")
 public class LeoProperties {
 
     /** 地址 */

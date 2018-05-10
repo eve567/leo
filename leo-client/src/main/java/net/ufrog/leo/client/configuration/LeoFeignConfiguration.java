@@ -1,9 +1,9 @@
 package net.ufrog.leo.client.configuration;
 
 import net.ufrog.leo.client.AppClient;
-import net.ufrog.leo.client.fallback.AppClientFallbackFactory;
+import net.ufrog.leo.client.fallbackfactory.AppClientFallbackFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**

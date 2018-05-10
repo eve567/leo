@@ -56,10 +56,7 @@ public class UserServiceImpl implements UserService {
      * @param userSignLogRepository 用户登录日志仓库
      */
     @Autowired
-    public UserServiceImpl(
-            UserRepository userRepository,
-            UserRoleRepository userRoleRepository,
-            UserSignLogRepository userSignLogRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, UserSignLogRepository userSignLogRepository) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
         this.userSignLogRepository = userSignLogRepository;
@@ -83,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(String id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -121,9 +118,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User update(User user) {
-        User oUser = userRepository.findOne(user.getId());
-        Objects.copyProperties(oUser, user, "creator", "createTime", "updater", "updateTime");
-        return userRepository.save(oUser);
+        return userRepository.findById(user.getId()).map(oUser -> {
+            Objects.copyProperties(oUser, user, "creator", "createTime", "updater", "updateTime");
+            return userRepository.save(oUser);
+        }).orElseThrow(() -> new ServiceException("cannot find user by id: " + user.getId()));
     }
 
     @Override
@@ -145,12 +143,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<UserRole> bindRoles(String userId, String appId, String[] roleIds) {
         List<UserRole> lUserRole = userRoleRepository.findByUserIdAndAppIdAndType(userId, appId, Role.Type.PUBLIC);
-        userRoleRepository.delete(lUserRole);
+        userRoleRepository.deleteAll(lUserRole);
         Logger.info("delete %s original user role reference(s).", lUserRole.size());
 
-        List<UserRole> lUR = new ArrayList<>(roleIds.length);
-        Stream.of(roleIds).forEach(roleId -> lUR.add(Models.newUserRole(userId, roleId)));
-        userRoleRepository.save(lUR);
-        return lUR;
+        List<UserRole> lnUserRole = new ArrayList<>(roleIds.length);
+        Stream.of(roleIds).forEach(roleId -> lnUserRole.add(Models.newUserRole(userId, roleId)));
+        userRoleRepository.saveAll(lnUserRole);
+        return lnUserRole;
     }
 }

@@ -1,6 +1,7 @@
 package net.ufrog.leo.service.impls;
 
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.domain.Models;
 import net.ufrog.leo.domain.models.Prop;
 import net.ufrog.leo.domain.repositories.PropRepository;
 import net.ufrog.leo.service.PropService;
@@ -42,11 +43,8 @@ public class PropServiceImpl implements PropService {
     @Override
     @Transactional
     public Prop save(String code, String value) {
-        Prop prop = propRepository.findByCode(code);
-        if (prop == null) {
-            prop = new Prop();
-            prop.setCode(code);
-        } if (!Strings.equals(prop.getValue(), value)) {
+        Prop prop = propRepository.findByCode(code).orElseGet(() -> Models.newProp(code));
+        if (!Strings.equals(prop.getValue(), value)) {
             prop.setValue(value);
             propRepository.save(prop);
         }

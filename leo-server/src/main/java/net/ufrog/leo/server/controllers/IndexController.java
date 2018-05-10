@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 索引控制器
@@ -105,15 +104,22 @@ public class IndexController {
         AppUser appUser = App.current().getUser();
         if (appUser != null) {
             WebApp app = App.current(WebApp.class);
-            @SuppressWarnings("unchecked") List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
-            if (lAccessToken != null) {
-                lAccessToken.forEach(accessToken -> {
+
+            //noinspection unchecked
+            app.getSession(SESSION_ACCESS_TOKENS, List.class).map(list -> {
+                //noinspection unchecked
+                list.forEach(data -> {
+                    AccessToken accessToken = (AccessToken) data;
                     AccessTokenManager.get().offline(appUser.getId(), accessToken.getAppId(), accessToken.getToken());
                     ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_OUT, UserSignLog.Mode.GATEWAY, accessToken.getAppId(), accessToken.getUserId(), null, null));
                 });
-            }
-            app.setUser(null);
-            app.session(SESSION_ACCESS_TOKENS, new ArrayList<>());
+                return list;
+            }).orElseGet(() -> {
+                List<AccessToken> lAccessToken = new ArrayList<>();
+                app.setUser(null);
+                app.setSession(SESSION_ACCESS_TOKENS, lAccessToken);
+                return lAccessToken;
+            });
         }
         return signIn();
     }
@@ -150,21 +156,17 @@ public class IndexController {
     @GetMapping("/redirect/{appId}")
     public String redirect(@PathVariable("appId") String appId, HttpServletRequest request) {
         net.ufrog.leo.domain.models.App app = appService.getById(appId);
-        @SuppressWarnings("unchecked") List<AccessToken> lAccessToken = App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, List.class);
-        if (lAccessToken == null) lAccessToken = new ArrayList<>();
+        WebApp webApp = App.current(WebApp.class);
+        @SuppressWarnings("unchecked") List<AccessToken> lAccessToken = webApp.getSession(SESSION_ACCESS_TOKENS, List.class).orElse(new ArrayList());
 
-        AccessToken accessToken;
-        Optional<AccessToken> oAccessToken = lAccessToken.stream().filter(at -> Strings.equals(appId, at.getAppId())).findFirst();
-        if (!oAccessToken.isPresent()) {
-            accessToken = AccessTokenManager.get().online(App.user(), app, request.getRemoteAddr());
-
-            lAccessToken.add(accessToken);
-            App.current(WebApp.class).session(SESSION_ACCESS_TOKENS, lAccessToken);
-            ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_IN, UserSignLog.Mode.GATEWAY, accessToken.getAppId(), accessToken.getUserId(), null, null));
-            Logger.debug("create access token '%s' for app '%s'", accessToken.getToken(), accessToken.getAppId());
-        } else {
-            accessToken = oAccessToken.get();
-        }
+        AccessToken accessToken = lAccessToken.stream().filter(at -> Strings.equals(appId, at.getAppId())).findFirst().orElseGet(() -> {
+            AccessToken at = AccessTokenManager.get().online(App.user(), app, request.getRemoteAddr());
+            lAccessToken.add(at);
+            webApp.setSession(SESSION_ACCESS_TOKENS, lAccessToken);
+            ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_IN, UserSignLog.Mode.GATEWAY, at.getAppId(), at.getUserId(), null, null));
+            Logger.debug("create access token '%s' for app '%s'", at.getToken(), at.getAppId());
+            return at;
+        });
 
         String uri = app.getUrl() + (app.getUrl().contains("?") ? "&" : "?") + LeoAppFilter.PARAM_KEY + "=" + accessToken.getToken();
         Logger.debug("redirect to uri: %s", uri);

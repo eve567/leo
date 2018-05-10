@@ -1,13 +1,13 @@
 package net.ufrog.leo.client.contract;
 
-import net.ufrog.aries.common.contract.Resp;
+import net.ufrog.aries.common.contract.Response;
 
 /**
  * @author ultrafrog, ufrog.net@gmail.com
  * @version 3.0.0, 2018-04-11
  * @since 3.0.0
  */
-public class AppUserResp extends Resp {
+public class AppUserResponse extends Response {
 
     private static final long serialVersionUID = 5154888543171961093L;
 

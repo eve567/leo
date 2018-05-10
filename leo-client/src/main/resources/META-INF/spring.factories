@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration = net.ufrog.leo.client.configuration.LeoAutoConfiguration,net.ufrog.leo.client.configuration.LeoFeignConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration = net.ufrog.leo.client.configuration.LeoAppConfiguration,\
+                                                                 net.ufrog.leo.client.configuration.LeoFeignConfiguration

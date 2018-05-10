@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 导航仓库
@@ -45,5 +46,5 @@ public interface NavRepository extends JpaRepository<Nav, String> {
      * @param appId 应用编号
      * @return 导航对象
      */
-    Nav findByParentIdAndNextIdAndAppId(String parentId, String nextId, String appId);
+    Optional<Nav> findByParentIdAndNextIdAndAppId(String parentId, String nextId, String appId);
 }

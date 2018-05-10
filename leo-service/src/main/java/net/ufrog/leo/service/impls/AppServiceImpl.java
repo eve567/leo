@@ -3,6 +3,7 @@ package net.ufrog.leo.service.impls;
 import net.ufrog.common.Logger;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.data.spring.Domains;
+import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.models.App;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -62,17 +65,15 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public App findById(String id) {
-        return appRepository.findOne(id);
+        return appRepository.findById(id).orElse(null);
     }
 
     @Override
     public App getById(String id) {
-        App app = Caches.get(CACHE_APP, id, App.class);
-        if (app == null) {
-            app = findById(id);
-            if (app != null) Caches.set(CACHE_APP, id, app);
-        }
-        return app;
+        return Optional.ofNullable(Caches.get(CACHE_APP, id, App.class)).orElseGet(() -> Optional.ofNullable(findById(id)).map(app -> {
+            Caches.set(CACHE_APP, id, app);
+            return app;
+        }).orElse(null));
     }
 
     @Override
@@ -82,12 +83,12 @@ public class AppServiceImpl implements AppService {
 
     @Override
     public List<App> getAll() {
-        @SuppressWarnings("unchecked") List<App> lApp = Caches.get(CACHE_APPS, List.class);
-        if (lApp == null) {
-            lApp = findAll();
+        //noinspection unchecked
+        return Optional.ofNullable(Caches.get(CACHE_APPS, List.class)).orElseGet(() -> {
+            List<App> lApp = findAll();
             Caches.set(CACHE_APPS, lApp);
-        }
-        return lApp;
+            return lApp;
+        });
     }
 
     @Override
@@ -114,28 +115,29 @@ public class AppServiceImpl implements AppService {
     @Override
     @Transactional
     public App update(App app) {
-        App oApp = appRepository.findOne(app.getId());
-        Objects.copyProperties(oApp, app, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
-        clear(app.getId());
-        clearAll();
-        return appRepository.save(oApp);
+        return appRepository.findById(app.getId()).map(oApp -> {
+            Objects.copyProperties(oApp, app, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
+            clear(app.getId());
+            clearAll();
+            return appRepository.save(oApp);
+        }).orElseThrow(() -> new ServiceException("cannot find app by id: " + app.getId()));
     }
 
     @Override
     @Transactional
     public List<AppResource> bindResourceTypes(String id, String[] types) {
         List<AppResource> lAppResource = appResourceRepository.findByAppId(id);
-        List<AppResource> lAR = new ArrayList<>(types.length);
-        Logger.info("delete %s app resource type reference(s).", lAppResource.size());
-        appResourceRepository.delete(lAppResource);
+        List<AppResource> lsAppResource = Collections.synchronizedList(new ArrayList<>(types.length));
 
+        Logger.info("delete %s app resource type reference(s).", lAppResource.size());
+        appResourceRepository.deleteAll(lAppResource);
         Stream.of(types).parallel().forEach(type -> {
             AppResource appResource = new AppResource();
             appResource.setType(type);
             appResource.setAppId(id);
-            lAR.add(appResource);
+            lsAppResource.add(appResource);
         });
-        return appResourceRepository.save(lAR);
+        return appResourceRepository.saveAll(lsAppResource);
     }
 
     @Override

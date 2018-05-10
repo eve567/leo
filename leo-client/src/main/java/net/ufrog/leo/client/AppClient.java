@@ -3,10 +3,10 @@ package net.ufrog.leo.client;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import net.ufrog.aries.common.contract.PageResp;
-import net.ufrog.leo.client.contract.AppResp;
-import net.ufrog.leo.client.fallback.AppClientFallbackFactory;
-import org.springframework.cloud.netflix.feign.FeignClient;
+import net.ufrog.aries.common.contract.PageResponse;
+import net.ufrog.leo.client.contract.AppResponse;
+import net.ufrog.leo.client.fallbackfactory.AppClientFallbackFactory;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,8 +31,7 @@ public interface AppClient {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "按编号查询应用", notes = "查询单个应用")
-    @ApiImplicitParam(value = "应用编号", name = "id", required = true, paramType = "path", dataTypeClass = String.class)
-    AppResp read(@PathVariable("id") String id);
+    AppResponse read(@PathVariable("id") String id);
 
     /**
      * 查询所有应用
@@ -41,5 +40,5 @@ public interface AppClient {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "查询所有应用", notes = "查询单个应用")
-    PageResp<AppResp> read();
+    PageResponse<AppResponse> read();
 }

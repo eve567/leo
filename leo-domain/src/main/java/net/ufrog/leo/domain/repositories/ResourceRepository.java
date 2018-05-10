@@ -4,6 +4,8 @@ import net.ufrog.leo.domain.models.Resource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * 资源仓库
  *
@@ -21,5 +23,5 @@ public interface ResourceRepository extends JpaRepository<Resource, String> {
      * @param referenceId 相关编号
      * @return 资源对象
      */
-    Resource findByTypeAndReferenceId(String type, String referenceId);
+    Optional<Resource> findByTypeAndReferenceId(String type, String referenceId);
 }

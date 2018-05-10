@@ -1,12 +1,13 @@
 package net.ufrog.leo.client;
 
 import io.swagger.annotations.Api;
-import net.ufrog.aries.common.contract.ListResp;
-import net.ufrog.leo.client.contract.AppResp;
-import net.ufrog.leo.client.contract.AppUserResp;
-import net.ufrog.leo.client.contract.NavResp;
-import net.ufrog.leo.client.fallback.LeoClientFallbackFactory;
-import org.springframework.cloud.netflix.feign.FeignClient;
+import io.swagger.annotations.ApiOperation;
+import net.ufrog.aries.common.contract.ListResponse;
+import net.ufrog.leo.client.contract.AppResponse;
+import net.ufrog.leo.client.contract.AppUserResponse;
+import net.ufrog.leo.client.contract.NavResponse;
+import net.ufrog.leo.client.fallbackfactory.LeoClientFallbackFactory;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +32,8 @@ public interface LeoClient {
      * @return 应用用户响应
      */
     @RequestMapping(value = "/user/{appId}/{token}", method = RequestMethod.GET)
-    AppUserResp getUser(@PathVariable("appId") String appId, @PathVariable("token") String token);
+    @ApiOperation(value = "获取当前用户", notes = "根据令牌及应用编号获取当前用户基础信息")
+    AppUserResponse getUser(@PathVariable("appId") String appId, @PathVariable("token") String token);
 
     /**
      * 获取当前用户权限下的应用
@@ -40,8 +42,9 @@ public interface LeoClient {
      * @param token 令牌
      * @return 应用列表
      */
-    @RequestMapping(value = "/apps/{token}/{appId}")
-    ListResp<AppResp> getApps(@PathVariable("appId") String appId, @PathVariable("token") String token);
+    @RequestMapping(value = "/apps/{token}/{appId}", method = RequestMethod.GET)
+    @ApiOperation(value = "获取当前用户应用权限", notes = "获取当前用户权限下的应用资源")
+    ListResponse<AppResponse> getApps(@PathVariable("appId") String appId, @PathVariable("token") String token);
 
     /**
      * 获取当前用户当前应用下的导航
@@ -53,5 +56,6 @@ public interface LeoClient {
      * @return 导航列表
      */
     @RequestMapping(value = "/navs/{type}/{parentId}/{token}/{appId}", method = RequestMethod.GET)
-    ListResp<NavResp> getNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("appId") String appId, @PathVariable("token") String token);
+    @ApiOperation(value = "获取当前用户导航权限", notes = "获取当前用户权限下的导航资源")
+    ListResponse<NavResponse> getNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("appId") String appId, @PathVariable("token") String token);
 }

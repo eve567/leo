@@ -8,21 +8,19 @@ import net.ufrog.common.spring.fastjson.FastJsonpHttpMessageConverter;
 import net.ufrog.common.spring.interceptor.MultipartRequestInterceptor;
 import net.ufrog.common.spring.interceptor.PropertiesInterceptor;
 import net.ufrog.common.spring.interceptor.TokenInterceptor;
-import net.ufrog.common.spring.springboot.AppAutoConfiguration;
+import net.ufrog.common.spring.springboot.SpringWebAppConfiguration;
 import net.ufrog.leo.domain.repositories.BlobRepository;
 import net.ufrog.leo.service.PropService;
 import net.ufrog.leo.service.storages.DBStorage;
 import net.ufrog.leo.service.storages.Storage;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +31,11 @@ import java.util.Optional;
  * @version 0.1, 2017-07-17
  * @since 0.1
  */
-@Configuration
-@EnableConfigurationProperties(AppAutoConfiguration.AppProperties.class)
-public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
+@EnableConfigurationProperties(SpringWebAppConfiguration.AppProperties.class)
+public class LeoCommonConfiguration implements WebMvcConfigurer {
 
     /**  */
-    private AppAutoConfiguration.AppProperties appProperties;
+    private SpringWebAppConfiguration.AppProperties appProperties;
 
     /** 系统属性业务接口 */
     private PropService propService;
@@ -49,7 +46,7 @@ public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
      * @param appProperties 应用属性
      * @param propService 系统属性业务接口
      */
-    public LeoCommonConfiguration(AppAutoConfiguration.AppProperties appProperties, PropService propService) {
+    public LeoCommonConfiguration(SpringWebAppConfiguration.AppProperties appProperties, PropService propService) {
         this.appProperties = appProperties;
         this.propService = propService;
     }
@@ -82,7 +79,7 @@ public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public MessageSource messageSource() {
-        return SpringConfigurations.reloadableResourceBundleMessageSource(appProperties.getConfig().getProperty("app.messages"));
+        return SpringConfigurations.reloadableResourceBundleMessageSource(appProperties.get().getProperty("app.messages"));
     }
 
     @Override
@@ -97,7 +94,7 @@ public class LeoCommonConfiguration extends WebMvcConfigurerAdapter {
         List<ExceptionHandler> lExceptionHandler = new ArrayList<>(3);
         lExceptionHandler.add(new ServiceExceptionHandler());
         lExceptionHandler.add(new InvalidArgumentExceptionHandler());
-        lExceptionHandler.add(new NotSignExceptionHandler("sign", appProperties.getConfig().getProperty("leo.host") + "/sign_out", "_not_sign::"));
+        lExceptionHandler.add(new NotSignExceptionHandler("sign", appProperties.get().getProperty("leo.host") + "/sign_out", "_not_sign::"));
         setExceptionHandler(lExceptionHandler, exceptionResolvers);
     }
 

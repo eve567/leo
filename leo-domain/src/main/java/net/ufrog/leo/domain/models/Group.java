@@ -16,8 +16,6 @@ public class Group extends Model {
 
     private static final long serialVersionUID = -8112194330217466145L;
 
-    public static final String PARENT_ID_ROOT  = "_root";
-
     /** 名称 */
     @javax.persistence.Column(name = "vc_name")
     private java.lang.String name;

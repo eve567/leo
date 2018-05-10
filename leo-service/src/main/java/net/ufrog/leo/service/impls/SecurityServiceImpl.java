@@ -6,6 +6,7 @@ import net.ufrog.common.cache.Caches;
 import net.ufrog.common.dict.Dicts;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Strings;
+import net.ufrog.leo.domain.Models;
 import net.ufrog.leo.domain.models.GroupRole;
 import net.ufrog.leo.domain.models.Resource;
 import net.ufrog.leo.domain.models.RoleResource;
@@ -81,43 +82,39 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public Resource findResourceById(String resourceId) {
-        return resourceRepository.findOne(resourceId);
+        return resourceRepository.findById(resourceId).orElse(null);
     }
 
     @Override
     public Resource findResourceByTypeAndReferenceId(String type, String referenceId) {
-        return resourceRepository.findByTypeAndReferenceId(type, referenceId);
+        return resourceRepository.findByTypeAndReferenceId(type, referenceId).orElse(null);
     }
 
     @Override
     public <T extends ID> List<T> filter(List<T> lResource, String userId) {
-        User user = userRepository.findOne(userId);
-        if (!Strings.equals(User.Type.ROOT, user.getType()) && lResource != null && lResource.size() > 0) {
-            List<String> lAllowed = getAllowedResource(userId, getType(lResource.get(0).getClass()));
-            return lResource.stream().filter(resource -> lAllowed.contains(resource.getId())).collect(Collectors.toList());
-        }
-        return lResource;
+        return userRepository.findById(userId).map(user -> {
+            if (!Strings.equals(User.Type.ROOT, user.getType()) && lResource != null && lResource.size() > 0) {
+                List<String> lAllowed = getAllowedResource(userId, getType(lResource.get(0).getClass()));
+                return lResource.stream().filter(resource -> lAllowed.contains(resource.getId())).collect(Collectors.toList());
+            }
+            return lResource;
+        }).orElseThrow(() -> new ServiceException("cannot find user by id: " + userId));
     }
 
     @Override
     @Transactional
     public Resource createResource(String type, String referenceId) {
-        Resource resource = new Resource();
-        resource.setType(type);
-        resource.setReferenceId(referenceId);
-        return resourceRepository.save(resource);
+        return resourceRepository.save(Models.newResource(type, referenceId));
     }
 
     @Override
     @Transactional
     public Resource deleteResource(String type, String referenceId) {
-        Resource resource = resourceRepository.findByTypeAndReferenceId(type, referenceId);
-        if (resource != null) {
-            List<RoleResource> lRoleResource = roleResourceRepository.findByResourceId(resource.getId());
-            roleResourceRepository.delete(lRoleResource);
+        return resourceRepository.findByTypeAndReferenceId(type, referenceId).map(resource -> {
+            roleResourceRepository.deleteAll(roleResourceRepository.findByResourceId(resource.getId()));
             resourceRepository.delete(resource);
-        }
-        return resource;
+            return resource;
+        }).orElse(null);
     }
 
     @Override
@@ -171,9 +168,8 @@ public class SecurityServiceImpl implements SecurityService {
             lGroupRole.forEach(groupRole -> lRoleId.add(groupRole.getRoleId()));
 
             lRoleId.forEach(roleId ->
-                roleResourceRepository.findByRoleId(roleId).forEach(roleResource -> {
-                    Resource resource = resourceRepository.findOne(roleResource.getResourceId());
-                    if (Strings.equals(type, resource.getType())) {
+                roleResourceRepository.findByRoleId(roleId).forEach(roleResource ->
+                    resourceRepository.findById(roleResource.getResourceId()).filter(resource -> Strings.equals(type, resource.getType())).ifPresent(resource -> {
                         if (!lAll.contains(resource.getReferenceId())) {
                             lAll.add(resource.getReferenceId());
                             Logger.debug("add resource: %s, type: %s", resource.getReferenceId(), type);
@@ -181,8 +177,8 @@ public class SecurityServiceImpl implements SecurityService {
                             lBan.add(resource.getReferenceId());
                             Logger.debug("ban resource: %s, type: %s", resource.getReferenceId(), type);
                         }
-                    }
-                })
+                    })
+                )
             );
             lAll.removeAll(lBan);
             mResource.put(type, lAll);

@@ -1,7 +1,6 @@
 package net.ufrog.leo.console;
 
 import net.ufrog.leo.client.configuration.LeoInterception;
-import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.repositories.AppRepository;
 import net.ufrog.leo.service.AppService;
@@ -19,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @version 3.0.0, 2018-04-17
  * @since 3.0.0
  */
-@SpringBootApplication(scanBasePackageClasses = {LeoConsoleApplication.class, AppService.class, SecurityJpql.class})
+@SpringBootApplication(scanBasePackageClasses = {LeoConsoleApplication.class, AppService.class})
 @EntityScan(basePackageClasses = App.class)
 @EnableJpaRepositories(basePackageClasses = AppRepository.class)
 @EnableDiscoveryClient

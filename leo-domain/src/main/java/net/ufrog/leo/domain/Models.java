@@ -60,6 +60,32 @@ public class Models {
     }
 
     /**
+     * 新建属性实例
+     *
+     * @param code 代码
+     * @return 属性实例
+     */
+    public static Prop newProp(String code) {
+        Prop prop = new Prop();
+        prop.setCode(code);
+        return prop;
+    }
+
+    /**
+     * 新建资源实例
+     *
+     * @param type 类型
+     * @param referenceId 相关编号
+     * @return 资源实例
+     */
+    public static Resource newResource(String type, String referenceId) {
+        Resource resource = new Resource();
+        resource.setType(type);
+        resource.setReferenceId(referenceId);
+        return resource;
+    }
+
+    /**
      * 新建角色资源实例
      *
      * @param type 类型

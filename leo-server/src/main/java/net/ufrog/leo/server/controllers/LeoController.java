@@ -1,12 +1,12 @@
 package net.ufrog.leo.server.controllers;
 
-import net.ufrog.aries.common.contract.ListResp;
+import net.ufrog.aries.common.contract.ListResponse;
 import net.ufrog.common.Logger;
 import net.ufrog.leo.client.LeoClient;
 import net.ufrog.leo.client.app.LeoAppUser;
-import net.ufrog.leo.client.contract.AppResp;
-import net.ufrog.leo.client.contract.AppUserResp;
-import net.ufrog.leo.client.contract.NavResp;
+import net.ufrog.leo.client.contract.AppResponse;
+import net.ufrog.leo.client.contract.AppUserResponse;
+import net.ufrog.leo.client.contract.NavResponse;
 import net.ufrog.leo.client.contract.ResultCode;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.Nav;
@@ -56,10 +56,10 @@ public class LeoController implements LeoClient {
     }
 
     @Override
-    public AppUserResp getUser(@PathVariable("appId") String appId, @PathVariable("token") String token) {
+    public AppUserResponse getUser(@PathVariable("appId") String appId, @PathVariable("token") String token) {
         Logger.debug("find user by appId: %s, token: %s", appId, token);
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
-        AppUserResp appUserResp = new AppUserResp();
+        AppUserResponse appUserResp = new AppUserResponse();
 
         if (accessToken != null) {
             LeoAppUser leoAppUser = accessToken.getLeoAppUser();
@@ -78,12 +78,12 @@ public class LeoController implements LeoClient {
     }
 
     @Override
-    public ListResp<AppResp> getApps(@PathVariable("appId") String appId, @PathVariable("token") String token) {
+    public ListResponse<AppResponse> getApps(@PathVariable("appId") String appId, @PathVariable("token") String token) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
-        ListResp<AppResp> lrAppResp = new ListResp<>();
+        ListResponse<AppResponse> lrAppResp = new ListResponse<>();
 
         securityService.filter(appService.findAll(), accessToken.getUserId()).forEach(app -> {
-            AppResp appResp = new AppResp();
+            AppResponse appResp = new AppResponse();
             appResp.setId(app.getId());
             appResp.setName(app.getName());
             appResp.setCode(app.getCode());
@@ -95,14 +95,14 @@ public class LeoController implements LeoClient {
     }
 
     @Override
-    public ListResp<NavResp> getNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("appId") String appId, @PathVariable("token") String token) {
+    public ListResponse<NavResponse> getNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("appId") String appId, @PathVariable("token") String token) {
         AccessToken accessToken = AccessTokenManager.get().get(token, appId);
         List<Nav> lNav = navService.getChildren(type, appId, parentId);
-        ListResp<NavResp> lrNavResp = new ListResp<>();
+        ListResponse<NavResponse> lrNavResp = new ListResponse<>();
         App app = appService.getById(appId);
 
         securityService.filter(lNav, accessToken.getUserId()).forEach(nav -> {
-            NavResp navResp = new NavResp();
+            NavResponse navResp = new NavResponse();
             navResp.setId(nav.getId());
             navResp.setName(nav.getName());
             navResp.setSubname(nav.getSubname());

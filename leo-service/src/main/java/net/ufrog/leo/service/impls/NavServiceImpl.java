@@ -60,25 +60,21 @@ public class NavServiceImpl implements NavService {
     @Override
     public List<Nav> getChildren(String type, String appId, String parentId) {
         String key = getCacheKey(type, appId, parentId);
-        @SuppressWarnings("unchecked") List<Nav> lNav = Caches.get(CACHE_NAV, key, List.class);
-        if (lNav == null) {
-            lNav = findChildren(type, appId, parentId);
+
+        //noinspection unchecked
+        return Optional.ofNullable(Caches.get(CACHE_NAV, key, List.class)).orElseGet(() -> {
+            List<Nav> lNav = findChildren(type, appId, parentId);
             Caches.set(CACHE_NAV, key, lNav);
-        }
-        return lNav;
+            return lNav;
+        });
     }
 
     @Override
     @Transactional
     public Nav create(Nav nav) {
         checkDuplicate(nav);
-        Nav prev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId());
         navRepository.save(nav);
-
-        if (prev != null) {
-            prev.setNextId(nav.getId());
-            navRepository.save(prev);
-        }
+        navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId()).ifPresent(prev -> setNextId(prev, nav.getId()));
         securityService.createResource(Resource.Type.NAV, nav.getId());
         clear(nav.getType(), nav.getAppId(), nav.getParentId());
         return nav;
@@ -88,39 +84,28 @@ public class NavServiceImpl implements NavService {
     @Transactional
     public Nav update(Nav nav) {
         checkDuplicate(nav);
-        Nav oNav = navRepository.findOne(nav.getId());
-
-        if (!Strings.equals(nav.getNextId(), oNav.getNextId())) {
-            Nav nPrev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId());
-            Nav oPrev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId());
-            if (nPrev != null) {
-                nPrev.setNextId(nav.getId());
-                navRepository.save(nPrev);
-            } if (oPrev != null) {
-                oPrev.setNextId(oNav.getNextId());
-                navRepository.save(oPrev);
+        return navRepository.findById(nav.getId()).map(oNav -> {
+            if (!Strings.equals(nav.getNextId(), oNav.getNextId())) {
+                navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId()).ifPresent(prev -> setNextId(prev, nav.getId()));
+                navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId()).ifPresent(prev -> setNextId(prev, oNav.getNextId()));
             }
-        }
-        Objects.copyProperties(oNav, nav, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
-        clear(nav.getType(), nav.getAppId(), nav.getParentId());
-        return navRepository.save(oNav);
+            Objects.copyProperties(oNav, nav, Boolean.TRUE, "id", "creator", "createTime", "updater", "updateTime");
+            clear(nav.getType(), nav.getAppId(), nav.getParentId());
+            return navRepository.save(oNav);
+        }).orElseThrow(() -> new ServiceException("cannot find nav by id: " + nav.getId()));
     }
 
     @Override
     @Transactional
     public Nav delete(String id) {
-        Nav nav = navRepository.findOne(id);
-        checkChildren(nav);
-        Nav prev = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId());
-
-        if (prev != null) {
-            prev.setNextId(nav.getNextId());
-            navRepository.save(prev);
-        }
-        navRepository.delete(nav);
-        securityService.deleteResource(Resource.Type.NAV, nav.getId());
-        clear(nav.getType(), nav.getAppId(), nav.getParentId());
-        return nav;
+        return navRepository.findById(id).map(nav -> {
+            checkChildren(nav);
+            navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getId(), nav.getAppId()).ifPresent(prev -> setNextId(prev, nav.getNextId()));
+            navRepository.delete(nav);
+            securityService.deleteResource(Resource.Type.NAV, nav.getId());
+            clear(nav.getType(), nav.getAppId(), nav.getParentId());
+            return nav;
+        }).orElseThrow(() -> new ServiceException("cannot find nav by id: " + id));
     }
 
     @Override
@@ -145,6 +130,7 @@ public class NavServiceImpl implements NavService {
         List<Nav> lTmp = new ArrayList<>(lExportNav.size());
         final Nav[] last = new Nav[1];
 
+        //noinspection ComparatorMethodParameterNotUsed
         lExportNav.stream().sorted((o1, o2) -> -1).forEach(exportNav -> {
             Logger.info("handle nav with code %s", exportNav.getCode());
             Optional<Nav> oNav = lNav.stream().filter(nav -> Strings.equals(exportNav.getCode(), nav.getCode())).findFirst();
@@ -233,5 +219,16 @@ public class NavServiceImpl implements NavService {
             clear(nav.getType(), nav.getAppId(), nav.getParentId());
             Logger.info("delete nav id: %s, code: %s, name: %s", nav.getId(), nav.getCode(), nav.getName());
         });
+    }
+
+    /**
+     * 设置下位编号
+     *
+     * @param nav 导航对象
+     * @param nextId 下位编号
+     */
+    private void setNextId(Nav nav, String nextId) {
+        nav.setNextId(nextId);
+        navRepository.save(nav);
     }
 }

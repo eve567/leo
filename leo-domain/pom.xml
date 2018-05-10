@@ -7,23 +7,25 @@
     <parent>
         <groupId>net.ufrog</groupId>
         <artifactId>leo-parent</artifactId>
-        <version>3.0.0</version>
+        <version>4.0.0</version>
     </parent>
     <artifactId>leo-domain</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>net.ufrog</groupId>
-            <artifactId>ufrog-common-data</artifactId>
+            <artifactId>aries-common</artifactId>
         </dependency>
         <dependency>
             <groupId>net.ufrog</groupId>
-            <artifactId>aries-common</artifactId>
+            <artifactId>ufrog-common-data</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>

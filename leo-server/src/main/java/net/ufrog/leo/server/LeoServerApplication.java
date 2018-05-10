@@ -4,7 +4,6 @@ import net.ufrog.aries.common.exception.AriesExceptionHandler;
 import net.ufrog.common.spring.exception.ExceptionHandler;
 import net.ufrog.leo.client.configuration.LeoInterception;
 import net.ufrog.leo.client.configuration.LeoProperties;
-import net.ufrog.leo.domain.jpqls.SecurityJpql;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.repositories.AppRepository;
 import net.ufrog.leo.server.accesstoken.AccessTokenManager;
@@ -20,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -34,14 +33,14 @@ import java.util.List;
  * @version 3.0.0, 2018-04-10
  * @since 3.0.0
  */
-@SpringBootApplication(scanBasePackageClasses = {LeoServerApplication.class, AppService.class, SecurityJpql.class})
+@SpringBootApplication(scanBasePackageClasses = {LeoServerApplication.class, AppService.class})
 @EntityScan(basePackageClasses = App.class)
 @EnableJpaRepositories(basePackageClasses = AppRepository.class)
 @EnableDiscoveryClient
 @EnableHystrix
 @EnableSwagger2
 @EnableConfigurationProperties(LeoProperties.class)
-public class LeoServerApplication extends WebMvcConfigurerAdapter {
+public class LeoServerApplication implements WebMvcConfigurer {
 
     /**
      * @param args argument array

@@ -106,10 +106,10 @@ public interface UserService {
     /**
      * 绑定角色
      *
-     * @param userId
-     * @param appId
-     * @param roleIds
-     * @return
+     * @param userId 用户编号
+     * @param appId 应用编号
+     * @param roleIds 角色编号数组
+     * @return 用户角色列表
      */
     List<UserRole> bindRoles(String userId, String appId, String[] roleIds);
 

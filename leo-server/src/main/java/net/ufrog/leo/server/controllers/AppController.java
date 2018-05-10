@@ -1,8 +1,8 @@
 package net.ufrog.leo.server.controllers;
 
-import net.ufrog.aries.common.contract.PageResp;
+import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.leo.client.AppClient;
-import net.ufrog.leo.client.contract.AppResp;
+import net.ufrog.leo.client.contract.AppResponse;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppController implements AppClient {
 
     @Override
-    public AppResp read(String id) {
+    public AppResponse read(String id) {
         return null;
     }
 
     @Override
-    public PageResp<AppResp> read() {
+    public PageResponse<AppResponse> read() {
         return null;
     }
 }

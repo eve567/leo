@@ -7,10 +7,10 @@
     <parent>
         <groupId>net.ufrog</groupId>
         <artifactId>aries-parent</artifactId>
-        <version>0.0.1</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>leo-parent</artifactId>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
     <packaging>pom</packaging>
     
     <modules>
@@ -23,9 +23,9 @@
     </modules>
 
     <properties>
-        <aries-common.version>0.0.1</aries-common.version>
-        <leo.version>3.0.0</leo.version>
-        <leo-client.version>3.0.0</leo-client.version>
+        <aries-common.version>1.0.0</aries-common.version>
+        <leo.version>4.0.0</leo.version>
+        <leo-client.version>4.0.0</leo-client.version>
     </properties>
 
     <dependencyManagement>

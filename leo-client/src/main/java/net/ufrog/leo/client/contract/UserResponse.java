@@ -1,17 +1,17 @@
 package net.ufrog.leo.client.contract;
 
-import net.ufrog.aries.common.contract.Req;
+import net.ufrog.aries.common.contract.Response;
 
 /**
- * 用户请求
+ * 用户响应
  *
  * @author ultrafrog, ufrog.net@gmail.com
  * @version 3.0.0, 2018-04-08
  * @since 3.0.0
  */
-public class UserReq extends Req {
+public class UserResponse extends Response {
 
-    private static final long serialVersionUID = -3064488777657685223L;
+    private static final long serialVersionUID = -5815850342544107851L;
 
     /** 账号 */
     private java.lang.String account;
@@ -22,14 +22,23 @@ public class UserReq extends Req {
     /** 电子邮件 */
     private java.lang.String email;
 
+    /** 编号 */
+    private java.lang.String id;
+
     /** 名称 */
     private java.lang.String name;
 
-    /** 密码 */
-    private java.lang.String password;
+    /** 状态 */
+    private java.lang.String status;
+
+    /** 状态名称 */
+    private java.lang.String statusName;
 
     /** 类型 */
     private java.lang.String type;
+
+    /** 类型名称 */
+    private java.lang.String typeName;
 
     /**
      * 读取账号
@@ -86,6 +95,24 @@ public class UserReq extends Req {
     }
 
     /**
+     * 读取编号
+     *
+     * @return 编号
+     */
+    public java.lang.String getId() {
+        return id;
+    }
+
+    /**
+     * 设置编号
+     *
+     * @param id 编号
+     */
+    public void setId(java.lang.String id) {
+        this.id = id;
+    }
+
+    /**
      * 读取名称
      *
      * @return 名称
@@ -104,21 +131,39 @@ public class UserReq extends Req {
     }
 
     /**
-     * 读取密码
+     * 读取状态
      *
-     * @return 密码
+     * @return 状态
      */
-    public java.lang.String getPassword() {
-        return password;
+    public java.lang.String getStatus() {
+        return status;
     }
 
     /**
-     * 设置密码
+     * 设置状态
      *
-     * @param password 密码
+     * @param status 状态
      */
-    public void setPassword(java.lang.String password) {
-        this.password = password;
+    public void setStatus(java.lang.String status) {
+        this.status = status;
+    }
+
+    /**
+     * 读取状态名称
+     *
+     * @return 状态名称
+     */
+    public java.lang.String getStatusName() {
+        return statusName;
+    }
+
+    /**
+     * 设置状态名称
+     *
+     * @param statusName 状态名称
+     */
+    public void setStatusName(java.lang.String statusName) {
+        this.statusName = statusName;
     }
 
     /**
@@ -140,18 +185,20 @@ public class UserReq extends Req {
     }
 
     /**
-     * 类型
+     * 读取类型名称
      *
-     * @author ultrafrog
-     * @version 3.0.0, 2018-04-11
-     * @since 3.0.0
+     * @return 类型名称
      */
-    public static final class Type {
+    public java.lang.String getTypeName() {
+        return typeName;
+    }
 
-        @net.ufrog.common.dict.Element("客户")
-        public static final String CLIENT = "00";
-
-        @net.ufrog.common.dict.Element("员工")
-        public static final String STAFF = "90";
+    /**
+     * 设置类型名称
+     *
+     * @param typeName 类型名称
+     */
+    public void setTypeName(java.lang.String typeName) {
+        this.typeName = typeName;
     }
 }

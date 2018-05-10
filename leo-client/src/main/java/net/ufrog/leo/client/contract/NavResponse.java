@@ -1,6 +1,6 @@
 package net.ufrog.leo.client.contract;
 
-import net.ufrog.aries.common.contract.Resp;
+import net.ufrog.aries.common.contract.Response;
 
 /**
  * 导航响应
@@ -9,7 +9,7 @@ import net.ufrog.aries.common.contract.Resp;
  * @version 3.0.0, 2018-04-17
  * @since 3.0.0
  */
-public class NavResp extends Resp {
+public class NavResponse extends Response {
 
     private static final long serialVersionUID = 5507652887967901531L;
 

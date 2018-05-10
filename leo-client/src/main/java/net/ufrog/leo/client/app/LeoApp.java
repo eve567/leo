@@ -5,13 +5,13 @@ import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.spring.app.SpringWebApp;
-import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.client.LeoClient;
-import net.ufrog.leo.client.contract.AppUserResp;
+import net.ufrog.leo.client.contract.AppUserResponse;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * 用户中心应用
@@ -25,6 +25,9 @@ public class LeoApp extends SpringWebApp {
     private static final String SESSION_TOKEN   = "leo_session_token";
     private static final String CACHE_TOKEN     = "leo_cache_token";
 
+    /**  */
+    private static LeoClient leoClient;
+
     /**
      * 构造函数
      *
@@ -37,30 +40,26 @@ public class LeoApp extends SpringWebApp {
 
     @Override
     public AppUser getUser() {
-        String token = session(SESSION_TOKEN, String.class);
-        if (Strings.empty(token)) {
-            Logger.warn("cannot find user token.");
-            return null;
-        } else {
-            LeoAppUser leoAppUser = Caches.get(CACHE_TOKEN, token, LeoAppUser.class);
-            LeoClient leoClient = SpringWebApp.getBean(LeoClient.class);
-
-            if (leoAppUser == null) {
-                Logger.debug("find user by appId: %s, token: %s", getAppId(), token);
-                AppUserResp appUserResp = leoClient.getUser(getAppId(), token);
-                if (appUserResp.isSuccess()) {
-                    leoAppUser = new LeoAppUser(LeoUserIdConverter.convert(appUserResp.getId()), appUserResp.getAccount(), appUserResp.getName());
-                    leoAppUser.setToken(appUserResp.getToken());
-                    Caches.set(CACHE_TOKEN, token, leoAppUser, "5min");
-                    Logger.debug("cache app user by token: %s", token);
-                } else {
-                    Logger.warn("cannot find user by token: %s, appId: %s", token, getAppId());
-                }
+        return getSession(SESSION_TOKEN, String.class).map(token -> Optional.ofNullable(Caches.get(CACHE_TOKEN, token, LeoAppUser.class)).map(leoAppUser -> {
+            Logger.trace("it's from cache.");
+            return leoAppUser;
+        }).orElseGet(() -> {
+            Logger.debug("find user by appId: %s, token: %s", getAppId(), token);
+            AppUserResponse appUserResponse = getLeoClient().getUser(getAppId(), token);
+            LeoAppUser leoAppUser = null;
+            if (appUserResponse.isSuccess()) {
+                leoAppUser = new LeoAppUser(LeoUserIdConverter.convert(appUserResponse.getId()), appUserResponse.getAccount(), appUserResponse.getName());
+                leoAppUser.setToken(appUserResponse.getToken());
+                Caches.set(CACHE_TOKEN, token, leoAppUser, "5min");
+                Logger.debug("cache app user by token: %s", token);
             } else {
-                Logger.trace("it's from cache.");
+                Logger.warn("cannot find user by appId: %s, token: %s", getAppId(), token);
             }
             return leoAppUser;
-        }
+        })).orElseGet(() -> {
+            Logger.warn("cannot find user token.");
+            return null;
+        });
     }
 
     @Override
@@ -101,7 +100,7 @@ public class LeoApp extends SpringWebApp {
      * @param accessToken 令牌
      */
     void setAccessToken(String accessToken) {
-        session(SESSION_TOKEN, accessToken);
+        setSession(SESSION_TOKEN, accessToken);
     }
 
     /**
@@ -124,5 +123,15 @@ public class LeoApp extends SpringWebApp {
         LeoApp leoApp = new LeoApp(request, response);
         current(leoApp);
         return leoApp;
+    }
+
+    /**
+     * @return leo client
+     */
+    private static LeoClient getLeoClient() {
+        if (leoClient == null) {
+            leoClient = SpringWebApp.getBean(LeoClient.class);
+        }
+        return leoClient;
     }
 }

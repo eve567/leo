@@ -1,13 +1,12 @@
 package net.ufrog.leo.server.controllers;
 
-import net.ufrog.aries.common.contract.PageResp;
-import net.ufrog.common.Assert;
+import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.common.Logger;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.client.UserClient;
-import net.ufrog.leo.client.contract.UserReq;
-import net.ufrog.leo.client.contract.UserResp;
+import net.ufrog.leo.client.contract.UserRequest;
+import net.ufrog.leo.client.contract.UserResponse;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.server.LeoContracts;
 import net.ufrog.leo.service.UserService;
@@ -39,7 +38,7 @@ public class UserController implements UserClient {
     }
 
     @Override
-    public UserResp create(@RequestBody UserReq userReq) {
+    public UserResponse create(@RequestBody UserRequest userReq) {
         User user = LeoContracts.toUserModel(userReq);
         if (Strings.empty(user.getPassword())) {
             String password = Strings.random(8);
@@ -53,32 +52,32 @@ public class UserController implements UserClient {
     }
 
     @Override
-    public UserResp read(String id) {
+    public UserResponse read(String id) {
         return null;
     }
 
     @Override
-    public PageResp<UserResp> read(UserReq userReq) {
+    public PageResponse<UserResponse> read(UserRequest userReq) {
         return null;
     }
 
     @Override
-    public UserResp update(String id, UserReq userReq) {
+    public UserResponse update(String id, UserRequest userReq) {
         return null;
     }
 
     @Override
-    public UserResp updatePassword(String id, UserReq userReq) {
+    public UserResponse updatePassword(String id, UserRequest userReq) {
         return null;
     }
 
     @Override
-    public UserResp freezeOrUnfreeze(String id) {
+    public UserResponse freezeOrUnfreeze(String id) {
         return null;
     }
 
     @Override
-    public UserResp delete(String id) {
+    public UserResponse delete(String id) {
         return null;
     }
 }

@@ -1,9 +1,9 @@
-package net.ufrog.leo.client.fallback;
+package net.ufrog.leo.client.fallbackfactory;
 
 import net.ufrog.aries.common.contract.ClientFallbackFactory;
-import net.ufrog.aries.common.contract.PageResp;
+import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.leo.client.AppClient;
-import net.ufrog.leo.client.contract.AppResp;
+import net.ufrog.leo.client.contract.AppResponse;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,12 +19,12 @@ public class AppClientFallbackFactory extends ClientFallbackFactory<AppClient> {
         return new AppClient() {
 
             @Override
-            public AppResp read(String id) {
+            public AppResponse read(String id) {
                 return null;
             }
 
             @Override
-            public PageResp<AppResp> read() {
+            public PageResponse<AppResponse> read() {
                 return null;
             }
         };
