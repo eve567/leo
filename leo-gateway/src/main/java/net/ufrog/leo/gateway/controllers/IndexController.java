@@ -2,7 +2,6 @@ package net.ufrog.leo.gateway.controllers;
 
 import net.ufrog.aries.common.contract.ListResponse;
 import net.ufrog.aries.common.contract.Response;
-import net.ufrog.common.Logger;
 import net.ufrog.common.Result;
 import net.ufrog.common.app.App;
 import net.ufrog.common.app.AppUser;
@@ -96,7 +95,6 @@ public class IndexController {
         authenticateRequest.setType(AuthenticateRequest.Type.CONSOLE);
 
         AppUserResponse appUserResponse = gatewayClient.authenticate(authenticateRequest);
-        Logger.error("==================== result code: %s", appUserResponse.getResultCode());
         if (appUserResponse.isSuccess()) {
             AppUser appUser = new AppUser(appUserResponse.getId(), appUserResponse.getAccount(), appUserResponse.getName());
             App.current().setUser(appUser);
