@@ -1,8 +1,8 @@
 package net.ufrog.leo.server;
 
-import net.ufrog.leo.client.contract.ResultCode;
-import net.ufrog.leo.client.contract.UserRequest;
-import net.ufrog.leo.client.contract.UserResponse;
+import net.ufrog.leo.client.contracts.ResultCode;
+import net.ufrog.leo.client.contracts.UserRequest;
+import net.ufrog.leo.client.contracts.UserResponse;
 import net.ufrog.leo.domain.models.User;
 
 /**

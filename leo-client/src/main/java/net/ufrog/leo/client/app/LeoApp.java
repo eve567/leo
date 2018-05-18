@@ -6,7 +6,7 @@ import net.ufrog.common.app.AppUser;
 import net.ufrog.common.cache.Caches;
 import net.ufrog.common.spring.app.SpringWebApp;
 import net.ufrog.leo.client.LeoClient;
-import net.ufrog.leo.client.contract.AppUserResponse;
+import net.ufrog.leo.client.contracts.AppUserResponse;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

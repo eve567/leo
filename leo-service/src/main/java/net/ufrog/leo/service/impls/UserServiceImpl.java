@@ -1,5 +1,6 @@
 package net.ufrog.leo.service.impls;
 
+import net.ufrog.aries.common.jpa.ID;
 import net.ufrog.common.Logger;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
@@ -134,7 +135,7 @@ public class UserServiceImpl implements UserService {
         userSignLog.setMode(mode);
         userSignLog.setAppId(appId);
         userSignLog.setUserId(userId);
-        userSignLog.setPlatformCode(platformCode);
+        userSignLog.setPlatformCode(Strings.empty(platformCode, ID.NULL));
         userSignLog.setRemark(remark);
         return userSignLogRepository.save(userSignLog);
     }

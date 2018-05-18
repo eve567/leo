@@ -1,0 +1,5 @@
+spring:
+  cloud:
+    config:
+      name: leo-gateway
+      profile: ${config.profile}

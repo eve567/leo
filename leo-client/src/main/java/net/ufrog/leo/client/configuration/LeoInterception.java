@@ -1,5 +1,6 @@
 package net.ufrog.leo.client.configuration;
 
+import net.ufrog.common.Logger;
 import net.ufrog.common.app.App;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,6 +18,7 @@ public class LeoInterception implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (Logger.isTraceEnabled()) Logger.trace("check user by uri: {}", request.getRequestURI());
         App.user();
         return true;
     }

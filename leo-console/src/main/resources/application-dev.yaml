@@ -67,6 +67,7 @@ ufrog:
       prefix: leo_
   leo:
     enabled: true
+    gateway: http://127.0.0.1:8086
     host: http://127.0.0.1:8081
     appId: 19ae06ac-0a29-11e7-8989-9ffd19844ced
     appSecret: 2ajrIM4Kf6fyn1FbH0bfpZ5XkLEMUji5W0VddFJxNa5nePwrbRJ90PsDiFpbWN6Z

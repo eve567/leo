@@ -1,9 +1,9 @@
-package net.ufrog.leo.client.fallbackfactory;
+package net.ufrog.leo.client.fallbackfactories;
 
 import net.ufrog.aries.common.contract.ClientFallbackFactory;
 import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.leo.client.AppClient;
-import net.ufrog.leo.client.contract.AppResponse;
+import net.ufrog.leo.client.contracts.AppResponse;
 import org.springframework.stereotype.Component;
 
 /**

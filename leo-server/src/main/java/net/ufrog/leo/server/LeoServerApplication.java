@@ -60,11 +60,6 @@ public class LeoServerApplication implements WebMvcConfigurer {
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LeoInterception()).excludePathPatterns("/sign", "/sign_in", "/sign_out", "/authenticate", "/api/**", "/swagger-ui.html");
-    }
-
-    @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         List<ExceptionHandler> lExceptionHandler = new ArrayList<>(1);
         lExceptionHandler.add(new AriesExceptionHandler());

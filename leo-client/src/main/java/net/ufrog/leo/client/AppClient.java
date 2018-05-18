@@ -1,11 +1,10 @@
 package net.ufrog.leo.client;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import net.ufrog.aries.common.contract.PageResponse;
-import net.ufrog.leo.client.contract.AppResponse;
-import net.ufrog.leo.client.fallbackfactory.AppClientFallbackFactory;
+import net.ufrog.leo.client.contracts.AppResponse;
+import net.ufrog.leo.client.fallbackfactories.AppClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +38,6 @@ public interface AppClient {
      * @return 应用列表
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @ApiOperation(value = "查询所有应用", notes = "查询单个应用")
+    @ApiOperation(value = "查询所有应用", notes = "分页查询应用列表")
     PageResponse<AppResponse> read();
 }

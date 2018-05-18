@@ -93,6 +93,7 @@ public class LeoCommonConfiguration implements WebMvcConfigurer {
     }
 
     @Override
+    @SuppressWarnings("Duplicates")
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         List<ExceptionHandler> lExceptionHandler = new ArrayList<>(3);
         lExceptionHandler.add(new ServiceExceptionHandler());

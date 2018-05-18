@@ -4,10 +4,10 @@ import net.ufrog.aries.common.contract.ListResponse;
 import net.ufrog.common.Logger;
 import net.ufrog.leo.client.LeoClient;
 import net.ufrog.leo.client.app.LeoAppUser;
-import net.ufrog.leo.client.contract.AppResponse;
-import net.ufrog.leo.client.contract.AppUserResponse;
-import net.ufrog.leo.client.contract.NavResponse;
-import net.ufrog.leo.client.contract.ResultCode;
+import net.ufrog.leo.client.contracts.AppResponse;
+import net.ufrog.leo.client.contracts.AppUserResponse;
+import net.ufrog.leo.client.contracts.NavResponse;
+import net.ufrog.leo.client.contracts.ResultCode;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.Nav;
 import net.ufrog.leo.server.accesstoken.AccessToken;
@@ -33,13 +33,13 @@ import java.util.List;
 public class LeoController implements LeoClient {
 
     /** 应用业务接口 */
-    private AppService appService;
+    private final AppService appService;
 
     /** 导航业务接口 */
-    private NavService navService;
+    private final NavService navService;
 
     /** 权限业务接口 */
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
     /**
      * 构造函数

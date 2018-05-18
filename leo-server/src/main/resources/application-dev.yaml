@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: ${config.port:8081}
 spring:
   application:
     name: leo-server
@@ -11,19 +11,6 @@ spring:
   jpa:
     database: mysql
     showSql: true
-  jetbrick:
-    template:
-      enabled: true
-      charset: utf-8
-      content-type: text/html
-      prefix: templates/default/
-      suffix: .html
-      config:
-        jetx.import.classes: net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.domains.models.*, net.ufrog.leo.beans.**
-        jetx.trim.directive.comments: "true"
-        jetx.template.loaders: $loader
-        $loader: jetbrick.template.loader.ClasspathResourceLoader
-        $loader.reloadable: "true"
 logging:
   level:
     root: info
@@ -55,8 +42,14 @@ ufrog:
     default:
       duration: 4h
       prefix: leo_
+    redis:
+      server: 10.111.4.49:2181
+      proxy.dir: /jodis/codis-test
+      serializer: net.ufrog.common.redis.serializers.ByteArraySerializer
+      type: net.ufrog.common.redis.CodisCacheImpl
   client:
-    resultCodeClass: net.ufrog.leo.client.contract.ResultCode
+    resultCodeClass: net.ufrog.leo.client.contracts.ResultCode
   leo:
     host: http://127.0.0.1:8080
-    accessTokenManager: net.ufrog.leo.server.accesstoken.MemAccessTokenManager
+    #accessTokenManager: net.ufrog.leo.server.accesstoken.MemAccessTokenManager
+    accessTokenManager: net.ufrog.leo.server.accesstoken.CodisAccessTokenManager

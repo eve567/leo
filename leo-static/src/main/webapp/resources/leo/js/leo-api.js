@@ -20,8 +20,9 @@
                 },
 
                 /** 配置 */
-                config: function(host, accessToken, appId, scope) {
+                config: function(host, gateway, accessToken, appId, scope) {
                     $_.$config.host = host;
+                    $_.$config.gateway = gateway;
                     $_.$config.accessToken = accessToken;
                     $_.$config.appId = appId;
                     $_.$config.scope = scope;
@@ -98,13 +99,14 @@
                         $init: function() {
                             ng.extend($scope, {
                                 $host: $attrs['host'],
+                                $gateway: $attrs['gateway'],
                                 $accessToken: $attrs['accessToken'],
                                 $appId: $attrs['appId'],
                                 $brand: $attrs['brand'],
                                 $username: $attrs['username'],
                                 $mode: parseInt($attrs['mode'] || 0)
                             });
-                            $leo.config($scope.$host, $scope.$accessToken, $scope.$appId, $scope);
+                            $leo.config($scope.$host, $scope.gateway, $scope.$accessToken, $scope.$appId, $scope);
                             $scope.$dom();
                             $scope.$find({id: '_root', root: true});
                             $leo.apps(function(data) {

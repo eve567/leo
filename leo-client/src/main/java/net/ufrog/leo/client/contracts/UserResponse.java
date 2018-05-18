@@ -1,4 +1,4 @@
-package net.ufrog.leo.client.contract;
+package net.ufrog.leo.client.contracts;
 
 import net.ufrog.aries.common.contract.Response;
 
