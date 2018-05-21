@@ -72,10 +72,10 @@ public class GatewayController implements GatewayClient {
                 securityService.clearResourceMapping(user.getId());
                 ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_IN, UserSignLog.Mode.GATEWAY, authenticateRequest.getAppId(), user.getId(), null, null));
                 return appUserResponse;
-            }).orElseGet(() -> Response.createResp(ResultCode.AUTHENTICATE_FAIL, AppUserResponse.class));
+            }).orElseGet(() -> Response.createResponse(ResultCode.AUTHENTICATE_FAIL, AppUserResponse.class));
         } catch (ServiceException e) {
             Logger.error(e.getMessage());
-            AppUserResponse appUserResponse = Response.createResp(ResultCode.AUTHENTICATE_FAIL, AppUserResponse.class);
+            AppUserResponse appUserResponse = Response.createResponse(ResultCode.AUTHENTICATE_FAIL, AppUserResponse.class);
             appUserResponse.setMessage(e.getLocalizedMessage());
             return appUserResponse;
         }
@@ -85,7 +85,7 @@ public class GatewayController implements GatewayClient {
     public Response signOut(@RequestBody SignOutRequest signOutRequest) {
         AccessTokenManager.get().offline(signOutRequest.getUserId(), signOutRequest.getAppId(), signOutRequest.getToken());
         ThreadPools.execute(() -> userService.createSignLog(UserSignLog.Type.SIGN_OUT, UserSignLog.Mode.GATEWAY, signOutRequest.getAppId(), signOutRequest.getUserId(), null, null));
-        return Response.createResp(ResultCode.SUCCESS, Response.class);
+        return Response.createResponse(ResultCode.SUCCESS, Response.class);
     }
 
     @Override
@@ -116,9 +116,9 @@ public class GatewayController implements GatewayClient {
     public Response checkForced(@PathVariable("userId") String userId) {
         User user = userService.findById(userId);
         if (Strings.equals(User.Forced.TRUE, user.getForced())) {
-            return Response.createResp(ResultCode.UNKNOW, Response.class);
+            return Response.createResponse(ResultCode.UNKNOW, Response.class);
         }
-        return Response.createResp(ResultCode.SUCCESS, Response.class);
+        return Response.createResponse(ResultCode.SUCCESS, Response.class);
     }
 
     @Override
@@ -128,9 +128,9 @@ public class GatewayController implements GatewayClient {
             user.setPassword(Passwords.encode(updatePasswordRequest.getNext()));
             user.setForced(User.Forced.FALSE);
             userService.update(user);
-            return Response.createResp(ResultCode.SUCCESS, Response.class);
+            return Response.createResponse(ResultCode.SUCCESS, Response.class);
         }
-        Response response = Response.createResp(ResultCode.USER_UPDATE_FAIL, Response.class);
+        Response response = Response.createResponse(ResultCode.USER_UPDATE_FAIL, Response.class);
         response.setMessage(net.ufrog.common.app.App.message("reset.password.failure.prev"));
         return response;
     }

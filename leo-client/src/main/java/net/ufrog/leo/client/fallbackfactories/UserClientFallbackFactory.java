@@ -3,6 +3,7 @@ package net.ufrog.leo.client.fallbackfactories;
 import net.ufrog.aries.common.contract.ClientFallbackFactory;
 import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.aries.common.contract.Response;
+import net.ufrog.common.dict.Dicts;
 import net.ufrog.leo.client.UserClient;
 import net.ufrog.leo.client.contracts.ResultCode;
 import net.ufrog.leo.client.contracts.UserRequest;
@@ -23,38 +24,38 @@ public class UserClientFallbackFactory extends ClientFallbackFactory<UserClient>
 
             @Override
             public UserResponse create(UserRequest userReq) {
-                return Response.createResp(ResultCode.NETWORK, UserResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
             }
 
             @Override
             public UserResponse read(String id) {
-                return Response.createResp(ResultCode.NETWORK, UserResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
             }
 
             @Override
             public PageResponse<UserResponse> read(UserRequest userReq) {
                 //noinspection unchecked
-                return Response.createResp(ResultCode.NETWORK, PageResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), PageResponse.class);
             }
 
             @Override
             public UserResponse update(String id, UserRequest userReq) {
-                return Response.createResp(ResultCode.NETWORK, UserResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
             }
 
             @Override
             public UserResponse updatePassword(String id, UserRequest userReq) {
-                return Response.createResp(ResultCode.NETWORK, UserResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
             }
 
             @Override
             public UserResponse freezeOrUnfreeze(String id) {
-                return Response.createResp(ResultCode.NETWORK, UserResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
             }
 
             @Override
             public UserResponse delete(String id) {
-                return Response.createResp(ResultCode.NETWORK, UserResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
             }
         };
     }

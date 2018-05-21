@@ -3,6 +3,7 @@ package net.ufrog.leo.client.fallbackfactories;
 import net.ufrog.aries.common.contract.ClientFallbackFactory;
 import net.ufrog.aries.common.contract.ListResponse;
 import net.ufrog.aries.common.contract.Response;
+import net.ufrog.common.dict.Dicts;
 import net.ufrog.leo.client.PropClient;
 import net.ufrog.leo.client.contracts.PropResponse;
 import net.ufrog.leo.client.contracts.ResultCode;
@@ -23,12 +24,12 @@ public class PropClientFallbackFactory extends ClientFallbackFactory<PropClient>
             @Override
             public ListResponse<PropResponse> readAll() {
                 //noinspection unchecked
-                return Response.createResp(ResultCode.NETWORK, ListResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), ListResponse.class);
             }
 
             @Override
             public PropResponse update(String id) {
-                return Response.createResp(ResultCode.NETWORK, PropResponse.class);
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), PropResponse.class);
             }
         };
     }
