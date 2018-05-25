@@ -51,5 +51,5 @@ ufrog:
     resultCodeClass: net.ufrog.leo.client.contracts.ResultCode
   leo:
     host: http://127.0.0.1:8080
-    #accessTokenManager: net.ufrog.leo.server.accesstoken.MemAccessTokenManager
-    accessTokenManager: net.ufrog.leo.server.accesstoken.CodisAccessTokenManager
+    accessTokenManager: net.ufrog.leo.server.accesstoken.MemAccessTokenManager
+    #accessTokenManager: net.ufrog.leo.server.accesstoken.CodisAccessTokenManager

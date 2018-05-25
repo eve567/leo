@@ -54,6 +54,10 @@
             <groupId>net.spy</groupId>
             <artifactId>spymemcached</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-http</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
