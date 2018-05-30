@@ -3,6 +3,7 @@ package net.ufrog.leo.service;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.leo.domain.models.User;
+import net.ufrog.leo.domain.models.UserOpenPlatform;
 import net.ufrog.leo.domain.models.UserRole;
 import net.ufrog.leo.domain.models.UserSignLog;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 用户业务接口
@@ -112,6 +115,23 @@ public interface UserService {
      * @return 用户角色列表
      */
     List<UserRole> bindRoles(String userId, String appId, String[] roleIds);
+
+    /**
+     * 通过开放平台查询用户
+     *
+     * @param mCodeValuePair 代码内容对映射表
+     * @return 用户 - 安全可选
+     */
+    Optional<User> findByOpenPlatform(Map<String, String> mCodeValuePair);
+
+    /**
+     * 注册开放平台信息<br>该接口不核查重复
+     *
+     * @param mCodeValuePair 代码内容映射表
+     * @param userId 用户编号
+     * @return 开放平台模型列表
+     */
+    List<UserOpenPlatform> registerOpenPlatform(Map<String, String> mCodeValuePair, String userId);
 
     /**
      * 用户类型

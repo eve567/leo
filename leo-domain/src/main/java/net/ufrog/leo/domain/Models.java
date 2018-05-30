@@ -133,13 +133,15 @@ public class Models {
      * @param code 代码
      * @param value 内容
      * @param userId 用户编号
+     * @param group 分组
      * @return 用户开放平台模型
      */
-    public static UserOpenPlatform newUserOpenPlatform(String code, String value, String userId) {
+    public static UserOpenPlatform newUserOpenPlatform(String code, String value, String userId, String group) {
         UserOpenPlatform userOpenPlatform = new UserOpenPlatform();
         userOpenPlatform.setCode(code);
         userOpenPlatform.setValue(value);
         userOpenPlatform.setUserId(userId);
+        userOpenPlatform.setGroup(group);
         return userOpenPlatform;
     }
 

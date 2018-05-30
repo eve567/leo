@@ -1,18 +1,26 @@
 package net.ufrog.leo.server.controllers;
 
 import net.ufrog.aries.common.contract.PageResponse;
+import net.ufrog.aries.common.contract.Response;
+import net.ufrog.aries.common.jpa.ID;
 import net.ufrog.common.Logger;
+import net.ufrog.common.exception.ServiceException;
+import net.ufrog.common.utils.Codecs;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.client.UserClient;
+import net.ufrog.leo.client.contracts.OpenPlatformRequest;
+import net.ufrog.leo.client.contracts.ResultCode;
 import net.ufrog.leo.client.contracts.UserRequest;
 import net.ufrog.leo.client.contracts.UserResponse;
 import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.server.LeoContracts;
 import net.ufrog.leo.service.UserService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.xml.ws.Service;
+import java.util.stream.Collectors;
 
 /**
  * 用户控制器
@@ -38,8 +46,8 @@ public class UserController implements UserClient {
     }
 
     @Override
-    public UserResponse create(@RequestBody UserRequest userReq) {
-        User user = LeoContracts.toUserModel(userReq);
+    public UserResponse create(@RequestBody UserRequest userRequest) {
+        User user = toUserModel(userRequest);
         if (Strings.empty(user.getPassword())) {
             String password = Strings.random(8);
             user.setPassword(password);
@@ -48,7 +56,7 @@ public class UserController implements UserClient {
         }
         user.setStatus(User.Status.ENABLED);
         user.setPassword(Passwords.encode(user.getPassword()));
-        return LeoContracts.toUserResp(userService.create(user));
+        return toUserResponse(userService.create(user));
     }
 
     @Override
@@ -57,17 +65,17 @@ public class UserController implements UserClient {
     }
 
     @Override
-    public PageResponse<UserResponse> read(UserRequest userReq) {
+    public PageResponse<UserResponse> read(UserRequest userRequest) {
         return null;
     }
 
     @Override
-    public UserResponse update(String id, UserRequest userReq) {
+    public UserResponse update(String id, UserRequest userRequest) {
         return null;
     }
 
     @Override
-    public UserResponse updatePassword(String id, UserRequest userReq) {
+    public UserResponse updatePassword(String id, UserRequest userRequest) {
         return null;
     }
 
@@ -79,5 +87,75 @@ public class UserController implements UserClient {
     @Override
     public UserResponse delete(String id) {
         return null;
+    }
+
+    @Override
+    public UserResponse readOrCreateByOpenPlatform(OpenPlatformRequest openPlatformRequest) {
+        return userService.findByOpenPlatform(openPlatformRequest.getCodeValuePairs()).map(UserController::toUserResponse).orElseGet(() -> {
+            UserRequest userRequest = new UserRequest();
+            userRequest.setAccount(Codecs.uuid());
+            userRequest.setCellphone(ID.NULL);
+            userRequest.setEmail(ID.NULL);
+            userRequest.setName(ID.NULL);
+            userRequest.setPassword(Strings.random(8));
+            userRequest.setType(UserRequest.Type.CLIENT);
+
+            return create(userRequest);
+        });
+    }
+
+    @Override
+    public Response registerOpenPlatform(OpenPlatformRequest openPlatformRequest) {
+        return userService.findByOpenPlatform(openPlatformRequest.getCodeValuePairs()).map(user -> {
+            if (Strings.equals(user.getId(), openPlatformRequest.getUserId())) {
+                return Response.createResponse(ResultCode.SUCCESS, Response.class);
+            } else {
+                String msg = openPlatformRequest.getCodeValuePairs().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(", "));
+                throw new ServiceException("another user '" + user.getId() + "' has same open platform info: " + msg);
+            }
+        }).orElseGet(() -> {
+            userService.registerOpenPlatform(openPlatformRequest.getCodeValuePairs(), openPlatformRequest.getUserId());
+            return Response.createResponse(ResultCode.SUCCESS, Response.class);
+        });
+    }
+
+    /**
+     * 转换用户模型
+     *
+     * @param userRequest 用户请求
+     * @return 用户模型
+     */
+    private static User toUserModel(UserRequest userRequest) {
+        User user = new User();
+        user.setAccount(userRequest.getAccount());
+        user.setCellphone(userRequest.getCellphone());
+        user.setEmail(userRequest.getEmail());
+        user.setName(userRequest.getName());
+        user.setPassword(userRequest.getPassword());
+        user.setType(userRequest.getType());
+        user.setStatus(User.Status.PENDING);
+        user.setForced(User.Forced.FALSE);
+        return user;
+    }
+
+    /**
+     * 转换用户响应
+     *
+     * @param user 用户模型
+     * @return 用户响应
+     */
+    private static UserResponse toUserResponse(User user) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setResultCode(ResultCode.SUCCESS);
+        userResponse.setId(user.getId());
+        userResponse.setAccount(user.getAccount());
+        userResponse.setCellphone(user.getCellphone());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setName(user.getName());
+        userResponse.setStatus(user.getStatus());
+        userResponse.setStatusName(user.getStatusName());
+        userResponse.setType(user.getType());
+        userResponse.setTypeName(user.getTypeName());
+        return userResponse;
     }
 }

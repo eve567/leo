@@ -2,16 +2,16 @@ package net.ufrog.leo.service.impls;
 
 import net.ufrog.aries.common.jpa.ID;
 import net.ufrog.common.Logger;
+import net.ufrog.common.data.exception.DataNotFoundException;
 import net.ufrog.common.data.spring.Domains;
 import net.ufrog.common.exception.ServiceException;
+import net.ufrog.common.utils.Codecs;
 import net.ufrog.common.utils.Objects;
 import net.ufrog.common.utils.Passwords;
 import net.ufrog.common.utils.Strings;
 import net.ufrog.leo.domain.Models;
-import net.ufrog.leo.domain.models.Role;
-import net.ufrog.leo.domain.models.User;
-import net.ufrog.leo.domain.models.UserRole;
-import net.ufrog.leo.domain.models.UserSignLog;
+import net.ufrog.leo.domain.models.*;
+import net.ufrog.leo.domain.repositories.UserOpenPlatformRepository;
 import net.ufrog.leo.domain.repositories.UserRepository;
 import net.ufrog.leo.domain.repositories.UserRoleRepository;
 import net.ufrog.leo.domain.repositories.UserSignLogRepository;
@@ -23,10 +23,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -43,6 +41,9 @@ public class UserServiceImpl implements UserService {
     /** 用户仓库 */
     private final UserRepository userRepository;
 
+    /** 用户开放平台仓库 */
+    private final UserOpenPlatformRepository userOpenPlatformRepository;
+
     /** 用户角色仓库 */
     private final UserRoleRepository userRoleRepository;
 
@@ -53,12 +54,14 @@ public class UserServiceImpl implements UserService {
      * 构造函数
      *
      * @param userRepository 用户仓库
+     * @param userOpenPlatformRepository 用户开放平台仓库
      * @param userRoleRepository 用户角色仓库
      * @param userSignLogRepository 用户登录日志仓库
      */
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, UserSignLogRepository userSignLogRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserOpenPlatformRepository userOpenPlatformRepository, UserRoleRepository userRoleRepository, UserSignLogRepository userSignLogRepository) {
         this.userRepository = userRepository;
+        this.userOpenPlatformRepository = userOpenPlatformRepository;
         this.userRoleRepository = userRoleRepository;
         this.userSignLogRepository = userSignLogRepository;
     }
@@ -151,5 +154,37 @@ public class UserServiceImpl implements UserService {
         Stream.of(roleIds).forEach(roleId -> lnUserRole.add(Models.newUserRole(userId, roleId)));
         userRoleRepository.saveAll(lnUserRole);
         return lnUserRole;
+    }
+
+    @Override
+    public Optional<User> findByOpenPlatform(Map<String, String> mCodeValuePair) {
+        Map<String, List<UserOpenPlatform>> mlUserOpenPlatform = new HashMap<>();
+        mCodeValuePair.forEach((k, v) -> userOpenPlatformRepository.findByCodeAndValue(k, v).forEach(userOpenPlatform -> {
+            String key = userOpenPlatform.getGroup() + userOpenPlatform.getUserId();
+            if (!mlUserOpenPlatform.containsKey(key)) mlUserOpenPlatform.put(key, new ArrayList<>());
+            mlUserOpenPlatform.get(key).add(userOpenPlatform);
+        }));
+
+        //
+        List<Map.Entry<String, List<UserOpenPlatform>>> lelUserOpenPlatform = mlUserOpenPlatform.entrySet().stream().filter(entry -> entry.getValue().size() == mCodeValuePair.size()).collect(Collectors.toList());
+        if (lelUserOpenPlatform.size() == 1) {
+            UserOpenPlatform userOpenPlatform = lelUserOpenPlatform.get(0).getValue().get(0);
+            User user = userRepository.findById(userOpenPlatform.getUserId()).orElseThrow(() -> new DataNotFoundException(User.class, "id", userOpenPlatform.getId()));
+            return Optional.of(user);
+        } else if (lelUserOpenPlatform.size() == 0) {
+            return Optional.empty();
+        } else {
+            throw new ServiceException("more than one same pair: " + mCodeValuePair.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining(", ")));
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<UserOpenPlatform> registerOpenPlatform(Map<String, String> mCodeValuePair, String userId) {
+        String group = Codecs.uuid().replaceAll("-", "");
+        List<UserOpenPlatform> lUserOpenPlatform = new ArrayList<>(mCodeValuePair.size());
+
+        mCodeValuePair.forEach((k, v) -> lUserOpenPlatform.add(Models.newUserOpenPlatform(k.trim(), v.trim(), userId, group)));
+        return userOpenPlatformRepository.saveAll(lUserOpenPlatform);
     }
 }

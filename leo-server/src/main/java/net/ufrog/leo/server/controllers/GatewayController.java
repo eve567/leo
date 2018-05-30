@@ -14,7 +14,6 @@ import net.ufrog.leo.client.contracts.*;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.domain.models.UserSignLog;
-import net.ufrog.leo.server.LeoContracts;
 import net.ufrog.leo.server.accesstoken.AccessToken;
 import net.ufrog.leo.server.accesstoken.AccessTokenManager;
 import net.ufrog.leo.service.AppService;

@@ -5,6 +5,7 @@ import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.aries.common.contract.Response;
 import net.ufrog.common.dict.Dicts;
 import net.ufrog.leo.client.UserClient;
+import net.ufrog.leo.client.contracts.OpenPlatformRequest;
 import net.ufrog.leo.client.contracts.ResultCode;
 import net.ufrog.leo.client.contracts.UserRequest;
 import net.ufrog.leo.client.contracts.UserResponse;
@@ -56,6 +57,16 @@ public class UserClientFallbackFactory extends ClientFallbackFactory<UserClient>
             @Override
             public UserResponse delete(String id) {
                 return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
+            }
+
+            @Override
+            public UserResponse readOrCreateByOpenPlatform(OpenPlatformRequest openPlatformRequest) {
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
+            }
+
+            @Override
+            public Response registerOpenPlatform(OpenPlatformRequest openPlatformRequest) {
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), Response.class);
             }
         };
     }

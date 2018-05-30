@@ -46,7 +46,7 @@ public class SmyTest {
         map.put("productType", "loan");
         map.put("productName", "smk");
         map.put("appType", "android");
-        map.put("appChannel", "bdsmk1804");
+        map.put("appChannel", "bdsmk1805");
         map.put("subAppChannel", "smk1");
         map.put("activity", "default");
         return map;
