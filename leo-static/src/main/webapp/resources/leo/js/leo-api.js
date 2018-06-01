@@ -108,7 +108,7 @@
                             });
                             $leo.config($scope.$host, $scope.gateway, $scope.$accessToken, $scope.$appId, $scope);
                             $scope.$dom();
-                            $scope.$find({id: '_root', root: true});
+                            $scope.$find({id: '_null', root: true});
                             $leo.apps(function(data) {
                                 $scope.$apps = data;
                             });
