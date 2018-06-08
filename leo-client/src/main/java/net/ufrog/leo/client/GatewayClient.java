@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @version 4.0.1, 2018-05-16
  * @since 4.0.1
  */
-@FeignClient(value = "leo-server", fallbackFactory = GatewayClientFallbackFactory.class)
+@FeignClient(value = Client.APP_NAME, fallbackFactory = GatewayClientFallbackFactory.class)
 @RequestMapping(value = "/gateway")
 @Api(value = "网关专用客户端")
 public interface GatewayClient {

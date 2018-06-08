@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @version 3.0.0, 2018-03-27
  * @since 3.0.0
  */
-@FeignClient(name = "leo-server", fallbackFactory = AppClientFallbackFactory.class)
+@FeignClient(name = Client.APP_NAME, fallbackFactory = AppClientFallbackFactory.class)
 @RequestMapping("/apps")
 @Api(value = "用户服务")
 public interface AppClient {
