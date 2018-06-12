@@ -89,22 +89,26 @@ public class UserController implements UserClient {
     }
 
     @Override
-    public UserResponse readOrCreateByOpenPlatform(OpenPlatformRequest openPlatformRequest) {
+    public UserResponse readOrCreateByOpenPlatform(@RequestBody OpenPlatformRequest openPlatformRequest) {
         return userService.findByOpenPlatform(openPlatformRequest.getCodeValuePairs()).map(UserController::toUserResponse).orElseGet(() -> {
-            UserRequest userRequest = new UserRequest();
-            userRequest.setAccount(Strings.empty(openPlatformRequest.getAccount(), Codecs.uuid()));
-            userRequest.setCellphone(Strings.empty(openPlatformRequest.getCellphone(), ID.NULL));
-            userRequest.setEmail(Strings.empty(openPlatformRequest.getEmail(), ID.NULL));
-            userRequest.setName(Strings.empty(openPlatformRequest.getName(), ID.NULL));
-            userRequest.setPassword(Strings.random(8));
-            userRequest.setType(UserRequest.Type.CLIENT);
+            User user = new User();
+            user.setAccount(Strings.empty(openPlatformRequest.getAccount(), Codecs.uuid()));
+            user.setCellphone(Strings.empty(openPlatformRequest.getCellphone(), ID.NULL));
+            user.setEmail(Strings.empty(openPlatformRequest.getEmail(), ID.NULL));
+            user.setName(Strings.empty(openPlatformRequest.getName(), ID.NULL));
+            user.setPassword(Passwords.encode(Strings.random(8)));
+            user.setType(UserRequest.Type.CLIENT);
+            user.setForced(User.Forced.TRUE);
+            user.setStatus(User.Status.ENABLED);
 
-            return create(userRequest);
+            userService.create(user);
+            userService.registerOpenPlatform(openPlatformRequest.getCodeValuePairs(), user.getId());
+            return toUserResponse(user);
         });
     }
 
     @Override
-    public Response registerOpenPlatform(OpenPlatformRequest openPlatformRequest) {
+    public Response registerOpenPlatform(@RequestBody OpenPlatformRequest openPlatformRequest) {
         return userService.findByOpenPlatform(openPlatformRequest.getCodeValuePairs()).map(user -> {
             if (Strings.equals(user.getId(), openPlatformRequest.getUserId())) {
                 return Response.createResponse(ResultCode.SUCCESS, Response.class);
