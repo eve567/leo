@@ -288,7 +288,7 @@
                 transclude: true,
                 template: [
                     '<div class="modal fade">',
-                        '<div class="modal-dialog" ng-style="$modalWidth">',
+                        '<div class="modal-dialog" ng-style="$modalStyle">',
                             '<div class="modal-content">',
                                 '<div class="modal-header">',
                                     '<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>',
@@ -303,7 +303,9 @@
                 link: function($scope, $element, $attrs) {
                     $element.find('.modal-body button:not(.btn-fixed)').appendTo($element.find('.modal-footer'));
                     $scope.$modalTitle = $attrs['title'];
-                    $scope.$modalWidth = ng.isDefined($attrs['width']) ? {width: $attrs['width']} : {};
+                    $scope.$modalStyle = {};
+                    if (ng.isDefined($attrs['width'])) $scope.$modalStyle['width'] = $attrs['width'];
+                    if (ng.isDefined($attrs['height'])) $scope.$modalStyle['height'] = $attrs['height'];
                 }
             };
         }])
