@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByOpenPlatform(Map<String, String> mCodeValuePair) {
         Map<String, List<UserOpenPlatform>> mlUserOpenPlatform = new HashMap<>();
-        mCodeValuePair.forEach((k, v) -> userOpenPlatformRepository.findByCodeAndValue(k, v).forEach(userOpenPlatform -> {
+        mCodeValuePair.forEach((k, v) -> userOpenPlatformRepository.findByCodeAndValue(k.trim(), v.trim()).forEach(userOpenPlatform -> {
             String key = userOpenPlatform.getGroup() + userOpenPlatform.getUserId();
             if (!mlUserOpenPlatform.containsKey(key)) mlUserOpenPlatform.put(key, new ArrayList<>());
             mlUserOpenPlatform.get(key).add(userOpenPlatform);

@@ -37,7 +37,7 @@ eureka:
     registerWithEureka: false
     registryFetchIntervalSeconds: 5
     serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
+      defaultZone: http://10.111.4.49:8002/eureka/,http://10.111.4.49:8001/eureka/,http://10.111.4.49:8003/eureka/
 ufrog:
   app:
     enabled: true
