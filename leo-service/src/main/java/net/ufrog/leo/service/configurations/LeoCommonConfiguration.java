@@ -13,7 +13,6 @@ import net.ufrog.leo.domain.repositories.BlobRepository;
 import net.ufrog.leo.service.PropService;
 import net.ufrog.leo.service.storages.DBStorage;
 import net.ufrog.leo.service.storages.Storage;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
