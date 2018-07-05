@@ -2,7 +2,7 @@ server:
   port: ${config.port:8081}
 spring:
   application:
-    name: leo-server-4-0-1
+    name: leo-server-4-0-2
   datasource:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://10.111.4.49/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false

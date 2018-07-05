@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>leo-parent</artifactId>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
     <packaging>pom</packaging>
     
     <modules>
@@ -25,8 +25,8 @@
 
     <properties>
         <aries-common.version>1.0.0</aries-common.version>
-        <leo.version>4.0.1</leo.version>
-        <leo-client.version>4.0.1</leo-client.version>
+        <leo.version>4.0.2</leo.version>
+        <leo-client.version>4.0.2</leo-client.version>
     </properties>
 
     <dependencyManagement>

@@ -1,11 +1,13 @@
 package net.ufrog.leo.client.fallbackfactories;
 
 import net.ufrog.aries.common.contract.ClientFallbackFactory;
+import net.ufrog.aries.common.contract.ListResponse;
 import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.aries.common.contract.Response;
 import net.ufrog.common.dict.Dicts;
 import net.ufrog.leo.client.AppClient;
 import net.ufrog.leo.client.contracts.AppResponse;
+import net.ufrog.leo.client.contracts.AppSecretResponse;
 import net.ufrog.leo.client.contracts.ResultCode;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +32,12 @@ public class AppClientFallbackFactory extends ClientFallbackFactory<AppClient> {
             public PageResponse<AppResponse> read() {
                 //noinspection unchecked
                 return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), PageResponse.class);
+            }
+
+            @Override
+            public ListResponse<AppSecretResponse> readSecrets() {
+                //noinspection unchecked
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), ListResponse.class);
             }
         };
     }

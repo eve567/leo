@@ -2,8 +2,10 @@ package net.ufrog.leo.client;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.ufrog.aries.common.contract.ListResponse;
 import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.leo.client.contracts.AppResponse;
+import net.ufrog.leo.client.contracts.AppSecretResponse;
 import net.ufrog.leo.client.fallbackfactories.AppClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,4 +42,13 @@ public interface AppClient {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "查询所有应用", notes = "分页查询应用列表")
     PageResponse<AppResponse> read();
+
+    /**
+     * 查询所有应用密钥
+     *
+     * @return 应用密钥列表
+     */
+    @RequestMapping(value = "/secrets", method = RequestMethod.GET)
+    @ApiOperation(value = "查询所有应用密钥", notes = "查询所有应用密钥")
+    ListResponse<AppSecretResponse> readSecrets();
 }
