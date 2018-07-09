@@ -7,9 +7,5 @@ package net.ufrog.leo.client;
  */
 public class Client {
 
-    public static final String SERVER_NAME  = "leo-server";
-
-    public static final String VERSION      = "4-0-2";
-
-    public static final String APP_NAME     = SERVER_NAME + "-" + VERSION;
+    public static final String NAME  = "leo-server-4";
 }

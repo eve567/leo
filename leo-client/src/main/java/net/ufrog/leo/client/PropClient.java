@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @version 4.0.0, 2018-05-15
  * @since 4.0.0
  */
-@FeignClient(value = Client.APP_NAME, fallbackFactory = PropClientFallbackFactory.class)
+@FeignClient(value = Client.NAME, fallbackFactory = PropClientFallbackFactory.class)
 @RequestMapping(value = "/props")
 public interface PropClient {
 

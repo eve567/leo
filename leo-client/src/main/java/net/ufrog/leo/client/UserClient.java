@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @version 3.0.0, 2018-03-27
  * @since 3.0.0
  */
-@FeignClient(name = Client.APP_NAME, fallbackFactory = UserClientFallbackFactory.class)
+@FeignClient(name = Client.NAME, fallbackFactory = UserClientFallbackFactory.class)
 @RequestMapping("/users")
 @Api(value = "用户服务")
 public interface UserClient {
