@@ -36,7 +36,7 @@ eureka:
   client:
     registerWithEureka: false
     serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
+      defaultZone: http://10.111.4.49:8002/eureka/,http://10.111.4.49:8003/eureka/,http://10.111.4.49:8001/eureka/
 feign:
   hystrix:
     enabled: true

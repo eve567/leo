@@ -73,8 +73,10 @@ public class NavServiceImpl implements NavService {
     @Transactional
     public Nav create(Nav nav) {
         checkDuplicate(nav);
+        Optional<Nav> oNav = navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId());
+
         navRepository.save(nav);
-        navRepository.findByParentIdAndNextIdAndAppId(nav.getParentId(), nav.getNextId(), nav.getAppId()).filter(prev -> !Strings.equals(nav.getId(), prev.getId())).ifPresent(prev -> setNextId(prev, nav.getId()));
+        oNav.filter(prev -> !Strings.equals(nav.getId(), prev.getId())).ifPresent(prev -> setNextId(prev, nav.getId()));
         securityService.createResource(Resource.Type.NAV, nav.getId());
         clear(nav.getType(), nav.getAppId(), nav.getParentId());
         return nav;
