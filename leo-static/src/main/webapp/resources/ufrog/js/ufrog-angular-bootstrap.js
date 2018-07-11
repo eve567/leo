@@ -319,7 +319,8 @@
                 scope: {
                     ngModel: '=',
                     btnValue: '@',
-                    multiple: '@'
+                    multiple: '@',
+                    accept: '@'
                 },
                 template: [
                     '<div>',
@@ -329,13 +330,14 @@
                                 '<button type="button" class="btn btn-default btn-fixed" ng-bind="btnValue"></button>',
                             '</span>',
                         '</div>',
-                        '<input type="file" class="sr-only">',
+                        '<input type="file" accept="{{accept}}" class="sr-only">',
                     '</div>'
                 ].join(''),
                 link: function($scope, $element) {
                     ng.extend($scope, {
                         // 初始化
                         $init: function() {
+                            $scope.accept = $scope.accept || '';
                             $scope.btnValue = $scope.btnValue || '\u9009\u62e9\u6587\u4ef6';
                             $element.find(':file').prop('multiple', $scope.$isMultiple()).on('change', $scope.$onChange);
                             $element.find('button, :text').on('click', function() {
