@@ -1,6 +1,6 @@
 package net.ufrog.leo.service.impls;
 
-import net.ufrog.aries.common.jpa.ID;
+import net.ufrog.aries.common.jpa.Model;
 import net.ufrog.common.Logger;
 import net.ufrog.common.data.exception.DataNotFoundException;
 import net.ufrog.common.data.spring.Domains;
@@ -116,6 +116,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User create(User user) {
+        // 验证账号/手机号码/电子邮件不能重复
+        // TODO 这样会影响效率 同时不能控制插入并发
+        // TODO 还是要有队列来处理这些东西
+        if (!Strings.empty(user.getAccount()) && userRepository.findByAccount(user.getAccount()) != null) {
+            throw new ServiceException("account '" + user.getAccount() + "' exists.", "service.create.failure.exists.account");
+        } if (!Strings.empty(user.getCellphone()) && userRepository.findByCellphone(user.getCellphone()) != null) {
+            throw new ServiceException("cellphone '" + user.getCellphone() + "' exists.", "service.create.failure.exists.cellphone");
+        } if (!Strings.empty(user.getEmail()) && userRepository.findByEmail(user.getEmail()) != null) {
+            throw new ServiceException("email '" + user.getEmail() + "' exists.", "service.create.failure.exists.email");
+        }
         return userRepository.save(user);
     }
 
@@ -138,7 +148,7 @@ public class UserServiceImpl implements UserService {
         userSignLog.setMode(mode);
         userSignLog.setAppId(appId);
         userSignLog.setUserId(userId);
-        userSignLog.setPlatformCode(Strings.empty(platformCode, ID.NULL));
+        userSignLog.setPlatformCode(Strings.empty(platformCode, Model.NULL));
         userSignLog.setRemark(remark);
         return userSignLogRepository.save(userSignLog);
     }
