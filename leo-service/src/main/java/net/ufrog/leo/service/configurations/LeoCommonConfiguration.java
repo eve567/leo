@@ -60,7 +60,7 @@ public class LeoCommonConfiguration implements WebMvcConfigurer {
 
     @Bean
     public PropertiesInterceptor propertiesInterceptor() {
-         return SpringConfigurations.propertiesInterceptor(new DBPropertiesManager(propService));
+        return SpringConfigurations.propertiesInterceptor(new DBPropertiesManager(propService));
     }
 
     @Bean
