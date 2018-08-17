@@ -86,6 +86,7 @@ public class TeamController {
     public Result<User> createUser(@RequestBody User user) {
         String password = Strings.random(8);
 
+        Objects.trimStringFields(user);
         user.setPassword(Passwords.encode(password));
         user.setForced(User.Forced.TRUE);
         user.setType(User.Type.STAFF);

@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: ${config.port:8086}
 spring:
   application:
-    name: leo-console
+    name: leo-gateway
   datasource:
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://10.111.4.49/ufrog_leo_dev?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
     username: dev
     password: mMZc%j13l
@@ -19,7 +19,7 @@ spring:
       prefix: templates/default/
       suffix: .html
       config:
-        jetx.import.classes: net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.domains.models.*, net.ufrog.leo.beans.**
+        jetx.import.classes: net.ufrog.common.app.App, net.ufrog.common.spring.app.SpringWebApp, net.ufrog.leo.client.contracts.*
         jetx.trim.directive.comments: "true"
         jetx.template.loaders: $loader
         $loader: jetbrick.template.loader.ClasspathResourceLoader
@@ -27,7 +27,7 @@ spring:
 logging:
   level:
     root: info
-    # net.ufrog: debug
+    net.ufrog: debug
 eureka:
   instance:
     preferIpAddress: true
@@ -35,22 +35,14 @@ eureka:
     leaseRenewalIntervalInSeconds: 5
   client:
     registerWithEureka: false
+    registryFetchIntervalSeconds: 5
     serviceUrl:
-      defaultZone: http://10.111.4.49:8002/eureka/,http://10.111.4.49:8003/eureka/,http://10.111.4.49:8001/eureka/
-feign:
-  hystrix:
-    enabled: true
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 5000
+      defaultZone: http://10.111.4.49:8002/eureka/,http://10.111.4.49:8001/eureka/,http://10.111.4.49:8003/eureka/
 ufrog:
   app:
+    enabled: true
     secret: zbh7DN0sLZYI5d6L0NzCwklr0NtZExi3RJ6ERKrjIzYuGz6WZYjplu2J0tKqEA8T
-    messages: classpath:messages-domain,classpath:messages-service,classpath:messages
+    messages: classpath:messages
     logger:
       caller: true
   pattern:
@@ -59,15 +51,12 @@ ufrog:
     email: "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?"
   path:
     resource:
-      common: //10.111.4.49:800/leo/resources
-      host: //10.111.4.49:800/leo/resources/leo
+      common: //10.111.4.49:800/nginx
+      host: //10.111.4.49:800/nginx/leo
   cache:
     default:
       duration: 4h
       prefix: leo_
   leo:
-    enabled: true
     gateway: http://127.0.0.1:8086
-    host: http://127.0.0.1:8081
     appId: 19ae06ac-0a29-11e7-8989-9ffd19844ced
-    appSecret: 2ajrIM4Kf6fyn1FbH0bfpZ5XkLEMUji5W0VddFJxNa5nePwrbRJ90PsDiFpbWN6Z

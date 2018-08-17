@@ -1,0 +1,44 @@
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <span class="pull-left">视图管理</span>
+        <ul class="panel-heading-group">
+            <li><a href="#" ng-click="viewFn.form()"><fa i="plus">&nbsp;添加</fa></a></li>
+            <li panel-heading-dropdown>
+                <a href="#"><span ng-bind="current.app.name"></span>&nbsp;<fa i="caret-down"></fa></a>
+                <ul class="panel-heading-dropdown">
+                    <li ng-repeat="app in $apps|exclude:current.app"><a href="#" ng-click="appFn.active(app)"><fa i="caret-right">&nbsp;<span ng-bind="app.name"></span></fa></a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <table>
+        <colgroup>
+            <col width="15%">
+            <col width="15%">
+            <col width="70%">
+        </colgroup>
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>代码</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="view in views">
+            <td ng-bind="view.name"></td>
+            <td ng-bind="view.code|empty:'-'"></td>
+            <td class="link-group">
+                <a href="#" class="link-group-item">元素列表</a>
+                <a href="#" class="link-group-item" ng-click="viewFn.form(view)">编辑</a>
+                <a href="#" class="link-group-item" ng-click="viewFn.popDeleteModel(view)">删除</a>
+            </td>
+        </tr>
+        <tr ng-if="ctrl.status('grid', ['loaded']) && valid.empty(views)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${_M('common.empty')}</fa></td></tr>
+        <tr ng-if="ctrl.status('grid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${_M('common.processing')}</fa></td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="table-footer">
+    <pagination class="pull-right" method="viewFn.find" delay="true"></pagination>
+</div>

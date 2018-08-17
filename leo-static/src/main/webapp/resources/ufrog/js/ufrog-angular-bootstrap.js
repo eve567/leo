@@ -320,12 +320,14 @@
                     ngModel: '=',
                     btnValue: '@',
                     multiple: '@',
-                    accept: '@'
+                    accept: '@',
+                    required: '@',
+                    name: '@'
                 },
                 template: [
                     '<div>',
                         '<div class="input-group">',
-                            '<input class="form-control" ng-value="$filenames()" readonly>',
+                            '<input name="{{name}}" class="form-control" ng-value="$filenames()" ng-required="$isRequired()" readonly>',
                             '<span class="input-group-btn">',
                                 '<button type="button" class="btn btn-default btn-fixed" ng-bind="btnValue"></button>',
                             '</span>',
@@ -350,23 +352,59 @@
                             return (!$common.valid.empty($scope.multiple) && $scope.multiple !== 'false');
                         },
 
+                        // 判断是否必选
+                        $isRequired: function() {
+                            return Boolean($scope.required);
+                        },
+
                         // 文件改动后回调
                         $onChange: function(event) {
-                            $scope.ngModel = $scope.ngModel || [];
-                            $common.array.empty($scope.ngModel);
-                            ng.forEach(event.target.files, function(val) {
-                                $scope.ngModel.push(val);
-                            });
-                            $scope.$apply();
+                            if ($common.valid.arr($scope.ngModel)) {
+                                $common.array.empty($scope.ngModel);
+                                ng.forEach(event.target.files, function(val) {
+                                    $scope.ngModel.push(val);
+                                });
+                                $scope.$apply();
+                            } else if ($common.valid.obj($scope.ngModel)) {
+                                $scope.ngModel.files = [];
+                                $scope.ngModel.urls = [];
+                                ng.forEach(event.target.files, function(val) {
+                                    $scope.ngModel.files.push(val);
+                                    $scope.ngModel.urls.push($scope.$url(val));
+                                });
+                                $scope.$apply();
+                            } else {
+                                throw 'ng-model is not array or object.';
+                            }
                         },
 
                         // 文件名称
                         $filenames: function() {
                             $scope.$files = [];
-                            ng.forEach($scope.ngModel, function(val) {
-                                $scope.$files.push(val.name);
-                            });
+                            if ($common.valid.arr($scope.ngModel)) {
+                                ng.forEach($scope.ngModel, function(val) {
+                                    $scope.$files.push(val.name);
+                                });
+                            } else if ($common.valid.obj($scope.ngModel)) {
+                                ng.forEach($scope.ngModel.files, function(val) {
+                                    $scope.$files.push(val.name);
+                                });
+                                $scope.ngModel.filenames = $scope.$files.join(', ');
+                            }
                             return $scope.$files.join(', ');
+                        },
+
+                        // 获取本地文件地址
+                        $url: function(file) {
+                            if (window.createObjectURL !== undefined) {
+                                return window.createObjectURL(file);
+                            } else if (window.URL !== undefined) {
+                                return window.URL.createObjectURL(file);
+                            } else if (window.webkitURL !== undefined) {
+                                return window.webkitURL.createObjectURL(file);
+                            } else {
+                                return null;
+                            }
                         }
                     }).$init();
                 }

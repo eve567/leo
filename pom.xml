@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>leo-parent</artifactId>
-    <version>4.0.2</version>
+    <version>4.1.0</version>
     <packaging>pom</packaging>
     
     <modules>
@@ -25,8 +25,11 @@
 
     <properties>
         <aries-common.version>1.0.0</aries-common.version>
-        <leo.version>4.0.2</leo.version>
+        <leo.version>4.1.0</leo.version>
         <leo-client.version>4.0.2</leo-client.version>
+        <jetbrick-commons.version>2.1.6</jetbrick-commons.version>
+        <mysql.version>8.0.11</mysql.version>
+        <javax.mail.version>1.6.1</javax.mail.version>
     </properties>
 
     <dependencyManagement>
@@ -50,6 +53,21 @@
                 <groupId>net.ufrog</groupId>
                 <artifactId>leo-service</artifactId>
                 <version>${leo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.subchen</groupId>
+                <artifactId>jetbrick-commons</artifactId>
+                <version>${jetbrick-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>javax.mail</artifactId>
+                <version>${javax.mail.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

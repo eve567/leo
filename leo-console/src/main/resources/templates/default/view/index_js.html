@@ -1,0 +1,108 @@
+<script type="text/javascript">
+    'use strict';
+    function viewCtrl($scope, $bootstrap) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.ctrl.status('view', 'grid');
+                $scope.appFn.active($scope.$apps[0]);
+            },
+
+            // 视图功能集合
+            viewFn: {
+                // 查询用户
+                find: function(page, size) {
+                    $scope.ctrl.status('grid', 'loading');
+                    $scope.get('${app}/view/' + $scope.current.app.id, {page: page, size: size}, function(data) {
+                        $bootstrap.page(data, 'views');
+                        $scope.ctrl.status('grid', 'loaded');
+                    });
+                },
+
+                // 显示表单
+                form: function(view) {
+                    $scope.view = angular.extend({}, view);
+                    $scope.view.appId = $scope.current.app.id;
+                    $scope.object.delete($scope.view, ['creator', 'createTime', 'updater', 'updateTime']);
+                    $scope.ctrl.status('view', 'form');
+                    $scope.ctrl.status('saveBtn', 'standby');
+                },
+
+                // 保存数据
+                save: function($event) {
+                    $scope.ctrl.stop($event);
+                    $scope.ctrl.status('saveBtn', 'processing');
+                    if ($scope.valid.empty($scope.view.id)) {
+                        $scope.viewFn.create($scope.view);
+                    } else {
+                        $scope.viewFn.update($scope.view);
+                    }
+                },
+
+                // 创建视图
+                create: function(view) {
+                    $scope.post('${app}/view/create', view, function(data) {
+                        $scope.viewFn.cancel();
+                        $scope.array.add($scope.views, data.data);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 更新视图
+                update: function(view) {
+                    $scope.put('${app}/view/update/' + view.id, view, function(data) {
+                        $scope.viewFn.cancel();
+                        $scope.array.replace($scope.views, data.data);
+                    }, function() {
+                        $scope.ctrl.status('saveBtn', 'standby');
+                    });
+                },
+
+                // 删除视图
+                delete: function(view) {
+                    $scope.ctrl.status('deleteBtn', 'processing');
+                    $scope.delete('${app}/view/delete/' + view.id, function() {
+                        $scope.array.remove($scope.views, view);
+                    }, function() {
+                        $bootstrap.modal.hide('deleteViewModal');
+                        $scope.ctrl.status('deleteBtn', 'standby');
+                    });
+                },
+
+                // 显示视图删除确认弹窗
+                popDeleteModel: function(view) {
+                    $scope.current.dview = view;
+                    $scope.ctrl.status('deleteBtn', 'standby');
+                    $bootstrap.modal.show('deleteViewModal');
+                },
+
+                // 取消表单
+                cancel: function() {
+                    $scope.ctrl.resetForm($scope.viewForm);
+                    $scope.ctrl.status('view', 'grid');
+                },
+
+                // 判断保存按钮是否有效
+                disabledSaveBtn: function() {
+                    if ($scope.viewForm.$invalid) return true;
+                    else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    return false;
+                }
+            },
+
+            // 应用功能集合
+            appFn: {
+                active: function(app) {
+                    if ($scope.current.app !== app) {
+                        $scope.current.app = app;
+                        $scope.viewFn.find(0);
+                    }
+                }
+            },
+
+            //
+            current: {}
+        }).init();
+    }
+</script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${App::config('console_title')}</title>
+    <title>${_C('console_title')}</title>
     <link rel="shortcut icon" href="${app.resourceCommon}/ufrog/img/favicon.png" type="image/png" />
     <link rel="stylesheet" type="text/css" href="${app.resourceCommon}/bootstrap/3_3_7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="${app.resourceCommon}/bootstrap/3_3_7/css/bootstrap-theme.min.css">
@@ -13,7 +13,7 @@
 <body ng-controller="indexCtrl">
 
 <alert ng-model="alert" sign-out-flag="_not_sign::" sign-view="${app}/sign_out"></alert>
-<layout brand="${App::config('console_name')}" host="${App::config('leo.host')}" gateway="${App::config('leo.gateway')}" app-id="${App::config('leo.appId')}" access-token="${app.user.token}" username="${app.user.name}"></layout>
+<layout brand="${_C('console_name')}" host="${_C('leo.host')}" gateway="${_C('leo.gateway')}" app-id="${_C('leo.appId')}" access-token="${app.user.token}" username="${app.user.name}"></layout>
 
 <script type="text/javascript" src="${app.resourceCommon}/jquery/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="${app.resourceCommon}/bootstrap/3_3_7/js/bootstrap.min.js"></script>

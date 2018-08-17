@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+    <div class="panel-heading">视图<span ng-if="valid.empty(view.id)">添加</span><span ng-if="!valid.empty(view.id)">「<span ng-bind="view.name"></span>」修改</span></div>
+    <div class="panel-body">
+        <form name="viewForm" method="post" action="#" class="form-horizontal" ng-submit="viewFn.save($event)">
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><rq>名称</rq></label>
+                <div class="col-sm-2">
+                    <input type="text" name="name" class="form-control" placeholder="请填写视图名称" ng-model="view.name" required maxlength="20">
+                    <alert-pop field="viewForm.name">
+                        <alert-pop-item type="required">必须填写视图名称</alert-pop-item>
+                        <alert-pop-item type="maxlength">视图名称不能超过20个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><rq>代码</rq></label>
+                <div class="col-sm-2">
+                    <input type="text" name="code" class="form-control" placeholder="请填写视图代码" ng-model="view.code" required maxlength="20">
+                    <alert-pop field="viewForm.code">
+                        <alert-pop-item type="required">必须填写视图代码</alert-pop-item>
+                        <alert-pop-item type="maxlength">视图代码不能超过20个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+            </div>
+            <div class="form-group margin-bottom-zero">
+                <div class="col-sm-offset-1 col-sm-11">
+                    <button class="btn btn-success" ng-disabled="viewFn.disabledSaveBtn()">
+                        <span ng-show="ctrl.status('saveBtn', ['standby'])"><fa i="floppy-o">&nbsp;${_M('common.op.save')}</fa></span>
+                        <span ng-show="ctrl.status('saveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${_M('common.processing')}</fa></span>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="viewFn.cancel()"><fa i="times-circle">&nbsp;${_M('common.op.cancel')}</fa></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

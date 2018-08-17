@@ -7,5 +7,5 @@ package net.ufrog.leo.client;
  */
 public class Client {
 
-    public static final String NAME  = "leo-server-4";
+    static final String NAME  = "leo-server-dev";
 }
