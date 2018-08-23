@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         // TODO 还是要有队列来处理这些东西
         if (!Strings.empty(user.getAccount()) && userRepository.findByAccount(user.getAccount()) != null) {
             throw new ServiceException("account '" + user.getAccount() + "' exists.", "service.create.failure.exists.account");
-        } if (!Strings.empty(user.getEmail()) && userRepository.findByEmail(user.getEmail()) != null) {
+        } if (!Strings.empty(user.getEmail()) && !Strings.equals(Model.NULL, user.getEmail()) && userRepository.findByEmail(user.getEmail()) != null) {
             throw new ServiceException("email '" + user.getEmail() + "' exists.", "service.create.failure.exists.email");
         }
         return userRepository.save(user);
