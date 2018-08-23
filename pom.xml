@@ -26,7 +26,7 @@
     <properties>
         <aries-common.version>1.0.0</aries-common.version>
         <leo.version>4.1.0</leo.version>
-        <leo-client.version>4.0.2</leo-client.version>
+        <leo-client.version>4.1.0</leo-client.version>
         <jetbrick-commons.version>2.1.6</jetbrick-commons.version>
         <mysql.version>8.0.11</mysql.version>
         <javax.mail.version>1.6.1</javax.mail.version>

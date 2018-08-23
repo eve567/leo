@@ -66,18 +66,11 @@
                         $scope.resetPassword();
                     });
                 }
-                $scope.testGateway();
             },
 
             // 修改密码视图
             resetPassword: function() {
                 $scope.bodyUrl = '${app}/view/index_reset_password';
-            },
-
-            testGateway: function() {
-                $scope.get('http://127.0.0.1:5566/sso/user/111111/2356', function(data) {
-                    console.log(data);
-                });
             },
 
             //

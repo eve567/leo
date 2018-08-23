@@ -70,9 +70,12 @@ public class Resource extends Model {
     public static final class Type {
 
         @net.ufrog.common.dict.Element(value = "导航", code = "net.ufrog.leo.domain.models.Nav")
-        public static final String NAV = "00";
+        public static final String NAV          = "00";
+
+        @net.ufrog.common.dict.Element(value = "视图元素", code = "net.ufrog.leo.domain.models.ViewItem")
+        public static final String VIEW_ITEM    = "98";
 
         @net.ufrog.common.dict.Element(value = "应用", code = "net.ufrog.leo.domain.models.App")
-        public static final String APP = "99";
+        public static final String APP          = "99";
     }
 }

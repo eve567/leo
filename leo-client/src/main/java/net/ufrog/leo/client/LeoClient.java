@@ -56,4 +56,16 @@ public interface LeoClient {
     @RequestMapping(value = "/navs/{type}/{parentId}/{token}/{appId}", method = RequestMethod.GET)
     @ApiOperation(value = "获取当前用户导航权限", notes = "获取当前用户权限下的导航资源")
     ListResponse<NavResponse> getNavs(@PathVariable("type") String type, @PathVariable("parentId") String parentId, @PathVariable("appId") String appId, @PathVariable("token") String token);
+
+    /**
+     * 读取当前用户视图下的元素
+     *
+     * @param code 代码
+     * @param token 访问令牌
+     * @param appId 应用编号
+     * @return 视图元素响应列表
+     */
+    @RequestMapping(value = "/view_items/{code}/{token}/{appId}", method = RequestMethod.GET)
+    @ApiOperation(value = "获取当前用户视图元素权限", notes = "获取当前用户权限下的视图元素")
+    ListResponse<ViewItemResponse> getViewItems(@PathVariable("code") String code, @PathVariable("token") String token, @PathVariable("appId") String appId);
 }

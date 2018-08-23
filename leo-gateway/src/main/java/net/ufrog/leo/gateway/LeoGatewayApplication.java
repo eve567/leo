@@ -1,6 +1,7 @@
 package net.ufrog.leo.gateway;
 
 import jetbrick.template.web.springmvc.JetTemplateViewResolver;
+import net.ufrog.common.Logger;
 import net.ufrog.leo.client.configuration.LeoInterception;
 import net.ufrog.leo.domain.models.App;
 import net.ufrog.leo.domain.repositories.AppRepository;
@@ -36,6 +37,7 @@ public class LeoGatewayApplication implements WebMvcConfigurer {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public LeoGatewayApplication(JetTemplateViewResolver jetTemplateViewResolver) {
         if (jetTemplateViewResolver != null) {
+            Logger.info("Set jet template view resolver redirect http 1.0 compatible false.");
             jetTemplateViewResolver.setRedirectHttp10Compatible(false);
         }
     }

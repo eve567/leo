@@ -69,8 +69,8 @@ public class LeoCommonConfiguration implements WebMvcConfigurer {
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
         List<MediaType> lMediaType = new ArrayList<>();
 
-        lMediaType.add(new MediaType("application", "json"));
-        lMediaType.add(new MediaType("text", "javascript"));
+        lMediaType.add(MediaType.APPLICATION_JSON);
+        lMediaType.add(MediaType.TEXT_HTML);
 
         fastJsonConfig.setSerializerFeatures(SerializerFeature.BrowserCompatible, SerializerFeature.DisableCircularReferenceDetect);
         fastJsonpHttpMessageConverter.setSupportedMediaTypes(lMediaType);
@@ -96,7 +96,7 @@ public class LeoCommonConfiguration implements WebMvcConfigurer {
         List<ExceptionHandler> lExceptionHandler = new ArrayList<>(3);
         lExceptionHandler.add(new ServiceExceptionHandler());
         lExceptionHandler.add(new InvalidArgumentExceptionHandler());
-        lExceptionHandler.add(new NotSignExceptionHandler("sign", appProperties.get().getProperty("leo.host") + "/sign_out", "_not_sign::"));
+        lExceptionHandler.add(new NotSignExceptionHandler("sign", appProperties.get().getProperty("leo.gateway") + "/sign_out", "_not_sign::"));
         setExceptionHandler(lExceptionHandler, exceptionResolvers);
     }
 

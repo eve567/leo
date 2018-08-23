@@ -1,6 +1,8 @@
 <div ng-controller="viewCtrl">
     <div class="ng-fade" ng-show="ctrl.status('view', ['grid'])">#include('index_grid.html')</div>
     <div class="ng-fade" ng-show="ctrl.status('view', ['form'])">#include('index_form.html')</div>
+    <div class="ng-fade" ng-show="ctrl.status('view', ['item'])">#include('index_item.html')</div>
     #include('modal_delete.html')
+    #include('modal_delete_item.html')
 </div>
 #include('index_js.html')

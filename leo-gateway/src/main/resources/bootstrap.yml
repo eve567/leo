@@ -1,4 +1,6 @@
 spring:
   cloud:
     config:
-      uri: ${config.uri:http://localhost:8888}
+      name: leo-gateway,leo-common,common-database,common-eureka,common-jetbrick,common-ufrog
+      uri: ${config.uri:http://101.132.100.91:8000}
+      profile: ${config.profile:dev}

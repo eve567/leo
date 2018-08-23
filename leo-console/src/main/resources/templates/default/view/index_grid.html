@@ -11,7 +11,7 @@
             </li>
         </ul>
     </div>
-    <table>
+    <table view="app">
         <colgroup>
             <col width="15%">
             <col width="15%">
@@ -19,7 +19,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th>名称</th>
+            <th view-item="btn_app_modify">名称</th>
             <th>代码</th>
             <th>&nbsp;</th>
         </tr>
@@ -29,7 +29,7 @@
             <td ng-bind="view.name"></td>
             <td ng-bind="view.code|empty:'-'"></td>
             <td class="link-group">
-                <a href="#" class="link-group-item">元素列表</a>
+                <a href="#" class="link-group-item" ng-click="viewFn.listItem(view)">元素列表</a>
                 <a href="#" class="link-group-item" ng-click="viewFn.form(view)">编辑</a>
                 <a href="#" class="link-group-item" ng-click="viewFn.popDeleteModel(view)">删除</a>
             </td>

@@ -1,5 +1,0 @@
-spring:
-  cloud:
-    config:
-      name: leo-console
-      profile: ${config.profile}

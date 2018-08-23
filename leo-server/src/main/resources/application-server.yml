@@ -1,5 +1,0 @@
-spring:
-  cloud:
-    config:
-      name: leo-server
-      profile: ${config.profile}

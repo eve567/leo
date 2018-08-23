@@ -14,7 +14,8 @@
                         signOut: '/sign_out',
                         core: {
                             apps: 'api/apps',
-                            navs: 'api/navs'
+                            navs: 'api/navs',
+                            viewItems: 'api/view_items'
                         }
                     }
                 },
@@ -38,6 +39,13 @@
                 /** 查询导航 */
                 navs: function(parent, callback) {
                     $_.$jsonp([$_.$config.host, $_.$constant.uri.core.navs, '99', parent.id, $_.$config.accessToken, $_.$config.appId].join('/'), function(data) {
+                        (callback || ng.noop)(data.content);
+                    });
+                },
+
+                /** 查询视图元素 */
+                viewItems: function(code, callback) {
+                    $_.$jsonp([$_.$config.host, $_.$constant.uri.core.viewItems, code, $_.$config.accessToken, $_.$config.appId].join('/'), function(data) {
                         (callback || ng.noop)(data.content);
                     });
                 },
@@ -196,6 +204,48 @@
                                     }
                                 }
                             }
+                        }
+                    }).$init();
+                }
+            };
+        }])
+
+        /** 视图指令 */
+        .directive('view', ['$leo', function($leo) {
+            return {
+                priority: 0,
+                restrict: 'A',
+                scope: true,
+                link: function($scope, $element, $attr) {
+                    ng.extend($scope, {
+                        //
+                        $init: function() {
+                            console.log('view log');
+                            $scope.$viewItemCodes = [];
+                            $leo.viewItems($attr['view'], function(data) {
+                                ng.forEach(data, function(val) {
+                                    $scope.$viewItemCodes.push(val.code);
+                                });
+                            });
+                        }
+                    }).$init();
+                }
+            };
+        }])
+
+        /**  */
+        .directive('viewItem', [function() {
+            return {
+                priority: 10,
+                restrict: 'A',
+                scope: true,
+                link: function($scope, $element, $attr) {
+                    ng.extend($scope, {
+                        //
+                        $init: function() {
+                            console.log($scope);
+                            console.log($scope.$viewItemCodes);
+                            console.log($attr['viewItem']);
                         }
                     }).$init();
                 }

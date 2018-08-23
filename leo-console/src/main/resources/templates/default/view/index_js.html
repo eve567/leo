@@ -70,11 +70,60 @@
                     });
                 },
 
+                // 视图元素列表
+                listItem: function(view) {
+                    $scope.current.view = view;
+                    $scope.ctrl.status('view', 'item');
+                    $scope.viewFn.findItems();
+                },
+
+                // 查询元素列表
+                findItems: function() {
+                    $scope.ctrl.status('itemGrid', 'loading');
+                    $scope.get('${app}/view/items/' + $scope.current.view.id, function(data) {
+                        $scope.items = data;
+                    }, function() {
+                        $scope.ctrl.status('itemGrid', 'loaded');
+                        $scope.viewFn.cancelItem();
+                    });
+                },
+
+                // 创建元素
+                createItem: function($event) {
+                    $scope.ctrl.stop($event);
+                    $scope.ctrl.status('itemSaveBtn', 'processing');
+                    $scope.item.viewId = $scope.current.view.id;
+                    $scope.post('${app}/view/item', $scope.item, function(data) {
+                        $scope.array.add($scope.items, data.data);
+                        $scope.viewFn.cancelItem();
+                    }, function() {
+                        $scope.ctrl.status('itemSaveBtn', 'standby');
+                    });
+                },
+
+                // 删除元素
+                deleteItem: function(item) {
+                    $scope.ctrl.status('itemDeleteBtn', 'processing');
+                    $scope.delete('${app}/view/item/' + $scope.current.ditem.id, function() {
+                        $scope.array.remove($scope.items, item);
+                    }, function() {
+                        $bootstrap.modal.hide('deleteViewItemModal');
+                        $scope.ctrl.status('itemDeleteBtn', 'standby');
+                    });
+                },
+
                 // 显示视图删除确认弹窗
                 popDeleteModel: function(view) {
                     $scope.current.dview = view;
                     $scope.ctrl.status('deleteBtn', 'standby');
                     $bootstrap.modal.show('deleteViewModal');
+                },
+
+                // 显示视图元素删除确认弹窗
+                popDeleteItemModel: function(item) {
+                    $scope.current.ditem = item;
+                    $scope.ctrl.status('itemDeleteBtn', 'standby');
+                    $bootstrap.modal.show('deleteViewItemModal');
                 },
 
                 // 取消表单
@@ -83,10 +132,24 @@
                     $scope.ctrl.status('view', 'grid');
                 },
 
+                // 取消元素表单
+                cancelItem: function() {
+                    $scope.item = {};
+                    $scope.ctrl.resetForm($scope.itemForm);
+                    $scope.ctrl.status('itemSaveBtn', 'standby');
+                },
+
                 // 判断保存按钮是否有效
                 disabledSaveBtn: function() {
                     if ($scope.viewForm.$invalid) return true;
                     else if ($scope.ctrl.status('saveBtn', ['processing'])) return true;
+                    return false;
+                },
+
+                // 判断元素保存按钮是否有效
+                disabledItemSaveBtn: function() {
+                    if ($scope.itemForm.$invalid) return true;
+                    else if ($scope.ctrl.status('itemSaveBtn', ['processing'])) return true;
                     return false;
                 }
             },

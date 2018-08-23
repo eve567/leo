@@ -1,0 +1,57 @@
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">视图「<span ng-bind="current.view.name"></span>」元素</div>
+    <table>
+        <colgroup>
+            <col width="15%">
+            <col width="15%">
+            <col width="70%">
+        </colgroup>
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>代码</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="item in items">
+            <td ng-bind="item.name"></td>
+            <td ng-bind="item.code"></td>
+            <td class="link-group">
+                <a href="#" class="link-group-item" ng-click="viewFn.popDeleteItemModel(item)">删除</a>
+            </td>
+        </tr>
+        <tr ng-if="ctrl.status('itemGrid', ['loaded']) && valid.empty(items)"><td class="text-warning" col-span><fa i="exclamation-triangle">&nbsp;${_M('common.empty')}</fa></td></tr>
+        <tr ng-if="ctrl.status('itemGrid', ['loading'])"><td col-span><fa i="spinner spin">&nbsp;${_M('common.processing')}</fa></td></tr>
+        </tbody>
+    </table>
+    <div class="panel-body">
+        <form name="itemForm" method="post" action="#" class="form-horizontal" ng-submit="viewFn.createItem($event)">
+            <div class="form-group margin-bottom-zero">
+                <div class="col-sm-2">
+                    <label for="viewName" class="sr-only">name</label>
+                    <input id="viewName" type="text" name="name" class="form-control" placeholder="请填写元素名称" ng-model="item.name" required maxlength="20">
+                    <alert-pop field="itemForm.name">
+                        <alert-pop-item type="required">视图元素名称必须填写</alert-pop-item>
+                        <alert-pop-item type="maxlength">视图元素名称不能超过20个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+                <div class="col-sm-2">
+                    <label for="viewCode" class="sr-only">code</label>
+                    <input id="viewCode" type="text" name="code" class="form-control" placeholder="请填写元素代码" ng-model="item.code" required maxlength="20">
+                    <alert-pop field="itemForm.code">
+                        <alert-pop-item type="required">视图元素代码必须填写</alert-pop-item>
+                        <alert-pop-item type="maxlength">视图元素代码不能超过20个字符</alert-pop-item>
+                    </alert-pop>
+                </div>
+                <div class="col-sm-8">
+                    <button class="btn btn-success" ng-disabled="viewFn.disabledItemSaveBtn()">
+                        <span ng-show="ctrl.status('itemSaveBtn', ['standby'])"><fa i="plus">&nbsp;${_M('common.op.add')}</fa></span>
+                        <span ng-show="ctrl.status('itemSaveBtn', ['processing'])"><fa i="spinner spin">&nbsp;${_M('common.processing')}</fa></span>
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="viewFn.cancel()"><fa i="angle-double-left">&nbsp;${_M('common.op.back')}</fa></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

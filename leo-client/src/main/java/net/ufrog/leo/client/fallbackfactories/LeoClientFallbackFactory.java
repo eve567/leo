@@ -36,6 +36,12 @@ public class LeoClientFallbackFactory extends ClientFallbackFactory<LeoClient> {
                 //noinspection unchecked
                 return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), ListResponse.class);
             }
+
+            @Override
+            public ListResponse<ViewItemResponse> getViewItems(String code, String token, String appId) {
+                //noinspection unchecked
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), ListResponse.class);
+            }
         };
     }
 }

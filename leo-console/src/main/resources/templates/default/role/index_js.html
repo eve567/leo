@@ -150,7 +150,7 @@
                     $scope.resource.roleId = $scope.current.role.id;
                     $scope.resource.type = $scope.current.resourceType.type;
                     $scope.post('${app}/role/bind_resources', $scope.resource, function(data) {
-                        console.log(data);
+                        //console.log(data);
                     }, function() {
                         $scope.ctrl.status('bindBtn', 'standby');
                     });

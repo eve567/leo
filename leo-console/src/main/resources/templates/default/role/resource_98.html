@@ -1,0 +1,47 @@
+<div class="panel panel-default" ng-controller="resource98Ctrl">
+    <div class="panel-body">
+        <tree ng-model="tree"></tree>
+    </div>
+</div>
+
+<!--suppress JSUnresolvedVariable -->
+<script type="text/javascript">
+    'use strict';
+    function resource98Ctrl($scope, $tree) {
+        angular.extend($scope, {
+            // 初始化
+            init: function() {
+                $scope.tree = {};
+                $scope.tree.id = '_null';
+                $scope.setup($scope.tree);
+            },
+
+            // 查询数据
+            find: function(node) {
+                $scope.get('${app}/role/resource_models/98', {appId: $scope.current.app.id, viewId: node.id}, function(data) {
+                    $scope.resourceFn.isChecked(data);
+                    $tree.loaded(node, data);
+                    angular.forEach(data, function(v) {
+                        $scope.setup(v);
+                    });
+                });
+            },
+
+            // 选中功能
+            check: function(nav, checked) {
+                $scope.resourceFn.check(nav, checked);
+            },
+
+            // 设置
+            setup: function(node) {
+                if (node.$setup !== true) {
+                    node.$setup = true;
+                    $tree.setLoadFn($scope.find, node);
+                    $tree.setCheckFn($scope.check, node);
+                    $tree.check(node, node.checked === true);
+                    $tree.load(node);
+                }
+            }
+        }).init();
+    }
+</script>

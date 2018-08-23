@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * 视图仓库
  *
@@ -17,6 +20,15 @@ import org.springframework.stereotype.Repository;
 public interface ViewRepository extends JpaRepository<View, String> {
 
     /**
+     * 通过代码和应用编号查询视图
+     *
+     * @param appId 应用编号
+     * @param code 代码
+     * @return 视图
+     */
+    Optional<View> findByAppIdAndCode(String appId, String code);
+
+    /**
      * 通过应用编号查询视图
      *
      * @param appId 应用编号
@@ -24,4 +36,12 @@ public interface ViewRepository extends JpaRepository<View, String> {
      * @return 视图分页对象
      */
     Page<View> findByAppId(String appId, Pageable pageable);
+
+    /**
+     * 通过应用编号查询视图
+     *
+     * @param appId 应用编号
+     * @return 视图列表
+     */
+    List<View> findByAppId(String appId);
 }

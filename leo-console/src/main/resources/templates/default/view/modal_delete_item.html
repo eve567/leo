@@ -1,0 +1,10 @@
+<modal id="deleteViewItemModal" title="确认删除视图元素？">
+    <p class="text-danger"><fa i="exclamation-triangle">&nbsp;正在删除「<span ng-bind="current.ditem.name"></span>&nbsp;-&nbsp;<span ng-bind="current.ditem.code"></span>」视图元素！</fa></p>
+    <p class="text-danger margin-bottom-zero"><fa i="exclamation-triangle">&nbsp;删除后将同步删除所有用户角色相关的权限配置！！！</fa></p>
+
+    <button type="button" class="btn btn-danger" ng-click="viewFn.deleteItem(current.ditem)" ng-disabled="ctrl.status('itemDeleteBtn', ['processing'])">
+        <span ng-show="ctrl.status('itemDeleteBtn', ['standby'])"><fa i="minus-circle">&nbsp;确认删除</fa></span>
+        <span ng-show="ctrl.status('itemDeleteBtn', ['processing'])"><fa i="spinner spin">&nbsp;${_M('common.processing')}</fa></span>
+    </button>
+    <button type="button" class="btn btn-default" data-dismiss="modal"><fa i="times-circle">&nbsp;${_M('common.op.cancel')}</fa></button>
+</modal>
