@@ -213,19 +213,18 @@
         /** 视图指令 */
         .directive('view', ['$leo', function($leo) {
             return {
-                priority: 0,
                 restrict: 'A',
                 scope: true,
                 link: function($scope, $element, $attr) {
                     ng.extend($scope, {
                         //
                         $init: function() {
-                            console.log('view log');
                             $scope.$viewItemCodes = [];
                             $leo.viewItems($attr['view'], function(data) {
                                 ng.forEach(data, function(val) {
                                     $scope.$viewItemCodes.push(val.code);
                                 });
+                                $scope.$loadedViewItemCodes = true;
                             });
                         }
                     }).$init();
@@ -234,18 +233,27 @@
         }])
 
         /**  */
-        .directive('viewItem', [function() {
+        .directive('viewItem', ['$common', function($common) {
             return {
-                priority: 10,
                 restrict: 'A',
-                scope: true,
                 link: function($scope, $element, $attr) {
                     ng.extend($scope, {
-                        //
+                        // 初始化
                         $init: function() {
-                            console.log($scope);
-                            console.log($scope.$viewItemCodes);
-                            console.log($attr['viewItem']);
+                            $scope.$watch('$loadedViewItemCodes', function(val) {
+                                if (val === true) {
+                                    $scope.$check($scope.$viewItemCodes);
+                                }
+                            });
+                        },
+
+                        // 检查是否有权限
+                        $check: function(viewItemCodes) {
+                            if ($common.array.in(viewItemCodes, $attr['viewItem']) >= 0) {
+                                $element.removeAttr('view-item');
+                            } else {
+                                $element.remove();
+                            }
                         }
                     }).$init();
                 }
