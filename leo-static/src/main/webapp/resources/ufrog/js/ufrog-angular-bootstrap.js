@@ -376,6 +376,7 @@
                             } else {
                                 throw 'ng-model is not array or object.';
                             }
+                            $element.find(':file').val('');
                         },
 
                         // 文件名称
