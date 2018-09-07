@@ -89,6 +89,35 @@
                     });
                 },
 
+                /** Method.PATCH */
+                patch: function(url, data, success, pre, post, error) {
+                    var args = $_.$checkArguments(data, success, pre, post, error);
+                    $http({
+                        method: 'patch',
+                        url: url + ((url.indexOf('?') >= 0) ? '&' : '?') + jq.param($_.$config.$defaultParams),
+                        data: args.data
+                    }).then(function(data) {
+                        $_.$doSuccess(data, args.success, args.pre, args.post, args.error);
+                    }, function(data) {
+                        $_.$doError(data, args.error, args.pre, args.post);
+                    });
+                },
+
+                /** Method.PATCH urlencoded */
+                patchUrlencoded: function(url, data, success, pre, post, error) {
+                    var args = $_.$checkArguments(data, success, pre, post, error);
+                    $http({
+                        method: 'patch',
+                        url: url,
+                        data: jq.param(ng.extend({}, $_.$config.$defaultParams, args.data)),
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                    }).then(function(data) {
+                        $_.$doSuccess(data, args.success, args.pre, args.post, args.error);
+                    }, function(data) {
+                        $_.$doError(data, args.error, args.pre, args.post);
+                    });
+                },
+
                 /** Method.DELETE */
                 delete: function(url, data, success, pre, post, error) {
                     var args = $_.$checkArguments(data, success, pre, post, error);

@@ -97,6 +97,14 @@ body {
     }
   }
 }
+.v-align-middle {
+  vertical-align: middle !important;
+}
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 ul.normal {
   margin: 0;
   padding: 0;
