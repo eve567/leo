@@ -532,5 +532,15 @@
                 }
                 return data;
             }
+        }])
+
+        /** 截断字符串 */
+        .filter('truncate', [function() {
+            return function(data, length, suffix) {
+                if (data.length > length) {
+                    return data.substr(0, length) + (suffix || '...');
+                }
+                return data;
+            }
         }]);
 })(window.angular, window.jQuery);
