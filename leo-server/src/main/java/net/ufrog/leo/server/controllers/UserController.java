@@ -15,11 +15,15 @@ import net.ufrog.leo.client.contracts.UserRequest;
 import net.ufrog.leo.client.contracts.UserResponse;
 import net.ufrog.leo.domain.models.User;
 import net.ufrog.leo.service.UserService;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 用户控制器
@@ -29,17 +33,17 @@ import java.util.stream.Collectors;
  * @since 3.0.0
  */
 @RestController
-@CrossOrigin
 public class UserController implements UserClient {
 
     /** 用户业务接口 */
-    private UserService userService;
+    private final UserService userService;
 
     /**
      * 构造函数
      *
      * @param userService 用户业务接口
      */
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -120,6 +124,24 @@ public class UserController implements UserClient {
             userService.registerOpenPlatform(openPlatformRequest.getCodeValuePairs(), openPlatformRequest.getUserId());
             return Response.createResponse(ResultCode.SUCCESS, Response.class);
         });
+    }
+
+    @Override
+    public UserResponse readByCellphone(String cellphone) {
+        User user = userService.findByCellphone(cellphone);
+        return (user == null) ? Response.createResponse(ResultCode.NOT_FOUND, UserResponse.class) : toUserResponse(userService.findByCellphone(cellphone));
+    }
+
+    @Override
+    public UserResponse readByOpenPlatform(@RequestParam("keyValuePairs[]") String[] keyValuePairs) {
+        Map<String, String> mKeyValuePair = new HashMap<>();
+        Stream.of(keyValuePairs).forEach(kvp -> {
+            String[] kv = kvp.split(";");
+            if (kv.length == 2) {
+                mKeyValuePair.put(kv[0], kv[1]);
+            }
+        });
+        return userService.findByOpenPlatform(mKeyValuePair).map(UserController::toUserResponse).orElse(Response.createResponse(ResultCode.NOT_FOUND, UserResponse.class));
     }
 
     /**

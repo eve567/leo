@@ -59,6 +59,22 @@ public interface UserService {
     User findById(String id);
 
     /**
+     * 通过手机号码查询用户
+     *
+     * @param cellphone 手机号码
+     * @return 用户对象
+     */
+    User findByCellphone(String cellphone);
+
+    /**
+     * 通过电子邮件查询用户
+     *
+     * @param email 电子邮件
+     * @return 用户对象
+     */
+    User findByEmail(String email);
+
+    /**
      * 通过账号查询用户
      *
      * @param account 账号/手机号码/电子邮件

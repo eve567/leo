@@ -9,10 +9,7 @@ import net.ufrog.leo.client.contracts.UserRequest;
 import net.ufrog.leo.client.contracts.UserResponse;
 import net.ufrog.leo.client.fallbackfactories.UserClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户业务客户端
@@ -99,4 +96,20 @@ public interface UserClient {
     @RequestMapping(value = "/register_open_platform", method = RequestMethod.POST)
     @ApiOperation(value = "注册用户开放平台信息", notes = "将开放平台标识注册给用户")
     Response registerOpenPlatform(@RequestBody OpenPlatformRequest openPlatformRequest);
+
+    /**
+     * @param cellphone 手机号码
+     * @return 用户响应
+     */
+    @RequestMapping(value = "/read_by_cellphone", method = RequestMethod.GET)
+    @ApiOperation(value = "通过手机号码读取用户")
+    UserResponse readByCellphone(String cellphone);
+
+    /**
+     * @param keyValuePairs 键值对
+     * @return 用户响应
+     */
+    @RequestMapping(value = "/read_by_open_platform", method = RequestMethod.GET)
+    @ApiOperation(value = "通过开放平台读取用户")
+    UserResponse readByOpenPlatform(@RequestParam("keyValuePairs[]") String[] keyValuePairs);
 }

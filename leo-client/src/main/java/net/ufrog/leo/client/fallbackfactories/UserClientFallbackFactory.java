@@ -68,6 +68,16 @@ public class UserClientFallbackFactory extends ClientFallbackFactory<UserClient>
             public Response registerOpenPlatform(OpenPlatformRequest openPlatformRequest) {
                 return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), Response.class);
             }
+
+            @Override
+            public UserResponse readByCellphone(String cellphone) {
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
+            }
+
+            @Override
+            public UserResponse readByOpenPlatform(String[] keyValuePairs) {
+                return Response.createResponse(ResultCode.NETWORK, Dicts.name(ResultCode.NETWORK, ResultCode.class), UserResponse.class);
+            }
         };
     }
 }
