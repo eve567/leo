@@ -2,7 +2,7 @@ package net.ufrog.leo.server.controllers;
 
 import net.ufrog.aries.common.contract.PageResponse;
 import net.ufrog.aries.common.contract.Response;
-import net.ufrog.aries.common.jpa.ID;
+import net.ufrog.aries.common.jpa.Model;
 import net.ufrog.common.Logger;
 import net.ufrog.common.exception.ServiceException;
 import net.ufrog.common.utils.Codecs;
@@ -74,7 +74,9 @@ public class UserController implements UserClient {
 
     @Override
     public UserResponse update(String id, UserRequest userRequest) {
-        return null;
+        User user = toUserModel(userRequest);
+        user.setId(id);
+        return toUserResponse(userService.update(user));
     }
 
     @Override
@@ -97,9 +99,9 @@ public class UserController implements UserClient {
         return userService.findByOpenPlatform(openPlatformRequest.getCodeValuePairs()).map(UserController::toUserResponse).orElseGet(() -> {
             User user = new User();
             user.setAccount(Strings.empty(openPlatformRequest.getAccount(), Codecs.uuid()));
-            user.setCellphone(Strings.empty(openPlatformRequest.getCellphone(), ID.NULL));
-            user.setEmail(Strings.empty(openPlatformRequest.getEmail(), ID.NULL));
-            user.setName(Strings.empty(openPlatformRequest.getName(), ID.NULL));
+            user.setCellphone(Strings.empty(openPlatformRequest.getCellphone(), Model.NULL));
+            user.setEmail(Strings.empty(openPlatformRequest.getEmail(), Model.NULL));
+            user.setName(Strings.empty(openPlatformRequest.getName(), Model.NULL));
             user.setPassword(Passwords.encode(Strings.random(8)));
             user.setType(UserRequest.Type.CLIENT);
             user.setForced(User.Forced.TRUE);
