@@ -1,6 +1,6 @@
 spring:
   cloud:
     config:
-      name: leo-console,leo-common,common-database,common-eureka,common-jetbrick,common-ufrog
+      name: common-database,common-eureka,common-jetbrick,common-ufrog,leo-common,leo-console
       uri: ${config.uri:http://101.132.100.91:8000}
       profile: ${config.profile:default,dev}
