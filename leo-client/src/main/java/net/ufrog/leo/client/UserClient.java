@@ -103,7 +103,7 @@ public interface UserClient {
      */
     @RequestMapping(value = "/read_by_cellphone", method = RequestMethod.GET)
     @ApiOperation(value = "通过手机号码读取用户")
-    UserResponse readByCellphone(String cellphone);
+    UserResponse readByCellphone(@RequestParam("cellphone") String cellphone);
 
     /**
      * @param keyValuePairs 键值对
