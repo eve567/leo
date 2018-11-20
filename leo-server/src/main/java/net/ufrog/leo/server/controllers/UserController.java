@@ -129,7 +129,7 @@ public class UserController implements UserClient {
     }
 
     @Override
-    public UserResponse readByCellphone(String cellphone) {
+    public UserResponse readByCellphone(@RequestParam("cellphone") String cellphone) {
         User user = userService.findByCellphone(cellphone);
         return (user == null) ? Response.createResponse(ResultCode.NOT_FOUND, UserResponse.class) : toUserResponse(userService.findByCellphone(cellphone));
     }
