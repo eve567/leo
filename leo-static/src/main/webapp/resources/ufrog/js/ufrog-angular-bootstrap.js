@@ -173,12 +173,16 @@
                     start: '@',
                     size: '@',
                     method: '@',
-                    delay: '='
+                    delay: '=',
+                    showTotal: '='
                 },
                 template: [
                     '<ul class="pagination">',
                         '<li ng-repeat="page in pages" ng-class="page.class">',
                             '<a href="#" ng-click="$search(page.index)" ng-bind="page.text"></a>',
+                        '</li>',
+                        '<li class="disabled" ng-show="isShowTotal">',
+                            '<a href="#">\u603b\u8ba1\uff1a<span ng-bind="total"></span></a>',
                         '</li>',
                     '</ul>'
                 ].join(''),
@@ -187,6 +191,7 @@
                         // 初始化
                         $init: function() {
                             $scope.$watchPage();
+                            $scope.isShowTotal = ($scope.showTotal && $scope.showTotal !== 'false');
                             if (!$scope.delay || $scope.delay === 'false') $scope.$search(0);
                         },
 
@@ -201,6 +206,7 @@
                         $gen: function(val) {
                             $scope.pages = [];
                             $scope.start = parseInt($scope.start || '0');
+                            $scope.total = val.total;
                             $scope.begin = (val.current - 2 > $scope.start) ? val.current - 2 : $scope.start;
                             $scope.end = (val.current + 2 < val.pages - 1 + $scope.start) ? val.current + 2 : val.pages - 1 + $scope.start;
 
