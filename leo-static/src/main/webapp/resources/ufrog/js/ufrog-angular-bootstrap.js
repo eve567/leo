@@ -191,7 +191,7 @@
                         // 初始化
                         $init: function() {
                             $scope.$watchPage();
-                            $scope.isShowTotal = ($scope.showTotal && $scope.showTotal !== 'false');
+                            $scope.isShowTotal = ($scope.showTotal !== 'false');
                             if (!$scope.delay || $scope.delay === 'false') $scope.$search(0);
                         },
 
